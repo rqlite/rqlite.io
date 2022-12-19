@@ -6,6 +6,18 @@ weight: 30
 ---
 rqlite replicates SQLite for fault-tolerance. It does not replicate it for performance. In fact performance is reduced relative to a standalone SQLite database due to the nature of distributed systems. _There is no such thing as a free lunch_.
 
+## In-memory databases
+
+By default rqlite uses an in-memory SQLite database to maximise performance. In this mode no actual SQLite file is created and the entire database is stored in memory. If you wish rqlite to use an actual file-based SQLite database, pass `-on-disk` to rqlite on start-up.
+
+**Does using an in-memory SQLite database put my data at risk?**
+
+No.
+
+Since the Raft log is the authoritative store for all data, and it is stored on disk by each node, an in-memory database can be fully recreated on start-up from the information stored in the Raft log. Using an in-memory database does not put your data at risk.
+
+## Performance Factors
+
 rqlite performance -- defined as the number of database updates performed in a given period of time -- is primarily determined by two factors:
 - Disk performance
 - Network latency
