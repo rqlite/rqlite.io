@@ -61,7 +61,6 @@ id = "UA-00000000-0"
 [languages]
 [languages.en]
 title = "rqlite"
-description = "A Docsy example site"
 languageName ="English"
 
 [markup]
@@ -82,7 +81,6 @@ section = ["HTML", "print", "RSS"]
 
 [params]
 copyright = "Philip O'Toole"
-#privacy_policy = "https://policies.google.com/privacy"
 
 # First one is picked as the Twitter card image if not set on page.
 # images = ["images/project-illustration.png"]
