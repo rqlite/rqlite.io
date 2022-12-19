@@ -1,6 +1,7 @@
 ---
 title: "Docker"
 linkTitle: "Docker"
+description: "Running rqlite via Docker"
 weight: 30
 ---
 `docker run -p4001:4001 rqlite/rqlite`

@@ -1,6 +1,7 @@
 ---
 title: "macOS"
 linkTitle: "macOS"
+description: "Installing rqlite on macOS"
 weight: 10
 ---
 `brew install rqlite`
