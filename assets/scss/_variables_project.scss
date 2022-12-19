@@ -6,3 +6,7 @@ Add styles or override variables from the theme here.
 
 $green: #008000;
 $yellow: #FFFF00;
+
+.td-navbar .navbar-brand__name {
+  display: none;
+}
