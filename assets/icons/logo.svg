@@ -10,9 +10,9 @@
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="123.7951mm"
+   width="125.3826mm"
    height="44.450001mm"
-   viewBox="0 0 123.7951 44.450001"
+   viewBox="0 0 125.3826 44.450001"
    version="1.1"
    id="svg21"
    sodipodi:docname="logo.svg"
@@ -28,7 +28,7 @@
      inkscape:pageshadow="2"
      inkscape:zoom="1"
      inkscape:cx="204.97624"
-     inkscape:cy="144.85369"
+     inkscape:cy="144.85367"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -46,7 +46,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -77,13 +77,13 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:20.96226311px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.52405655"
-       x="51.230682"
+       x="52.818184"
        y="163.03986"
        id="text82"><tspan
          sodipodi:role="line"
          id="tspan897"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:30px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#f9f9f9"
-         x="51.230682"
+         x="52.818184"
          y="163.03986">rqlite</tspan></text>
     <text
        xml:space="preserve"
