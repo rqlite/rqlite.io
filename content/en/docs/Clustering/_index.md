@@ -16,7 +16,7 @@ Clusters of 3, 5, 7, or 9, nodes are most practical. Clusters of those sizes can
 Clusters with a greater number of nodes start to become unwieldy, due to the number of nodes that must be contacted before a database change can take place. There is no intrinsic limit to the number of nodes comprising a cluster, but the operational overload can increase with little benefit.
 
 #### Read-only nodes
-It is possible to run larger clusters if you just need nodes [from which you only need to read from](https://github.com/rqlite/rqlite/blob/master/DOC/READ_ONLY_NODES.md). When it comes to the Raft protocol, these nodes do not count towards `N`, since they do not [vote](https://raft.github.io/).
+It is possible to run larger clusters if you just need nodes [from which you only need to read from](/docs/clustering/read-only-nodes/). When it comes to the Raft protocol, these nodes do not count towards `N`, since they do not [vote](https://raft.github.io/).
 
 ### Clusters with an even-number of nodes
 There is little point running clusters with even numbers of voting i.e. Raft nodes. To see why this is imagine you have one cluster of 3 nodes, and a second cluster of 4 nodes. In each case, for the cluster to reach consensus on a given change, a majority of nodes within the cluster are required to have agreed to the change.
@@ -26,7 +26,7 @@ Specifically, a majority is defined as `(N/2)+1` where `N` is the number of node
 So a 4-node cluster is no more fault-tolerant than a 3-node cluster, so running a 4-node cluster provides no advantage over a 3-node cluster. Only a 5-node cluster can tolerate the failure of 2 nodes. An analogous argument applies to 5-node vs. 6-node clusters, and so on.
 
 ## Creating a cluster
-_This section describes manually creating a cluster. If you wish rqlite nodes to automatically find other, and form a cluster, check out [auto-clustering](https://github.com/rqlite/rqlite/blob/master/DOC/AUTO_CLUSTERING.md)._
+_This section describes manually creating a cluster. If you wish rqlite nodes to automatically find other, and form a cluster, check out [auto-clustering](/docs/clustering/automatic-clustering/)._
 
 Let's say you have 3 host machines, _host1_, _host2_, and _host3_, and that each of these hostnames resolves to an IP address reachable from the other hosts. Instead of hostnames you can use the IP address directly if you wish.
 

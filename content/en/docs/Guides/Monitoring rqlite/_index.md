@@ -11,7 +11,7 @@ A status API exists, which returns extensive diagnostic and statistical informat
 curl localhost:4001/status?pretty
 ```
 
-The use of the URL param `pretty` is optional, and results in pretty-printed JSON responses.
+The use of the URL param `pretty` is optional, and results in pretty-printed JSON responses. The output of this endpoint could be periodically written to a monitoring system, allowing the performance of rqlite to tracked over time.
 
 You can also request the same status information via the CLI:
 ```
@@ -113,6 +113,7 @@ memstats:
   StackInuse: 557056
   LastGC: 0...
  ```
+Similar to the `status` output, the output of this endpoint could be periodically written to a monitoring system, allowing the performance of rqlite to tracked over time.
 
 ## pprof support
 [pprof](https://golang.org/pkg/net/http/pprof/) information is available by default and can be accessed as follows:

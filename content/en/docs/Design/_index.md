@@ -8,6 +8,8 @@ date: 2017-01-05
 ---
 You can find details on the design and implementation of rqlite from [these blog posts](https://www.philipotoole.com/tag/rqlite/) (in particular [this post](https://www.philipotoole.com/replicating-sqlite-using-raft-consensus/) and [this post](https://www.philipotoole.com/rqlite-replicated-sqlite-with-new-raft-consensus-and-api/)).
 
+Understanding the content of this page is not required to operate rqlite, but may be of interest to people who wish to learn more about its design and operation.
+
 ## Design Presentations
 - [Presentation](https://docs.google.com/presentation/d/1E0MpQbUA6JOP2GjA60CNN0ER8fia0TP6kdJ41U9Jdy4/edit#slide=id.p) given to Hacker Nights NYC, March 2022.
 - [Presentation]( https://www.philipotoole.com/2021-rqlite-cmu-tech-talk) given to the [Carnegie Mellon Database Group](https://db.cs.cmu.edu/), [September 2021](https://db.cs.cmu.edu/events/vaccination-2021-rqlite-the-distributed-database-built-on-raft-and-sqlite-philip-otoole/). There is also a [video recording](https://www.youtube.com/watch?v=JLlIAWjvHxM) of the talk.

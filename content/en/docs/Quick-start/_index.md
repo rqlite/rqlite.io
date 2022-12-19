@@ -8,7 +8,7 @@ The quickest way to get running is to download a pre-built release binary, avail
 ```bash
 rqlited -node-id 1 node1
 ```
-This single node automatically becomes the leader. You can pass `-h` to `rqlited` to list all configuration options.
+This single node automatically becomes the Leader. You can pass `-h` to `rqlited` to list all configuration options.
 
 ## Forming a cluster
 While not strictly necessary to run rqlite, running multiple nodes means you'll have a fault-tolerant cluster. Start two more nodes, allowing the cluster to tolerate failure of a single node, like so:
@@ -21,7 +21,7 @@ _This demonstration shows all 3 nodes running on the same host. In reality you p
 With just these few steps you've now got a fault-tolerant, distributed relational database.
 
 ## Inserting records
-Let's insert some records via the [rqlite CLI](https://github.com/rqlite/rqlite/blob/master/DOC/CLI.md), using standard SQLite commands. Once inserted, these records will be replicated across the cluster, in a durable and fault-tolerant manner. Your 3-node cluster can suffer the failure of a single node without any loss of functionality or data.
+Let's insert some records via the [rqlite CLI](/docs/guides/cli), using standard SQLite commands. Once inserted, these records will be replicated across the cluster, in a durable and fault-tolerant manner. Your 3-node cluster can suffer the failure of a single node without any loss of functionality or data.
 ```
 $ rqlite
 127.0.0.1:4001> CREATE TABLE foo (id INTEGER NOT NULL PRIMARY KEY, name TEXT)

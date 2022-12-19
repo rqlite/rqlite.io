@@ -8,7 +8,6 @@ weight: 5
 
 - [Usage](#usage)
 - [Example](#example)
-- [Build](#example)
 
 ## Usage
 

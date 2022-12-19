@@ -25,10 +25,10 @@ There are a few ways to improve performance, but not all will be suitable for a 
 ### Batching
 The more SQLite statements you can include in a single request to a rqlite node, the better the system will perform. 
 
-By using the [bulk API](https://github.com/rqlite/rqlite/blob/master/DOC/BULK.md), transactions, or both, throughput will increase significantly, often by 2 orders of magnitude. This speed-up is due to the way Raft and SQLite work. So for high throughput, execute as many operations as possible within a single transaction.
+By using the [bulk API](/docs/api/bulk-api/), transactions, or both, throughput will increase significantly, often by 2 orders of magnitude. This speed-up is due to the way Raft and SQLite work. So for high throughput, execute as many operations as possible within a single transaction.
 
 ### Queued Writes
-If you can tolerate a small risk of some data loss in the event that a node crashes, you could consider using the [Queued Writes API](https://github.com/rqlite/rqlite/blob/master/DOC/QUEUED_WRITES.md). Using Queued Writes can easily give you orders of magnitude improvement in perfomance.
+If you can tolerate a small risk of some data loss in the event that a node crashes, you could consider using the [Queued Writes API](/docs/api/queued-writes/). Using Queued Writes can easily give you orders of magnitude improvement in perfomance.
 
 ### Use more powerful hardware
 Obviously running rqlite on better disks, better networks, or both, will improve performance.

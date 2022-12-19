@@ -1,9 +1,10 @@
 ---
 title: "Building from source"
 linkTitle: "Building from source"
+description: "How to build rqlite from source"
 weight: 40
 ---
-rqlite can be compiled for Linux, macOS, and Microsoft Windows.
+rqlite can be compiled for a wide variety of operating systems and platforms.
 
 ## Building rqlite
 *Building rqlite requires Go 1.18 or later. [gvm](https://github.com/moovweb/gvm) is a great tool for installing and managing your versions of Go.*
@@ -21,7 +22,7 @@ cd rqlite
 go install ./...
 $GOPATH/bin/rqlited ~/node.1
 ```
-This starts a rqlite server listening on localhost, port 4001. This single node automatically becomes the leader.
+This starts a rqlite server listening on localhost, port 4001. This single node automatically becomes the Leader.
 
 To rebuild and run, perhaps after making some changes to the source, do something like the following:
 ```bash

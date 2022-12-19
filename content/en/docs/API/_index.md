@@ -9,7 +9,7 @@ date: 2017-01-05
 
 Each rqlite node exposes an HTTP API allowing data to be inserted into, and read back from, the database. Any changes to the database  (`INSERT`, `UPDATE`, `DELETE`) **must** be sent to the `/db/execute` endpoint, and reads (`SELECT`) should be sent to the `/db/query` endpoint. _It is important to use the correct endpoint for the operation you wish to perform._
 
-The best way to understand the API is to work through the simple examples below. There are also [client libraries available](https://github.com/rqlite).
+The best way to understand the API is to work through the simple examples below. There are also [client libraries available](/docs/api/client-libraries/).
 
 ## Writing Data
 To write data successfully to the database, you must create at least 1 table. To do this perform a HTTP POST on the `/db/execute` endpoint on any rqlite node. Encapsulate the `CREATE TABLE` SQL command in a JSON array, and put it in the body of the request. An example via [curl](https://curl.haxx.se/):
@@ -177,9 +177,6 @@ curl -XPOST 'localhost:4001/db/execute?pretty&timings' -H "Content-Type: applica
     "time": 2.478862
 }
 ```
-
-## Bulk API
-You can learn about the Bulk write API [here](https://github.com/rqlite/rqlite/blob/master/DOC/BULK.md).
 
 ## How rqlite Handles Requests
 _This section assumes a basic familiarity with the Raft protocol. A simple introduction to Raft can be found [here](http://thesecretlivesofdata.com/raft/)._

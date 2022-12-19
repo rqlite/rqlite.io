@@ -11,7 +11,7 @@ date: 2017-01-05
 
 ## Usage
 
-rqlite exposes a special API flag, which will instruct rqlite to queue up write-requests and execute them asynchronously. This allows clients to send multiple distinct requests to a rqlite node, and have rqlite automatically do the batching and bulk insert for the client, without the client doing any extra work. The net result is as if the client wrote a single Bulk request containing all the queued statements. For the same reason that using the [Bulk API](https://github.com/rqlite/rqlite/blob/master/DOC/BULK.md) results in much higher write performance, **using the _Queued Writes_ API will also result in much higher write performance**.
+rqlite exposes a special API flag, which will instruct rqlite to queue up write-requests and execute them asynchronously. This allows clients to send multiple distinct requests to a rqlite node, and have rqlite automatically do the batching and bulk insert for the client, without the client doing any extra work. The net result is as if the client wrote a single Bulk request containing all the queued statements. For the same reason that using the [Bulk API](/docs/api/bulk-api/) results in much higher write performance, **using the _Queued Writes_ API will also result in much higher write performance**.
 
 This functionality is best illustrated by an example, showing two requests being queued.
 ```bash
@@ -36,7 +36,7 @@ Setting the URL query parameter `queue` enables queuing mode, adding the request
 
 rqlite will merge the requests, once a batch-size of them has been queued on the node or a configurable timeout expires, and execute them as though they had been both contained in a single request. 
 
-Each response includes a monotonically-increasing `sequence_number`, which allows you to track when this request is actually persisted to the Raft log. The `/status` [diagnostics](https://github.com/rqlite/rqlite/blob/master/DOC/DIAGNOSTICS.md) endpoint includes the sequence number of the latest request successfully written to Raft.
+Each response includes a monotonically-increasing `sequence_number`, which allows you to track when this request is actually persisted to the Raft log. The `/status` [diagnostics](/docs/guides/monitoring-rqlite) endpoint includes the sequence number of the latest request successfully written to Raft.
 
 ### Waiting for a queue to flush
 You can explicitly tell the request to wait until the queue has persisted all pending requests. To do this, add the parameter `wait` to the request like so:
