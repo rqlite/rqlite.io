@@ -195,3 +195,10 @@ enable = false
     name = "Blog"
     weight = 50
     url = "https://www.philipotoole.com/tag/rqlite/"
+
+
+[[menu.main]]
+    name = "GitHub"
+    weight = 50
+    url = "https://github.com/rqlite/rqlite"
+    pre = "<i class='fa-brands fa-github'></i>"
