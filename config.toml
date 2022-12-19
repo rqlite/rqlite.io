@@ -1,5 +1,5 @@
 baseURL = "/"
-title = "Goldydocs"
+title = "rqlite - the lightweight, distributed, relational database built on SQLite"
 
 # Language settings
 contentDir = "content/en"
@@ -224,4 +224,4 @@ enable = false
     disable = false
   [[module.imports]]
     path = "github.com/google/docsy/dependencies"
-    disable = false    
+    disable = false
