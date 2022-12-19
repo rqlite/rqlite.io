@@ -1,8 +1,8 @@
 
 ---
-title: "API"
-linkTitle: "API"
-description: "Reading and writing with rqlite"
+title: "Accessing rqlite"
+linkTitle: "Accessing rqlite"
+description: "How to write data and read it back"
 weight: 5
 date: 2017-01-05
 ---
