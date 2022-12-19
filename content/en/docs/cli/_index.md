@@ -1,10 +1,10 @@
 ---
-title: "Command line tool"
-linkTitle: "Command line tool"
+title: "rqlite shell"
+linkTitle: "rqlite shell"
 description: "How to access rqlite using the command-line tool"
 weight: 25
 ---
-`rqlite` is a command line tool for connecting to a rqlited node. Consult the [SQLite query language documentation](https://www.sqlite.org/lang.html) for full details on the supported SQL syntax.
+`rqlite` is a command line tool for connecting to a rqlite node. Consult the [SQLite query language documentation](https://www.sqlite.org/lang.html) for full details on the supported SQL syntax.
 
 - [Usage](#usage)
 - [Example](#example)
