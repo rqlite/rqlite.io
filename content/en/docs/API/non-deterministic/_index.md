@@ -2,7 +2,7 @@
 title: "Non-deterministic functions"
 linkTitle: "Non-deterministic functions"
 description: "How rqlite handles non-deterministic functions"
-weight: 35
+weight: 40
 date: 2017-01-05
 ---
 
