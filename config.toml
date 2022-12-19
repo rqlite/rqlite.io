@@ -80,7 +80,7 @@ languageName ="English"
 section = ["HTML", "print", "RSS"]
 
 [params]
-copyright = "Philip O'Toole"
+copyright = "rqlite"
 
 # First one is picked as the Twitter card image if not set on page.
 # images = ["images/project-illustration.png"]
