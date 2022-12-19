@@ -1,6 +1,7 @@
 ---
 title: "Monitoring rqlite"
 linkTitle: "Monitoring rqlite"
+description: "How to monitor rqlite"
 weight: 50
 ---
 ## Status API

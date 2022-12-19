@@ -1,6 +1,7 @@
 ---
 title: "Quick start"
 linkTitle: "Quick start"
+description: "Get up and running with rqlite"
 weight: 10
 ---
 The quickest way to get running is to download a pre-built release binary, available on the [Github releases page](https://github.com/rqlite/rqlite/releases). Once installed, you can start a single rqlite node like so:

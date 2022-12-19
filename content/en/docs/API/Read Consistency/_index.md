@@ -2,6 +2,7 @@
 ---
 title: "Read Consistency"
 linkTitle: "Read Consistency"
+description: "rqlite support various levels of Read Consistency"
 weight: 10
 date: 2017-01-05
 ---

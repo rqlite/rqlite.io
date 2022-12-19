@@ -2,11 +2,12 @@
 ---
 title: "Bulk Writes"
 linkTitle: "Bulk Writes"
+description: "Bulk Writes allow you to write multiple records in a single request"
 weight: 10
 date: 2017-01-05
 ---
 
-The bulk API allows multiple updates or queries to be executed in a single request. Both non-paramterized and parameterized requests are supported by the Bulk API. The API does not support mixing the parameterized and non-parameterized form in a single request.
+The Bulk API allows multiple updates or queries to be executed in a single request. Both non-paramterized and parameterized requests are supported by the Bulk API. The API does not support mixing the parameterized and non-parameterized form in a single request.
 
 A bulk update is contained within a single Raft log entry, so round-trips between nodes are at a minimum. This should result in much better throughput, if it is possible to use this kind of update. You can also ask rqlite to do the batching for you automatically, through the use of [_Queued Writes_](https://github.com/rqlite/rqlite/blob/master/DOC/QUEUED_WRITES.md). This relieves the client of doing any batching before transmitting a request to rqlite.
 

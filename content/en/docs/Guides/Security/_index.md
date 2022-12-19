@@ -1,6 +1,7 @@
 ---
 title: "Security"
 linkTitle: "Security"
+"description": "All about security your rqlite deployment"
 weight: 20
 ---
 rqlite can be secured in various way, and with different levels of control.

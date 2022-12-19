@@ -1,6 +1,7 @@
 ---
 title: "Performance"
 linkTitle: "Performance"
+description: "Maximizing the performance of rqlite"
 weight: 30
 ---
 rqlite replicates SQLite for fault-tolerance. It does not replicate it for performance. In fact performance is reduced relative to a standalone SQLite database due to the nature of distributed systems. _There is no such thing as a free lunch_.

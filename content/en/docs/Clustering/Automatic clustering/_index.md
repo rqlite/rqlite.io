@@ -1,10 +1,9 @@
 ---
 title: "Automatic clustering"
 linkTitle: "Automatic clustering"
+description: "Dynamically form rqlite clusters and automate your deployment of rqlite"
 weight: 10
 ---
-
-This document describes various ways to dynamically form rqlite clusters, which is particularly useful for automating your deployment of rqlite.
 
 > **This functionality was introduced in version 7.0. It does not exist in earlier releases.**
 

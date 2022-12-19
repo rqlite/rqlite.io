@@ -2,6 +2,7 @@
 ---
 title: "API"
 linkTitle: "API"
+description: "All about rqlite's rich API"
 weight: 30
 date: 2017-01-05
 ---

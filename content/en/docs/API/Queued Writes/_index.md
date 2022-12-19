@@ -2,6 +2,7 @@
 ---
 title: "Queued Writes"
 linkTitle: "Queued Writes"
+description: "Queued Writes allow you to trade durability for performance"
 weight: 20
 date: 2017-01-05
 ---

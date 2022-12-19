@@ -2,6 +2,7 @@
 ---
 title: "Client Libraries"
 linkTitle: "Client Libraries"
+description: "How to access rqlite via code"
 weight: 40
 date: 2017-01-05
 ---

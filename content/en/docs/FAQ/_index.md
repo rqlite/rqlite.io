@@ -1,6 +1,7 @@
 ---
 title: "FAQ"
 linkTitle: "FAQ"
+description: "Frequently-asked questions about rqlite"
 weight: 70
 ---
 ## What exactly does rqlite do?
