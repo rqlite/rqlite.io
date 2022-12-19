@@ -1,6 +1,6 @@
 ---
-title: "Getting rqlite"
-linkTitle: "Getting rqlite"
+title: "Install rqlite"
+linkTitle: "Install rqlite"
 description: "How to download and install rqlite"
 weight: 20
 ---

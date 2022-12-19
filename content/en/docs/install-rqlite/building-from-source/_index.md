@@ -1,6 +1,6 @@
 ---
-title: "Building from source"
-linkTitle: "Building from source"
+title: "Build from source"
+linkTitle: "Build from source"
 description: "How to build rqlite from source"
 weight: 40
 ---
