@@ -198,3 +198,8 @@ enable = false
   [[module.imports]]
     path = "github.com/google/docsy/dependencies"
     disable = false
+
+[[menu.main]]
+    name = "Blog"
+    weight = 50
+    url = "https://www.philipotoole.com/tag/rqlite/"
