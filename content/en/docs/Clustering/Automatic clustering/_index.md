@@ -8,7 +8,7 @@ weight: 10
 ## Quickstart
 
 ### Automatic Bootstrapping
-While [manually creating a cluster](/docs/clustering/) is simple, it does suffer one drawback -- you must start one node first and with different options, so it can become the Leader. _Automatic Bootstrapping_, in constrast, allows you to start all the nodes at once, and in a very similar manner. **You just need to know the network addresses of the nodes ahead of time**.
+While [manually creating a cluster](/docs/clustering/) is simple, it does suffer one drawback -- you must start one node first and with different options, so it can become the Leader. _Automatic Bootstrapping_, in contrast, allows you to start all the nodes at once, and in a very similar manner. **You just need to know the network addresses of the nodes ahead of time**.
 
 For simplicity, let's assume you want to run a 3-node rqlite cluster. The network addresses of the nodes are `$HOST1`, `$HOST2`, and `$HOST3`. To bootstrap the cluster, use the `-bootstrap-expect` option like so:
 
