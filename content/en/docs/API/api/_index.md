@@ -178,14 +178,77 @@ curl -XPOST 'localhost:4001/db/execute?pretty&timings' -H "Content-Type: applica
 }
 ```
 
+## PRAGMA Directives
+
+You can issue [`PRAGMA`](https://www.sqlite.org/pragma.html) directives to rqlite, and they will be passed to the underlying SQLite database. Certain `PRAGMA` directives, which alter the operation of the SQLite database, may not make sense in the context of rqlite (since rqlite does not given direct control over its connections to the SQLite database). Furthermore some `PRAGMA` directives may even break rqlite. 
+
+`PRAGMA` directives which just return information about the SQLite database, without changing its operation, are always safe.
+
+### Issuing a `PRAGMA` directive
+The rqlite CLI supports issuing `PRAGMA` directives. For example:
+```
+127.0.0.1:4001> pragma compile_options
++----------------------------+
+| compile_options            |
++----------------------------+
+| COMPILER=gcc-7.5.0         |
++----------------------------+
+| DEFAULT_WAL_SYNCHRONOUS=1  |
++----------------------------+
+| ENABLE_DBSTAT_VTAB         |
++----------------------------+
+| ENABLE_FTS3                |
++----------------------------+
+| ENABLE_FTS3_PARENTHESIS    |
++----------------------------+
+| ENABLE_JSON1               |
++----------------------------+
+| ENABLE_RTREE               |
++----------------------------+
+| ENABLE_UPDATE_DELETE_LIMIT |
++----------------------------+
+| OMIT_DEPRECATED            |
++----------------------------+
+| OMIT_SHARED_CACHE          |
++----------------------------+
+| SYSTEM_MALLOC              |
++----------------------------+
+| THREADSAFE=1               |
++----------------------------+
+```
+
+`PRAGMA` directives may also be issued using the `/db/execute` or `/db/query` endpoint. For example:
+```bash
+$ curl -G 'localhost:4001/db/query?pretty&timings' --data-urlencode 'q=PRAGMA foreign_keys'                                                                        
+{                                                                                                                                                                                                                        
+    "results": [                                                                                                                                                                                                         
+        {                                                                                                                                                                                                                
+            "columns": [                                                                                                                                                                                                 
+                "foreign_keys"                                                                                                                                                                                           
+            ],                                                                                                                                                                                                           
+            "types": [                                                                                                                                                                                                   
+                ""                                                                                                                                                                                                       
+            ],                                                                                                                                                                                                           
+            "values": [                                                                                                                                                                                                  
+                [                                                                                                                                                                                                        
+                    0                                                                                                                                                                                                    
+                ]
+            ],
+            "time": 0.000070499
+        }
+    ],
+    "time": 0.000540857
+}$
+```
+
 ## How rqlite Handles Requests
 _This section assumes a basic familiarity with the Raft protocol. A simple introduction to Raft can be found [here](http://thesecretlivesofdata.com/raft/)._
 
-To make the very best use of the rqlite API, there are some important details to know. But understanding the following details is **not required** to make use of rqlite.
+To make the very best use of the rqlite API, there are some details to know. But understanding the following information is **not required** to make use of rqlite.
 
 With any rqlite cluster, all write-requests must be serviced by the cluster Leader -- this is due to the way the Raft consensus protocol works. If a client sends a write request to a Follower (or read-only, non-voting, node), the Follower transparently forwards the request to the Leader. The Follower waits for the response from the Leader, and returns it to the client. Any credential information included in the original HTTP request to the Follower is included with the forwarded request (assuming that permission checking also passes first on the Follower), and permission checking is performed on the Leader.
 
-Queries, by default, are also serviced by the cluster Leader. Like write-requests, Followers will, by default, transparently forward queries to the Leader, and respond to the client after receiving the response from the Leader. However, depending on the [read-consistency](https://github.com/rqlite/rqlite/blob/master/DOC/CONSISTENCY.md) specified with the request, if a Follower received the query request it may serve that request directly and not contact the Leader. Which read-consistency level makes sense depends on your application.
+Queries, by default, are also serviced by the cluster Leader. Like write-requests, Followers will, by default, transparently forward queries to the Leader, and respond to the client after receiving the response from the Leader. However, depending on the [read-consistency](/docs/api/read-consistency/) specified with the request, if a Follower received the query request it may serve that request directly and not contact the Leader. Which read-consistency level makes sense depends on your application.
 
 ### Data and the Raft log
 Any writes to the SQLite database go through the Raft log, ensuring only changes committed by a quorum of rqlite nodes are actually applied to the SQLite database. Queries do not __necessarily__ go through the Raft log, however, since they do not change the state of the database, and therefore do not need to be captured in the log. Only if _Strong_ read consistency is requested does a query go through the Raft log.

@@ -164,11 +164,16 @@ enable = false
 [[params.links.user]]
   name = "User mailing list"
   url = "https://groups.google.com/g/rqlite"
-  icon = "fa fa-envelope"
+  icon = "fa fa-user-group"
   desc = "Discussion and help from your fellow users"
+[[params.links.user]]
+  name ="Contact the rqlite team"
+  url = "https://www.philipotoole.com/contact/"
+  icon = "fa fa-envelope"
+  desc = "How to get in touch with the rqlite team"
 [[params.links.developer]]
   name = "GitHub"
-  url = "https://github.com/rqlite/rqlite"
+  url = "https://github.com/rqlite"
   icon = "fab fa-github"
   desc = "rqlite development takes place on GitHub"
 [[params.links.developer]]
