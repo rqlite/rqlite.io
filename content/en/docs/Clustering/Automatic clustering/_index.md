@@ -5,8 +5,6 @@ description: "Dynamically form rqlite clusters and automate your deployment of r
 weight: 10
 ---
 
-> **This functionality was introduced in version 7.0. It does not exist in earlier releases.**
-
 ## Quickstart
 
 ### Automatic Bootstrapping

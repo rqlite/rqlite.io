@@ -4,6 +4,9 @@ linkTitle: "macOS"
 description: "Installing rqlite on macOS"
 weight: 10
 ---
+
+## brew
 `brew install rqlite`
 
-There are also prebuilt binaries available for macOS on the [Github releases page](https://github.com/rqlite/rqlite/releases).
+## Prebuilt binaries
+There are also prebuilt binaries available for macOS on the [GitHub releases page](https://github.com/rqlite/rqlite/releases).
