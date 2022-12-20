@@ -10,21 +10,21 @@ rqlite is about replicating a set of data, which has been written to it using SQ
 On top of that, rqlite provides strong guarantees about what state any copy of that data is in, with respect to a special node called the _leader_. That is where Raft comes in. It prevents divergent copies of the data, and ensures there is an "authoritative" copy of that data at all times.
 
 ## Why would I use this, versus some other distributed database?
-**rqlite is very simple to deploy, run, and manage** -- in fact, simplicity-of-operation is a key design goal. It's also lightweight and easy to query. It's a single binary you can drop anywhere on a machine, and just start it, which makes it very convenient. It takes literally seconds [to configure and form a cluster](https://github.com/rqlite/rqlite/blob/master/DOC/CLUSTER_MGMT.md), which provides you with fault-tolerance and high-availability. With rqlite you have complete control over your database infrastructure, and the data it stores.
+**rqlite is very simple to deploy, run, and manage** -- in fact, simplicity-of-operation is a key design goal. It's also lightweight and easy to query. It's a single binary you can drop anywhere on a machine, and just start it, which makes it very convenient. It takes literally seconds [to configure and form a cluster](/docs/clustering/), which provides you with fault-tolerance and high-availability. With rqlite you have complete control over your database infrastructure, and the data it stores.
 
 That said, it's always possible it's _too_ simple for your needs.
 
 ## How do I access the database?
-The primary way to access the database is via the [HTTP API](https://github.com/rqlite/rqlite/blob/master/DOC/DATA_API.md). You can access it directly, or use a [client library](https://github.com/rqlite). For more casual use you can use the [command line tool](https://github.com/rqlite/rqlite/blob/master/DOC/CLI.md). It is also technically possible to [read the SQLite file directly](https://github.com/rqlite/rqlite/blob/master/DOC/FAQ.md#can-i-read-the-sqlite-file-directly), but it's not officially supported.
+The primary way to access the database is via the [HTTP API](/docs/api/api/). You can access it directly, or use a [client library](https://github.com/rqlite). For more casual use you can use the [command line tool](/docs/cli/). It is also technically possible to [read the SQLite file directly](https://github.com/rqlite/rqlite/blob/master/DOC/FAQ.md#can-i-read-the-sqlite-file-directly), but it's not officially supported.
 
 ## How do I monitor rqlite?
-Check out the [monitoring documentation](https://github.com/rqlite/rqlite/blob/master/DOC/DIAGNOSTICS.md).
+Check out the [monitoring guide](/docs/guides/monitoring-rqlite/).
 
 ## Is it a drop-in replacement for SQLite?
 No. While it does use SQLite as its storage engine, you must only write to the database via the [HTTP API](https://github.com/rqlite/rqlite/blob/master/DOC/DATA_API.md). That said, since it basically exposes SQLite, all the power of that database is available. It is also possible that any system built on top of SQLite only needs small changes to work with rqlite.
 
 ## How do I deploy rqlite on Kubernetes?
-Check out the [Kubernetes deployment guide](https://github.com/rqlite/rqlite/blob/master/DOC/KUBERNETES.md).
+Check out the [Kubernetes deployment guide](/docs/guides/kubernetes/).
 
 ## Can any node execute a write request, and have the system "synchronize it all"?
 The first thing to understand is that you can send your write-request to any node in the cluster, and rqlite will do the right thing automatically. You do not need to direct your write requests specifically to the Leader node.
@@ -34,13 +34,13 @@ Under the covers however, only the Leader can make changes to the database. If a
 ## Can I send a read request to any node in the cluster?
 Yes. If a read request must be serviced by the Leader, however, rqlite will transparently forward the request to the Leader, wait for the Leader to handle it, and return the results to the client. If the node receiving the write cannot contact the Leader, the write will fail and return an error to the client.
 
-Some reads, depending on the requested [_read consistency_](https://github.com/rqlite/rqlite/blob/master/DOC/CONSISTENCY.md), do not need to serviced by the Leader, and in that case the node can service the read regardless of whether it contact the Leader or not.
+Some reads, depending on the requested [_read consistency_](/docs/api/read-consistency/), do not need to serviced by the Leader, and in that case the node can service the read regardless of whether it contact the Leader or not.
 
 ## rqlite is distributed. Does that mean it can increase SQLite performance?
 Yes, but only for reads. It does not provide any scaling for writes, since all writes must go through the leader. **rqlite is distributed primarily for replication and fault tolerance, not for peformance**. In fact write performance is reduced relative to a standalone SQLite database, because of the round-trips between nodes and the need to write to the Raft log.
 
 ## What is the best way to increase rqlite performance?
-The simplest way to increase performance is to use higher-performance disks and a lower-latency network. This is known as _scaling vertically_. You could also consider using [Queued Writes](https://github.com/rqlite/rqlite/blob/master/DOC/QUEUED_WRITES.md), or [Bulk Updates](https://github.com/rqlite/rqlite/blob/master/DOC/BULK.md) if you wish to improve write performance specifically.
+The simplest way to increase performance is to use higher-performance disks and a lower-latency network. This is known as _scaling vertically_. You could also consider using [Queued Writes](/docs/api/queued-writes/), or [Bulk Updates](/docs/api/bulk-api/) if you wish to improve write performance specifically.
 
 ## Where does rqlite fit into the CAP theorem?
 The [CAP theorem](https://en.wikipedia.org/wiki/CAP_theorem) states that it is impossible for a distributed database to provide consistency, availability, and partition tolerance simulataneously -- that, in the face of a network partition, the database can be available or consistent, but not both.
@@ -50,7 +50,7 @@ Raft is a Consistency-Partition (CP) protocol. This means that if a rqlite clust
 ## Does rqlite require consensus be reached before a write is accepted?
 Yes, this is an intrinsic part of the Raft protocol. How long it takes to reach [consensus](https://computersciencewiki.org/index.php/Distributed_consensus) depends primarily on your network. It will take two rounds trips from a leader to a quorum of nodes, though each of those nodes is contacted in parallel.
 
-There is one exception however, when rqlite does not wait for consensus. You can use [Queued Writes](https://github.com/rqlite/rqlite/blob/master/DOC/QUEUED_WRITES.md), which trades off durability for performance.
+There is one exception however, when rqlite does not wait for consensus. You can use [Queued Writes](/docs/api/queued-writes/), which trades off durability for performance.
 
 ## How does a client detect a cluster partition?
 If the client is on the same side of the partition as a quorum of nodes, there will be no real problem, and any writes should succeed. However if the client is on the other side of the partition, one of two things will happen. The client may be redirected to the leader, but will then (presumably) fail to contact the leader due to the partition, and experience a timeout. Alternatively the client may receive a `no leader` error.
@@ -61,21 +61,21 @@ It may be possible to make partitions clearer to clients in a future release.
 Sure. Many people do so, as they like accessing a SQLite database over HTTP. Of course, you won't have any redundancy or fault tolerance if you only run a single node.
 
 ## What is the maximum size of a cluster?
-There is no explicit maximum cluster size. However the [practical cluster size limit is about 9 _voting nodes_](https://github.com/rqlite/rqlite/blob/master/DOC/CLUSTER_MGMT.md). You can go bigger by adding [read-only nodes](https://github.com/rqlite/rqlite/blob/master/DOC/READ_ONLY_NODES.md).
+There is no explicit maximum cluster size. However the [practical cluster size limit is about 9 _voting nodes_](/docs/clustering/). You can go bigger by adding [read-only nodes](/docs/clustering/read-only-nodes/).
 
 ## Is rqlite a good match for a network of nodes that come and go -- perhaps thousands of them?
 Unlikely. While rqlite does support read-only nodes, allowing it to scale to many nodes, the consensus protocol at the core of rqlite works best when the **voting** nodes in the cluster don't continually come and go. While it won't break, it probably won't be practical.
 
-However if the nodes that come and go only need to stay up-to-date with changes, and serve read requests, it might work. Learn about [read-only nodes](https://github.com/rqlite/rqlite/blob/master/DOC/READ_ONLY_NODES.md).
+However if the nodes that come and go only need to stay up-to-date with changes, and serve read requests, it might work. Learn about [read-only nodes](/docs/clustering/read-only-nodes/).
  
 ## Can I use rqlite to broadcast changes to lots of other nodes -- perhaps hundreds -- as long as those nodes don't write data?
-Yes, try out [read-only nodes](https://github.com/rqlite/rqlite/blob/master/DOC/READ_ONLY_NODES.md).
+Yes, try out [read-only nodes](/docs/clustering/read-only-nodes/).
 
 ## What if read-only nodes -- or clients accessing read-only nodes -- want to write data after all?
 Then they must do it by sending write requests to the leader node. But if they can reach the leader node, it is an effective way for one node at the edge to send a message to all other nodes (well, at least other nodes that are connected to the cluster at that time).
 
 ## Does rqlite support transactions?
-It supports [a form of transactions](https://github.com/rqlite/rqlite/blob/master/DOC/DATA_API.md#transactions). You can wrap a bulk update in a transaction such that all the statements in the bulk request will succeed, or none of them will. However the behaviour or rqlite is undefined if you send explicit `BEGIN`, `COMMIT`, or `ROLLBACK` statements. This is not because they won't work -- they will -- but if your node (or cluster) fails while a transaction is in progress, the system may be left in a hard-to-use state. So until rqlite can offer strict guarantees about its behaviour if it fails during a transaction, using `BEGIN`, `COMMIT`, and `ROLLBACK` is officially unsupported. Unfortunately this does mean that rqlite may not be suitable for some applications.
+It supports [a form of transactions](/docs/api/api/#transactions). You can wrap a bulk update in a transaction such that all the statements in the bulk request will succeed, or none of them will. However the behaviour or rqlite is undefined if you send explicit `BEGIN`, `COMMIT`, or `ROLLBACK` statements. This is not because they won't work -- they will -- but if your node (or cluster) fails while a transaction is in progress, the system may be left in a hard-to-use state. So until rqlite can offer strict guarantees about its behaviour if it fails during a transaction, using `BEGIN`, `COMMIT`, and `ROLLBACK` is officially unsupported. Unfortunately this does mean that rqlite may not be suitable for some applications.
 
 ## Can I modify the SQLite file directly?
 No, you must only change the database using the HTTP API. The moment you directly modify the SQLite file under any node (if running in _on-disk_ mode) the behavior of rqlite is undefined. In otherwords, you run the risk of breaking your cluster.
