@@ -4,7 +4,7 @@ linkTitle: "Install rqlite"
 description: "How to download and install rqlite"
 weight: 20
 ---
-Prebuilt binaries are available for a variety of systems including **Linux** and **macOS**. You can find download binaries from the rqlite [GitHub releases page](https://github.com/rqlite/rqlite/releases).
+Prebuilt binaries are available for a variety of systems including **Linux**, **macOS**, and **Microsoft Windows**. You can find download binaries from the rqlite [GitHub releases page](https://github.com/rqlite/rqlite/releases).
 
 ## Platforms
 
@@ -17,7 +17,7 @@ Check out the [rqlite Docker page](https://hub.docker.com/r/rqlite/rqlite/) for 
 ```brew install rqlite```
 
 ### Windows
-rqlite can be built for Windows, and Windows compatibility is ensured via [AppVeyor](https://www.appveyor.com/). However you may need to build a specific release yourself, though the top-of-tree build [is available for download](https://ci.appveyor.com/api/projects/otoolep/rqlite/artifacts/rqlite-latest-win64.zip?branch=master) from AppVeyor. Check out the [CI build for Windows](https://ci.appveyor.com/project/otoolep/rqlite) for more details.
+The latest top-of-tree build [is available for download](https://ci.appveyor.com/api/projects/otoolep/rqlite/artifacts/rqlite-latest-win64.zip?branch=master) from AppVeyor.
 
 > Note that the build processes for both Homebrew and Windows are not completely controlled by the rqlite organization. You use those binaries at your own risk.
 
