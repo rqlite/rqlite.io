@@ -3,7 +3,7 @@
 title: "Design"
 linkTitle: "Design"
 description: "Learn about the design and implementation of rqlite"
-weight: 60
+weight: 70
 date: 2017-01-05
 ---
 You can find details on the design and implementation of rqlite from [these blog posts](https://www.philipotoole.com/tag/rqlite/) (in particular [this post](https://www.philipotoole.com/replicating-sqlite-using-raft-consensus/) and [this post](https://www.philipotoole.com/rqlite-replicated-sqlite-with-new-raft-consensus-and-api/)).
