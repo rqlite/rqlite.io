@@ -5,7 +5,7 @@ description: "How to monitor rqlite"
 weight: 50
 ---
 ## Status API
-A status API exists, which returns extensive diagnostic and statistical information, as well as basic information about the underlying Raft node. Assuming the rqlite node is started with default settings, node status is available via a HTTP `GET` request. To see the raw data, you can issue a `curl` command like so:
+rqlite serves diagnostic and statistical information, as well as basic information about the underlying Raft system, at `/status`. Assuming the rqlite node is started with default settings you can issue a `curl` command like so to retrieve this information:
 
 ```bash
 curl localhost:4001/status?pretty
@@ -13,7 +13,7 @@ curl localhost:4001/status?pretty
 
 The use of the URL param `pretty` is optional, and results in pretty-printed JSON responses. The output of this endpoint could be periodically written to a monitoring system, allowing the performance of rqlite to tracked over time.
 
-You can also request the same status information via the CLI:
+You can also request the same status information via the rqlite shell:
 ```
 $ ./rqlite 
 Welcome to the rqlite CLI. Enter ".help" for usage hints.
@@ -42,11 +42,15 @@ runtime:
 
 ```bash
 curl localhost:4001/nodes?pretty
-curl localhost:4001/nodes?nonvoters&pretty  # Also check non-voting nodes.
-curl localhost:4001/nodes?timeout=5s  # Give up if all nodes don't respond within 5 seconds. Default is 30 seconds.
+
+# Also check non-voting nodes.
+curl localhost:4001/nodes?nonvoters&pretty
+
+# Give up if all nodes don't respond within 5 seconds. Default is 30 seconds.
+curl localhost:4001/nodes?timeout=5s
 ```
 
-You can also request the same nodes information via the CLI:
+You can also request the same nodes information via the rqlite shell:
 ```
 $ ./rqlite
 Welcome to the rqlite CLI. Enter ".help" for usage hints.
