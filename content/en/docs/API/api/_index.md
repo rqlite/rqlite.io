@@ -91,7 +91,7 @@ curl -XPOST 'localhost:4001/db/query?pretty&timings' -H "Content-Type: applicati
 The response will be in the same form as when the query is made via HTTP GET.
 
 ### Associative response form
-A alternative form of response can be requested, by adding `associative` as a query parameter:
+You can also request an _associative_ form of response, by adding `associative` as a query parameter:
 ```bash
 curl -G 'localhost:4001/db/query?pretty&timings&associative' --data-urlencode 'q=SELECT * FROM foo'
 ```
@@ -111,7 +111,7 @@ Response:
     "time": 0.000185964
 }
 ```
-This form will have a map per row returned, with each column name as a key. This form can be more convenient for clients, depending on the application.
+This form will have a map per row returned, with each column name as a key. This form can be more convenient for clients, as many programming languages will support loading the `rows` object directly into a array-of-maps data type.
 
 ## Parameterized Statements
 While the "raw" API described above can be convenient and simple to use, it is vulnerable to [SQL Injection attacks](https://owasp.org/www-community/attacks/SQL_Injection). To protect against this issue, rqlite also supports [SQLite parameterized statements](https://www.sqlite.org/lang_expr.html#varparam), for both read and writes. To use this feature, send the SQL statement and values as distinct elements within a new JSON array, as follows:
@@ -264,7 +264,7 @@ curl -XPOST 'localhost:4001/db/execute?timeout=2m' -H "Content-Type: application
 ### Disabling Request Forwarding
 If you do not wish a Follower to transparently forward a request to a Leader, add `redirect` to the URL as a query parameter. In that case if a Follower receives a request that can only be serviced by the Leader, the Follower will respond with [HTTP 301 Moved Permanently](https://en.wikipedia.org/wiki/HTTP_301) and include the address of the Leader as the `Location` header in the response. It is then up the clients to re-issue the command to the Leader.
 
-This option was made available as it provides maximum visibility to the clients, should they prefer if. For example, if a Follower transparently forwarded a request to the Leader, and one of the nodes then crashed during processing, it may be difficult for the client to determine where in the chain of nodes the processing failed.
+This option was made available as it provides maximum visibility to the clients, should they prefer it. For example, if a Follower transparently forwarded a request to the Leader, and one of the nodes then crashed during processing, it may be difficult for the client to determine where in the chain of nodes the processing failed.
 
 ### Example of redirect on query
 ```
