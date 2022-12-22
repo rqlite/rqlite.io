@@ -37,7 +37,7 @@ If a query request is sent to a follower, and _strong_ consistency is specified,
 To avoid even the issues associated with _weak_ consistency, rqlite also offers _strong_. In this mode, the Leader sends the query through the Raft consensus system, ensuring that the Leader **remains** the Leader at all times during query processing. When using _strong_ you can be sure that the database reflects every change sent to it prior to the query. However, this will involve the Leader contacting at least a quorum of nodes, and will therefore increase query response times.
 
 ## Which should I use?
-_Weak_ is probably sufficient for most applications, and is the default read consistency level. Unless the leader on your cluster is continually changing there will be no difference between _weak_ and _strong_ -- but using _strong_ will result in more Raft traffic, which is not what most people want.
+_Weak_ is probably sufficient for most applications, and is the default read consistency level. Unless the leader on your cluster is continually changing there will be no difference between _weak_ and _strong_ -- but using _strong_ will result in slower queries, which is not what most people want.
 
 To explicitly select consistency, set the query param `level` to the desired level. However, you should use _none_ with read-only nodes, unless you want those nodes to actually forward the query to the Leader.
 
@@ -46,17 +46,17 @@ Examples of enabling each read consistency level for a simple query is shown bel
 
 ```bash
 # Query the node, telling it simply to read the SQLite database directly.
-# No guarantees on how old the data is.
-# In fact the node may not even be connected to the cluster.
+# No guarantees on how old the data is. In fact, the node may not even be
+# connected to the cluster.
 curl -G 'localhost:4001/db/query?level=none' --data-urlencode 'q=SELECT * FROM foo'
 
 # Query the node, telling it simply to read the SQLite database directly.
-# The read request will be successful
-# only if the node last heard from the leader no more than 1 second ago.
+# The read request will be successful only if the node last heard from the
+# leader no more than 1 second ago.
 curl -G 'localhost:4001/db/query?level=none&freshness=1s' --data-urlencode 'q=SELECT * FROM foo'
 
 # Default query options. The read request will be successful only
-# if the node believes its the leader. 
+# if the node believes it's the leader. 
 curl -G 'localhost:4001/db/query?level=weak' --data-urlencode 'q=SELECT * FROM foo'
 
 # Default query options. The read request will be successful only

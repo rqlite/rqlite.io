@@ -206,5 +206,5 @@ enable = false
 [[menu.main]]
     name = "GitHub"
     weight = 50
-    url = "https://github.com/rqlite/rqlite"
+    url = "https://github.com/rqlite"
     pre = "<i class='fa-brands fa-github'></i>"
