@@ -80,3 +80,6 @@ Connecting to a host running somewhere else on the network:
 $ rqlite -H localhost -p 8493
 locahost:8493>
 ```
+
+## History
+Command history is stored and reloaded between sessions, in a hidden file in the user's home directory named `.rqlite_history`. By default 100 previous commands are stored, though this value can be explicitly set via the environment variable `RQLITE_HISTFILESIZE`. If `RQLITE_HISTFILESIZE` is set to 0, no history file is written at all.
