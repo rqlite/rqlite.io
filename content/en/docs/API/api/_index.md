@@ -244,7 +244,7 @@ $ curl -G 'localhost:4001/db/query?pretty&timings' --data-urlencode 'q=PRAGMA fo
 ## How rqlite Handles Requests
 _This section assumes a basic familiarity with the Raft protocol. A simple introduction to Raft can be found [here](http://thesecretlivesofdata.com/raft/)._
 
-To make the very best use of the rqlite API, there are some details to know. But understanding the following information is **not required** to make use of rqlite.
+>To make the very best use of the rqlite API, there are some details to know. But understanding the following information is **not required** to make use of rqlite.
 
 With any rqlite cluster, all write-requests must be serviced by the cluster Leader -- this is due to the way the Raft consensus protocol works. If a client sends a write request to a Follower (or read-only, non-voting, node), the Follower transparently forwards the request to the Leader. The Follower waits for the response from the Leader, and returns it to the client. Any credential information included in the original HTTP request to the Follower is included with the forwarded request (assuming that permission checking also passes first on the Follower), and permission checking is performed on the Leader.
 

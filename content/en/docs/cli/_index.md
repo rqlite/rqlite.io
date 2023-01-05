@@ -6,9 +6,6 @@ weight: 25
 ---
 `rqlite` is a command line tool for connecting to a rqlite node. Consult the [SQLite query language documentation](https://www.sqlite.org/lang.html) for full details on the supported SQL syntax.
 
-- [Usage](#usage)
-- [Example](#example)
-
 ## Usage
 
 ```sh
@@ -81,5 +78,5 @@ $ rqlite -H localhost -p 8493
 locahost:8493>
 ```
 
-## History
+## Command history
 Command history is stored and reloaded between sessions, in a hidden file in the user's home directory named `.rqlite_history`. By default 100 previous commands are stored, though this value can be explicitly set via the environment variable `RQLITE_HISTFILESIZE`. If `RQLITE_HISTFILESIZE` is set to 0, no history file is written at all.

@@ -1,7 +1,7 @@
 
 ---
 title: "Design"
-linkTitle: "Design"
+linkTitle: "Design and implementation"
 description: "Learn about the design and implementation of rqlite"
 weight: 70
 date: 2017-01-05
