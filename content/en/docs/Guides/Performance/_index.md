@@ -72,7 +72,8 @@ In either case to control where rqlite places the SQLite database file, set `-on
 ### Linux example
 An example of running rqlite with a SQLite file on a memory-backed file system, and keeping the data directory on persistent disk, is shown below. The data directory is where the Raft log is stored. The example below would allow up to a 4GB SQLite database.
 ```bash
-# Create a RAM disk, and then launch rqlite, telling it to put the SQLite database on the RAM disk.
+# Create a RAM disk, and then launch rqlite, telling it to
+# put the SQLite database on the RAM disk.
 mount -t tmpfs -o size=4096m tmpfs /mnt/ramdisk
 rqlited -on-disk -on-disk-startup -on-disk-path /mnt/ramdisk/node1/db.sqlite /path_to_persistent_disk/data
 ```
