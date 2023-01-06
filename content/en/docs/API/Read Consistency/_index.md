@@ -19,9 +19,9 @@ This is why rqlite offers selectable read consistency levels of _weak_ (the defa
 ## Weak
 >_Weak_ consistency is used if you don't specify any level.
 
-_Weak_ instructs the node to check that it is the Leader, before querying the local SQLite file. Checking Leader state only involves checking state local to the node, so is still very fast. There is, however, a very small window of time (milliseconds by default) during which the node may return stale data. This is because after the local Leader check, but before the local SQLite database is read, another node could be elected Leader and make changes to the cluster. As result the node may not be quite up-to-date with the rest of cluster.
+_Weak_ instructs the node to check that it is the Leader, before querying the local SQLite file. Checking Leader state only involves checking state local to the node, so is very fast. There is, however, a very small window of time (milliseconds by default) during which the node may return stale data. This is because after the local Leader check, but before the local SQLite database is read, another node could be elected Leader and make changes to the cluster. As result the node may not be quite up-to-date with the rest of cluster.
 
-If the node determines it is not the Leader, the Follower will transparently forward the request to the Leader. The Follower waits for the response from the Leader, and then returns that response to the client.
+If the node determines it is not the Leader, the node will transparently forward the request to the Leader. The node then waits for the response from the Leader, and then returns that response to the client.
 
 ## Strong
 To avoid even the issues associated with _weak_ consistency, rqlite also offers _strong_. In this mode, the Leader sends the query through the Raft consensus system, ensuring that the Leader **remains** the Leader at all times during query processing. When using _strong_ you can be sure that the database reflects every change sent to it prior to the query. However, this will involve the Leader contacting at least a quorum of nodes, and will therefore increase query response times.
