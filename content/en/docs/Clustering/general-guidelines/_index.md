@@ -78,7 +78,7 @@ You can also make a direct call to the HTTP API to remove a node:
 ```
 curl -XDELETE http://host:4001/remove -d '{"id": "<node raft ID>"}'
 ```
-where `host` is any node in the cluster. If you do not remove a failed node the lLader will continually attempt to communicate with that node. **Note that the cluster must be functional -- there must still be an operational Leader -- for this removal to be successful**. If, after a node failure, a given cluster does not have a quorum of nodes still running, you must bring back the failed node. Any attempt to remove it will fail as there will be no Leader to respond to the node-removal request.
+where `host` is any node in the cluster. If you do not remove a failed node the Leader will continually attempt to communicate with that node. **Note that the cluster must be functional -- there must still be an operational Leader -- for this removal to be successful**. If, after a node failure, a given cluster does not have a quorum of nodes still running, you must bring back the failed node. Any attempt to remove it will fail as there will be no Leader to respond to the node-removal request.
 
 If you cannot bring sufficient nodes back online such that the cluster can elect a leader, follow the instructions in the section titled _Dealing with failure_.
 
@@ -97,9 +97,9 @@ rqlited -node-id 1 -raft-reap-node-timeout=48h -raft-reap-read-only-node-timeout
 For reaping to work consistently you **must** set these flags on **every** voting node in the cluster -- in otherwords, every node that could potentially become the Leader. You can also set the flags on read-only nodes, but they will simply be silently ignored.
 
 ## Dealing with failure
-It is the nature of clustered systems that nodes can fail at anytime. Depending on the size of your cluster, it will tolerate various amounts of failure. With a 3-node cluster, it can tolerate the failure of a single node, including the leader.
+It is the nature of clustered systems that nodes can fail at anytime. Depending on the size of your cluster, it will tolerate various amounts of failure. With a 3-node cluster, it can tolerate the failure of a single node, including the Leader.
 
-If an rqlite process crashes, it is safe to simply to restart it. The node will pick up any changes that happened on the cluster while it was down.
+If an rqlite process crashes, it is safe to simply to restart it. The node will pick up any changes that happened on the cluster while the node was offline.
 
 ### Recovering a cluster that has permanently lost quorum
 _This section borrows heavily from the Consul documentation._
