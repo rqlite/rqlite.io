@@ -60,7 +60,7 @@ id = "G-PMEFHJ7BGP"
 
 [languages]
 [languages.en]
-title = "rqlite - the lightweight, distributed, relational database built on SQLite"
+title = "rqlite"
 languageName ="English"
 
 [markup]
