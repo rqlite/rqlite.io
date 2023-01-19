@@ -42,14 +42,14 @@ where `$HOST[1-3]` are the expected network addresses of the containers.
 __________________________
 
 ### Using DNS for Bootstrapping
-You can also use the Domain Name System (DNS) to bootstrap a cluster. This is similar to automatic clustering, but doesn't require you to specify the network addresses of other nodes at the command line. Instead you create a DNS record for the host `rqlite.local`, with an [A Record](https://www.cloudflare.com/learning/dns/dns-records/dns-a-record/) for each rqlite node's IP address. 
+You can also use the Domain Name System (DNS) to bootstrap a cluster. This is similar to automatic clustering, but doesn't require you to specify the IP addresses of other nodes at the command line. Instead you create a DNS record for the host `rqlite.cluster` (or whatever hostname you prefer), and DNS is configured to return the IP addresses when the hostname is resolved. You do using by creating an [A Record](https://www.cloudflare.com/learning/dns/dns-records/dns-a-record/) for each rqlite IP address. 
 
 To launch a node with node ID `$ID` and network address `$HOST`, using DNS for cluster boostrap, execute the following (example) command:
 ```bash
 rqlited -node-id $ID -http-addr=$HOST:4001 -raft-addr=$HOST:4002 \
--disco-mode=dns -disco-config='{"name":"rqlite.local"}' -bootstrap-expect 3 data
+-disco-mode=dns -disco-config='{"name":"rqlite.cluster"}' -bootstrap-expect 3 data
 ```
-You would launch other nodes similarly, setting `$ID` and `$HOST` as required for each node. In the example above, resolving `rqlite.local` should result in 3 IP addresses.
+You would launch other nodes similarly, setting `$ID` and `$HOST` as required for each node. In the example above, resolving `rqlite.local` should return 3 IP addresses, informing each launched node where the nodes in the cluster are.
 
 #### DNS SRV
 Using [DNS SRV](https://www.cloudflare.com/learning/dns/dns-records/dns-srv-record/) gives you more control over the rqlite node address details returned by DNS, including the HTTP port each node is listening on. This means that unlike using just simple DNS records, each rqlite node can be listening on a different HTTP port. Simple DNS records are probably good enough for most situations, however.
