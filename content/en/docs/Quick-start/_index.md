@@ -8,7 +8,7 @@ The quickest way to get running is to download a pre-built release binary, avail
 ```bash
 $ rqlited -node-id 1 node1
 ```
-Once launched rqlite will be listening on http://localhost:4001.
+Once launched rqlite will be listening on [http://localhost:4001](http://localhost:4001).
 
 ## Inserting records
 Let's insert some records using the [rqlite shell](/docs/cli), using standard SQLite commands. 
