@@ -6,6 +6,9 @@ weight: 20
 ---
 rqlite can be secured in various way, and with different levels of control.
 
+## SQLite security
+SQLite has some [documentation on security](https://www.sqlite.org/security.html), which is worth reviewing. Much of it can be applied to rqlite, though implementing some of the practices would need you to [recompile rqlite](/docs/install-rqlite/building-from-source/).
+
 ## File system security
 You should control access to the data directory that each rqlite node uses. There is no reason for any user to directly access this directory.
 
