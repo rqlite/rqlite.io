@@ -180,7 +180,7 @@ enable = false
   name = "Slack"
   url = "https://www.philipotoole.com/join-rqlite-slack"
   icon = "fab fa-slack"
-  desc = "Chat with other rqlite users"
+  desc = "Chat with other rqlite users at https://rqlite.slack.com"
 
 # hugo module configuration
 
