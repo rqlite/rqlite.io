@@ -178,7 +178,7 @@ enable = false
   desc = "rqlite development takes place on GitHub"
 [[params.links.developer]]
   name = "Slack"
-  url = "https://rqlite.slack.com/"
+  url = "https://www.philipotoole.com/join-rqlite-slack"
   icon = "fab fa-slack"
   desc = "Chat with other rqlite users"
 
