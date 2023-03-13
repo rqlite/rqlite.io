@@ -19,7 +19,7 @@ This is why rqlite offers selectable read consistency levels of _weak_ (the defa
 ## Weak
 >_Weak_ consistency is used if you don't specify any level.
 
-_Weak_ instructs the node to check that it is the Leader, before querying the local SQLite file. Checking Leader state only involves checking state local to the node, so is very fast. There is, however, a very small window of time (milliseconds by default) during which the node may return stale data. This is because after the local Leader check, but before the local SQLite database is read, another node could be elected Leader and make changes to the cluster. As result the node may not be quite up-to-date with the rest of cluster.
+_Weak_ instructs the node to check that it is the Leader, before querying the local SQLite file. Checking Leader state only involves checking state local to the node, so is very fast. There is, however, a very small window of time (milliseconds by default) during which the node may return stale data if a Leader-election is in progress. This is because after the local Leader check, but before the local SQLite database is read, another node could be elected Leader and make changes to the cluster. As result the node may not be quite up-to-date with the rest of cluster.
 
 If the node determines it is not the Leader, the node will transparently forward the request to the Leader. The node then waits for the response from the Leader, and then returns that response to the client.
 
@@ -29,7 +29,7 @@ To avoid even the issues associated with _weak_ consistency, rqlite also offers 
 If a query request is sent to a Follower, and _strong_ consistency is specified, the Follower will transparently forward the request to the Leader. The Follower waits for the response from the Leader, and then returns that response to the client.
 
 ## None
-With _none_, the node simply queries its local SQLite database, and does not perform any Leadership check. This offers the fastest query response, but suffers from the potential issues outlined above.
+With _none_, the node simply queries its local SQLite database, and does not perform any Leadership check. This offers the fastest query response, but suffers from the potential issues outlined above, whereby there is a very small change of _Stale Reads_ if the Leader changes during the query.
 
 ### Limiting read staleness
 You can tell the node not return results (effectively) staler than a certain duration, however. If a read request sets the query parameter `freshness` to a [Go duration string](https://golang.org/pkg/time/#Duration), the node serving the read will check that less time has passed since it was last in contact with the Leader, than that specified via freshness. If more time has passed the node will return an error. `freshness` is ignored for all consistency levels except `none`, and is also ignored if set to zero.
@@ -39,7 +39,7 @@ You can tell the node not return results (effectively) staler than a certain dur
 If you decide to deploy [read-only nodes](/docs/clustering/read-only-nodes/) however, _none_ combined with `freshness` can be a particularly effective at adding read scalability to your system. You can use lots of read-only nodes, yet be sure that a given node serving a request has not fallen too far behind the Leader (or even become disconnected from the cluster).
 
 ## Which should I use?
-_Weak_ is probably sufficient for most applications, and is the default read consistency level. Unless your cluster Leader is continually changing there will be no difference between _weak_ and _strong_ -- but using _strong_ will result in slower queries, which is not what most people want.
+_Weak_ is almost certainly sufficient for your application, and is the default read consistency level. Unless your cluster Leader is continually changing while you're actually executing queries there will be never be any difference between _weak_ and _strong_ -- but using _strong_ will result in slower queries, which is not what most people want.
 
 ## How do I specify read consistency?
 To explicitly select consistency, set the query param `level` to the desired level. However, you should use _none_ with read-only nodes, unless you want those nodes to actually forward the query to the Leader.
@@ -48,25 +48,26 @@ To explicitly select consistency, set the query param `level` to the desired lev
 Examples of enabling each read consistency level for a simple query is shown below.
 
 ```bash
+# Default query options. The read request will be served by the node if it believes
+# it is the leader, otherwise it forwards the request to the Leader. Same as weak.
+curl -G 'localhost:4001/db/query' --data-urlencode 'q=SELECT * FROM foo'
+
 # Query the node, telling it simply to read the SQLite database directly.
 # No guarantees on how old the data is. In fact, the node may not even be
-# connected to the cluster.
+# connected to the cluster. Provides the shortest possible query response time.
 curl -G 'localhost:4001/db/query?level=none' --data-urlencode 'q=SELECT * FROM foo'
 
 # Query the node, telling it simply to read the SQLite database directly.
 # The read request will be successful only if the node last heard from the
-# leader no more than 1 second ago.
+# Leader no more than 1 second ago.
 curl -G 'localhost:4001/db/query?level=none&freshness=1s' --data-urlencode 'q=SELECT * FROM foo'
 
-# Default query options. The read request will be successful only
-# if the node believes it's the leader. 
+# The read request will be served by the node if it believes it is the Leader,
+# otherwise it wil forward the request to the Leader.
 curl -G 'localhost:4001/db/query?level=weak' --data-urlencode 'q=SELECT * FROM foo'
 
-# Default query options. The read request will be successful only
-# if the node believes it is the leader. Same as weak.
-curl -G 'localhost:4001/db/query' --data-urlencode 'q=SELECT * FROM foo'
-
 # The read request will be successful only if the node maintained cluster
-# leadership during the entirety of query processing.
+# leadership during the entirety of query processing. Zero chance of stale reads
+# but query processing will be relatively slow.
 curl -G 'localhost:4001/db/query?level=strong' --data-urlencode 'q=SELECT * FROM foo'
 ```
