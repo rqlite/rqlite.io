@@ -42,20 +42,20 @@ where `$HOST[1-3]` are the expected network addresses of the containers.
 __________________________
 
 ### Using DNS for Bootstrapping
-You can also use the Domain Name System (DNS) to bootstrap a cluster. This is similar to automatic clustering, but doesn't require you to pass the IP addresses of other nodes at the command line via `-join`. Each each rqlite node instead learns the IP addresses it should join with by resolving a hostname using the Domain Name System.
+You can also use the Domain Name System (DNS) to bootstrap a cluster. This is similar to automatic clustering, but doesn't require you to pass the IP addresses of other nodes at the command line via `-join`. Each each rqlite node instead learns the IP addresses it should join with by resolving a hostname using DNS.
 
 To use this feature you create a DNS record for the host `rqlite.cluster` (or whatever hostname you prefer), and create an [A Record](https://www.cloudflare.com/learning/dns/dns-records/dns-a-record/) for each rqlite node IP address. For example, if you're creating a 3-node rqlite cluster, you would create 3 A Records for `rqlite.cluster`. Each rqlite node would then use the returned IP addresses to find the other nodes on the network, then form a cluster. Of course, one of the returned IP addresses will be the node itself, but rqlite is designed to handle that.
 
 Let's look at an example of creating a 3-node cluster, which autoclusters using DNS. Launch the 3 nodes as follows:
 ```bash
-$ rqlited -node-id $ID1 -http-addr=$HOST:4001 -raft-addr=$HOST1:4002 \
+$ rqlited -node-id $ID1 -http-addr=$HOST1:4001 -raft-addr=$HOST1:4002 \
 -disco-mode=dns -disco-config='{"name":"rqlite.cluster"}' -bootstrap-expect 3 data
-$ rqlited -node-id $ID2 -http-addr=$HOST:4001 -raft-addr=$HOST2:4002 \
+$ rqlited -node-id $ID2 -http-addr=$HOST2:4001 -raft-addr=$HOST2:4002 \
 -disco-mode=dns -disco-config='{"name":"rqlite.cluster"}' -bootstrap-expect 3 data
-$ rqlited -node-id $ID3 -http-addr=$HOST:4001 -raft-addr=$HOST3:4002 \
+$ rqlited -node-id $ID3 -http-addr=$HOST3:4001 -raft-addr=$HOST3:4002 \
 -disco-mode=dns -disco-config='{"name":"rqlite.cluster"}' -bootstrap-expect 3 data
 ```
-DNS is then configured such that resolving `rqlite.cluster` would return 3 IP addresses -- the IP addresses for `$HOST1`, `$HOST2`, and `$HOST3`. Note that when using DNS each rqlite node will assuming the other nodes are listening on the same ports as it is listening on, but the node will try both `http` and `https` protocols when joining with other nodes.
+DNS is then configured such that resolving `rqlite.cluster` would return 3 IP addresses -- the IP addresses for `$HOST1`, `$HOST2`, and `$HOST3`. Note that when using DNS each rqlite node will assume the other nodes are listening on the same ports as it is listening on (4001 and 4002 in the example above), but the node will try both `http` and `https` protocols when joining with other nodes.
 
 #### DNS SRV
 Using [DNS SRV](https://www.cloudflare.com/learning/dns/dns-records/dns-srv-record/) gives you more control over the rqlite node address details returned by DNS, including the HTTP port each node is listening on. This means that unlike using just simple DNS records, each rqlite node can be listening on a different HTTP port. Simple DNS records are probably good enough for most situations, however.
