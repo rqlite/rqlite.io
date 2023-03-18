@@ -42,14 +42,20 @@ where `$HOST[1-3]` are the expected network addresses of the containers.
 __________________________
 
 ### Using DNS for Bootstrapping
-You can also use the Domain Name System (DNS) to bootstrap a cluster. This is similar to automatic clustering, but doesn't require you to specify the IP addresses of other nodes at the command line. Instead you create a DNS record for the host `rqlite.cluster` (or whatever hostname you prefer), and DNS is configured to return the IP addresses when the hostname is resolved. You do this using by creating an [A Record](https://www.cloudflare.com/learning/dns/dns-records/dns-a-record/) for each rqlite IP address. 
+You can also use the Domain Name System (DNS) to bootstrap a cluster. This is similar to automatic clustering, but doesn't require you to pass the IP addresses of other nodes at the command line via `-join`. Each each rqlite node instead learns the IP addresses it should join with by resolving a hostname using the Domain Name System.
 
-To launch a node with node ID `$ID` and network address `$HOST`, using DNS for cluster boostrap, execute the following (example) command:
+To use this feature you create a DNS record for the host `rqlite.cluster` (or whatever hostname you prefer), and create an [A Record](https://www.cloudflare.com/learning/dns/dns-records/dns-a-record/) for each rqlite node IP address. For example, if you're creating a 3-node rqlite cluster, you would create 3 A Records for `rqlite.cluster`. Each rqlite node would then use the returned IP addresses to find the other nodes on the network, then form a cluster. Of course, one of the returned IP addresses will be the node itself, but rqlite is designed to handle that.
+
+Let's look at an example of creating a 3-node cluster, which autoclusters using DNS. Launch the 3 nodes as follows:
 ```bash
-rqlited -node-id $ID -http-addr=$HOST:4001 -raft-addr=$HOST:4002 \
+$ rqlited -node-id $ID1 -http-addr=$HOST:4001 -raft-addr=$HOST1:4002 \
+-disco-mode=dns -disco-config='{"name":"rqlite.cluster"}' -bootstrap-expect 3 data
+$ rqlited -node-id $ID2 -http-addr=$HOST:4001 -raft-addr=$HOST2:4002 \
+-disco-mode=dns -disco-config='{"name":"rqlite.cluster"}' -bootstrap-expect 3 data
+$ rqlited -node-id $ID3 -http-addr=$HOST:4001 -raft-addr=$HOST3:4002 \
 -disco-mode=dns -disco-config='{"name":"rqlite.cluster"}' -bootstrap-expect 3 data
 ```
-You would launch other nodes similarly, setting `$ID` and `$HOST` as required for each node. In the example above, resolving `rqlite.local` should return 3 IP addresses, informing each launched node where the nodes in the cluster are.
+DNS is then configured such that resolving `rqlite.cluster` would return 3 IP addresses -- the IP addresses for `$HOST1`, `$HOST2`, and `$HOST3`. Note that when using DNS each rqlite node will assuming the other nodes are listening on the same ports as it is listening on, but the node will try both `http` and `https` protocols when joining with other nodes.
 
 #### DNS SRV
 Using [DNS SRV](https://www.cloudflare.com/learning/dns/dns-records/dns-srv-record/) gives you more control over the rqlite node address details returned by DNS, including the HTTP port each node is listening on. This means that unlike using just simple DNS records, each rqlite node can be listening on a different HTTP port. Simple DNS records are probably good enough for most situations, however.
@@ -67,7 +73,7 @@ DNS-based approaches can be quite useful for many deployment scenarios, in parti
 __________________________
 
 ### Consul
-Another approach uses [Consul](https://www.consul.io/) to coordinate clustering. The advantage of this approach is that you do not need to know the network addresses of all nodes ahead of time.
+Another approach uses [Consul](https://www.consul.io/) to coordinate clustering. The advantage of this approach is that you do not need to know the network addresses of the nodes ahead of time -- as nodes comes up they use Consul to share networking information, allowing the nodes to find each other automatically on the network.
 
 Let's assume your Consul cluster is running at `http://example.com:8500`. Let's also assume that you are going to run 3 rqlite nodes, each node on a different machine. Launch your rqlite nodes as follows:
 
