@@ -6,7 +6,9 @@ weight: 5
 ---
 
 ## Practical cluster size
-Firstly, you should understand the basic requirement for systems built on the [Raft protocol](https://raft.github.io/). For a cluster of `N` nodes in size to remain operational, at least `(N/2)+1` nodes must be up and running, and be in contact with each other. For a single-node system (N=1) then (obviously) that single node must be running. For a 3-node cluster (N=3) at least 2 nodes must be running. For N=5, at least 3 nodes should be running, and so on.
+Firstly, you don't have to run a cluster to use rqlite. A single-node rqlite system will work perfectly fine, and many people do that as they like having a SQLite database available over the network. You won't have a highly-available system of course, and if that single node goes offline, you'll need to restart it.
+
+But if you do want to run a cluster, you should understand the basic requirement for systems built on the [Raft protocol](https://raft.github.io/). For a cluster of `N` nodes in size to remain operational, at least `(N/2)+1` nodes must be up and running, and be in contact with each other. For a single-node system (N=1) then (obviously) that single node must be running. For a 3-node cluster (N=3) at least 2 nodes must be running. For N=5, at least 3 nodes should be running, and so on.
 
 Clusters of 3, 5, 7, or 9, nodes are most practical. Clusters of those sizes can tolerate failures of 1, 2, 3, and 4 nodes respectively.
 
