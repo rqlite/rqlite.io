@@ -17,7 +17,7 @@ You are also responsible for securing access to the SQLite database files if you
 ## Network security
 Each rqlite node listens on 2 TCP ports -- one for the HTTP API, and the other for inter-node (Raft consensus) communications. Only the API port need be reachable from outside the cluster.
 
-So, if possible, configure the network such that the Raft port on each node is only accessible from other nodes in the cluster. There is no need for the Raft port to be accessible by rqlite clients.
+So, if possible, configure the network such that the Raft port on each node is only accessible from other nodes in the cluster. Alternatively run the Raft connections on a physically, or logically, different network from the network the HTTP API is connected to. There is no need for the Raft port to be accessible by rqlite clients, which only need to use the HTTP API.
 
 If the IP addresses (or subnets) of rqlite clients is also known, it may also be possible to limit access to the HTTP API from those addresses only.
 
@@ -44,7 +44,7 @@ To configure HTTPS, you set the following command-line options when launching rq
 ```
 
 ## Node-to-node encryption
-rqlite supports authentication encryption of all inter-node traffic<sup>1</sup>. TLS is again used and mutual TLS is supported. Each node must also be supplied with the relevant SSL certificate and corresponding private key, in X.509 format. Note that every node in a cluster must operate with encryption enabled, or none at all.
+rqlite supports authentication encryption of all inter-node traffic<sup>1</sup>. TLS is again used, and mutual TLS is also supported so you can restrict nodes to only accept inter-node connections from other authorized nodes. To use TLS each node must be supplied with the relevant SSL certificate and corresponding private key, in X.509 format. Note that every node in a cluster must operate with inter-node encryption enabled, or none at all.
 ```bash
   -node-ca-cert string
       Path to X.509 CA certificate for node-to-node encryption.
@@ -62,7 +62,7 @@ rqlite supports authentication encryption of all inter-node traffic<sup>1</sup>.
       Enable mutual TLS for node-to-node communication.
       Mutual TLS is disabled by default.
 ```
-<sup>1</sup>There is one time nodes use the HTTP API when communicating -- during a _Join_ operation. But once a node joins a cluster, all further communications happens over the node-to-node connection.
+<sup>1</sup>There is one time nodes use the HTTP API when communicating -- during a _Join_ operation, or during bootstrapping (autoclustering). But once a node joins a cluster, all further communications takes place over the node-to-node connection.
 
 ## Basic Auth
 The HTTP API supports [Basic Auth](https://tools.ietf.org/html/rfc2617). Each rqlite node can be passed a JSON-formatted configuration file, which configures valid usernames and associated passwords for that node. The password string can be in cleartext or [bcrypt hashed](https://en.wikipedia.org/wiki/Bcrypt).
