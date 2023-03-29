@@ -12,10 +12,10 @@ SQLite has some [documentation on security](https://www.sqlite.org/security.html
 ## File system security
 You should control access to the data directory that each rqlite node uses. There is no reason for any user to directly access this directory. File-level security is also very important if you decide to use _TLS Certificates and Keys_ with rqlite (see later).
 
-You are also responsible for securing access to the SQLite database files if you enable "on disk" mode (which is not the default mode). There is no reason for any user to directly access any SQLite file, and doing so may cause rqlite to work incorrectly. If you don't need to access a SQLite database file, then don't enable "on disk" mode. This will maximize file-level security.
+You are also responsible for securing access to the SQLite database files if you enable "on disk" mode (which is not the default mode). Unless your application requires it, there is no reason for any client to directly access the SQLite file, and writing to the SQLite file may cause rqlite to fail. If your users don't need to access a SQLite database file, then don't enable "on disk" mode. This will maximize file-level security.
 
 ## Network security
-Each rqlite node listens on 2 TCP ports -- one for the HTTP API, and the other for inter-node (Raft consensus) communications. Only the API port need be reachable from outside the cluster.
+Each rqlite node listens on 2 TCP ports -- one for the HTTP API, and the other for inter-node (Raft consensus) communications. Only the HTTP API port need be reachable from outside the cluster.
 
 So, if possible, configure the network such that the Raft port on each node is only accessible from other nodes in the cluster. Alternatively run the Raft connections on a physically, or logically, different network from the network the HTTP API is connected to. There is no need for the Raft port to be accessible by rqlite clients, which only need to use the HTTP API.
 
