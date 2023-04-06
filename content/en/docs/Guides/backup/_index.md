@@ -96,7 +96,7 @@ Welcome to the rqlite CLI. Enter ".help" for usage hints.
 +-----+
 127.0.0.1:4001> .restore mydb.sqlite
 database restored successfully
-127.0.0.1:4001> select * from foo
+127.0.0.1:4001> SELECT * FROM foo
 +----+-------+
 | id | name  |
 +----+-------+
