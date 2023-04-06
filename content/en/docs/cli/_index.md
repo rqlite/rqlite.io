@@ -4,11 +4,11 @@ linkTitle: "rqlite shell"
 description: "How to access rqlite using the command-line tool"
 weight: 25
 ---
-`rqlite` is a command line tool for connecting to a rqlite node. Consult the [SQLite query language documentation](https://www.sqlite.org/lang.html) for full details on the supported SQL syntax.
+`rqlite` is a command line tool for interacting with a rqlite node. Consult the [SQLite query language documentation](https://www.sqlite.org/lang.html) for full details on the supported SQL syntax.
 
 ## Usage
 
-```sh
+```
 $> rqlite -h
 Options:
 
@@ -45,7 +45,7 @@ Options:
 
 ## Example
 Connecting to a host running locally and listing available commands:
-```sh
+```
 $ rqlite
 127.0.0.1:4001> .help
 .backup <file>                      Write database backup to SQLite file
@@ -66,7 +66,7 @@ $ rqlite
 127.0.0.1:4001>
 ```
 Inserting some data via standard SQLite syntax and then reading it back:
-```sh
+```
 127.0.0.1:4001> CREATE TABLE foo (id INTEGER NOT NULL PRIMARY KEY, name TEXT)
 0 row affected (0.000362 sec)
 127.0.0.1:4001> INSERT INTO foo(name) VALUES("fiona")
