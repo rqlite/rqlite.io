@@ -44,23 +44,31 @@ Options:
 ```
 
 ## Example
-Connecting to a host running locally:
+Connecting to a host running locally and listing available commands:
 ```sh
 $ rqlite
+127.0.0.1:4001> .help
+.backup <file>                      Write database backup to SQLite file
+.consistency [none|weak|strong]     Show or set read consistency level
+.dump <file>                        Dump the database in SQL text format to a file
+.exit                               Exit this program
+.expvar                             Show expvar (Go runtime) information for connected node
+.help                               Show this message
+.indexes                            Show names of all indexes
+.nodes                              Show connection status of all nodes in cluster
+.ready                              Show ready status for connected node
+.remove <raft ID>                   Remove a node from the cluster
+.restore <file>                     Restore the database from a SQLite database file or dump file
+.schema                             Show CREATE statements for all tables
+.status                             Show status and diagnostic information for connected node
+.sysdump <file>                     Dump system diagnostics to a file for offline analysis
+.tables                             List names of tables
+127.0.0.1:4001>
+```
+Inserting some data via standard SQLite syntax and then reading it back:
+```sh
 127.0.0.1:4001> CREATE TABLE foo (id INTEGER NOT NULL PRIMARY KEY, name TEXT)
 0 row affected (0.000362 sec)
-127.0.0.1:4001> .tables
-+------+
-| name |
-+------+
-| foo  |
-+------+
-127.0.0.1:4001> .schema
-+---------------------------------------------------------------+
-| sql                                                           |
-+---------------------------------------------------------------+
-| CREATE TABLE foo (id INTEGER NOT NULL PRIMARY KEY, name TEXT) |
-+---------------------------------------------------------------+
 127.0.0.1:4001> INSERT INTO foo(name) VALUES("fiona")
 1 row affected (0.000117 sec)
 127.0.0.1:4001> SELECT * FROM foo
@@ -74,8 +82,8 @@ bye~
 ```
 Connecting to a host running somewhere else on the network:
 ```
-$ rqlite -H localhost -p 8493
-locahost:8493>
+$ rqlite -H 192.168.0.1 -p 8493
+192.168.0.1:8493>
 ```
 
 ## Command history
