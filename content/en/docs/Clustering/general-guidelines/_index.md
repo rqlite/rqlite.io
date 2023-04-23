@@ -31,7 +31,8 @@ Let's say you have 3 host machines, _host1_, _host2_, and _host3_, and that each
 
 To create a cluster you must first launch a node that can act as the initial leader. Do this as follows on _host1_:
 ```bash
-host1:$ rqlited -node-id 1 -http-addr host1:4001 -raft-addr host1:4002 ~/node
+# Run this on host 1:
+$ rqlited -node-id 1 -http-addr host1:4001 -raft-addr host1:4002 ~/node
 ```
 _It's called the "Raft" address because that will be the port the node will use for communications related to the Raft distributed consensus protocol._
 
@@ -41,13 +42,15 @@ With this command a single node is started, listening for client requests on por
 
 To join a second node to this leader, execute the following command on _host2_:
 ```bash
-host2:$ rqlited -node-id 2 -http-addr host2:4001 -raft-addr host2:4002 -join http://host1:4001 ~/node
+# Run this on host 2:
+$ rqlited -node-id 2 -http-addr host2:4001 -raft-addr host2:4002 -join http://host1:4001 ~/node
 ```
 _If a node receives a join request, and that node is not actually the leader of the cluster, the receiving node will automatically redirect the requesting node to the Leader node. As a result a node can actually join a cluster by contacting any node in the cluster. You can also specify multiple join addresses, and the node will try each address until joining is successful._
 
 Once executed you now have a cluster of two nodes. Of course, for fault-tolerance you need a 3-node cluster, so launch a third node like so on _host3_:
 ```bash
-host3:$ rqlited -node-id 3 -http-addr host3:4001 -raft-addr host3:4002 -join http://host1:4001 ~/node
+# Run this on host 3:
+$ rqlited -node-id 3 -http-addr host3:4001 -raft-addr host3:4002 -join http://host1:4001 ~/node
 ```
 _When simply restarting a node, there is no further need to pass `-join`. However, if a node does attempt to join a cluster it is already a member of, and neither its node ID or Raft network address has changed, then the cluster Leader will ignore the join request as there is nothing to do -- the joining node is already a fully-configured member of the cluster. However, if either the node ID or Raft network address of the joining node has changed, the cluster Leader will first automatically remove the joining node from the cluster configuration before processing the join request. For most applications this is an implementation detail which can be safely ignored, and cluster-joins are basically idempotent._
 
