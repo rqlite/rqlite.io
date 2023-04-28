@@ -43,7 +43,7 @@ See the [SQLite documentation](https://www.sqlite.org/isolation.html) for more d
 ## Automatic Backups
 rqlite supports automatically backing up the underlying SQLite database to Cloud-hosted storage. The backup process can be configured to run periodically and uploads the entire SQLite database to the Cloud each time. It does compress the backup before uploading (using GZIP), and won't upload a backup if the SQLite database hasn't changed since the last upload took place.
 
-Backups are controlled via a special configuration file, which is passed to `rqlited` using the `-auto-backup` flag. The configuration file also supports variable expansion -- this means any variable starting with `$` will be replaced with that [value from Environment variables](https://pkg.go.dev/os#ExpandEnv).
+Backups are controlled via a special configuration file, which is passed to `rqlited` using the `-auto-backup` flag. 
 
 ### Amazon S3
 To configure automatic backups to an [S3 bucket](https://aws.amazon.com/s3/), pass the following configuration file to rqlite:
@@ -62,6 +62,9 @@ To configure automatic backups to an [S3 bucket](https://aws.amazon.com/s3/), pa
 }
 ```
 `interval` is configurable and must be set to a [Go duration string](https://pkg.go.dev/maze.io/x/duration#ParseDuration). In the example above a backup will be attempted every 5 minutes. You must also supply your Access Key, Secret Key, S3 bucket name, and the region of that bucket. `path` is the name of the object that will be created, which stores the compressed database. Leave all other fields as is.
+
+### Other configuration options
+If you wish to disable compression of the backup add `no_compress: true` to the top-level portion of the configuration file. The configuration file also supports variable expansion -- this means any variable starting with `$` will be replaced with that [value from Environment variables](https://pkg.go.dev/os#ExpandEnv) when it is loaded by rqlite.
 
 ## Restoring from SQLite
 
