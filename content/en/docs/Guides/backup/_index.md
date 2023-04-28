@@ -41,7 +41,7 @@ The isolation offered by binary backups is `READ COMMITTED`. This means that any
 See the [SQLite documentation](https://www.sqlite.org/isolation.html) for more details.
 
 ## Automatic Backups
-rqlite supports automatically backing up the underlying SQLite database to Cloud-hosted storage. The backup process can be configured to run periodically and uploads the entire SQLite database to the Cloud each time. It does compress the backup before uploading, and won't upload a backup if the SQLite database hasn't changed since the last upload took place.
+rqlite supports automatically backing up the underlying SQLite database to Cloud-hosted storage. The backup process can be configured to run periodically and uploads the entire SQLite database to the Cloud each time. It does compress the backup before uploading (using GZIP), and won't upload a backup if the SQLite database hasn't changed since the last upload took place.
 
 Backups are controlled via a special configuration file, which is passed to `rqlited` using the `-auto-backup` flag. The configuration file also supports variable expansion -- this means any variable starting with `$` will be replaced with that [value from Environment variables](https://pkg.go.dev/os#ExpandEnv).
 
