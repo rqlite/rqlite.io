@@ -57,11 +57,11 @@ To configure automatic backups to an [S3 bucket](https://aws.amazon.com/s3/), pa
 		"secret_access_key": "$SECRET_ACCESS_KEY_ID",
 		"region": "$BUCKET_REGION",
 		"bucket": "$BUCKET_NAME",
-		"path": "db.sqlite3.gz"
+		"path": "backups/db.sqlite3.gz"
 	}
 }
 ```
-`interval` is configurable and must be set to a [Go duration string](https://pkg.go.dev/maze.io/x/duration#ParseDuration). In the example above a backup will be attempted every 5 minutes. You must also supply your Access Key, Secret Key, S3 bucket name, and the region of that bucket. `path` is the name of the object that will be created, which stores the compressed database. Leave all other fields as is.
+`interval` is configurable and must be set to a [Go duration string](https://pkg.go.dev/maze.io/x/duration#ParseDuration). In the example above a backup will be attempted every 5 minutes. You must also supply your Access Key, Secret Key, S3 bucket name, and the bucket's region. The backup will be stored in the bucket at `path`. Leave all other fields as is.
 
 ### Other configuration options
 If you wish to disable compression of the backup add `no_compress: true` to the top-level portion of the configuration file. The configuration file also supports variable expansion -- this means any variable starting with `$` will be replaced with that [value from Environment variables](https://pkg.go.dev/os#ExpandEnv) when it is loaded by rqlite.
