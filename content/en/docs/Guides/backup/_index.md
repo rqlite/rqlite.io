@@ -43,10 +43,10 @@ See the [SQLite documentation](https://www.sqlite.org/isolation.html) for more d
 ## Automatic Backups
 rqlite supports automatically backing up the underlying SQLite database to Cloud-hosted storage. The backup process can be configured to run periodically and uploads the entire SQLite database to the Cloud each time. It does compress the backup before uploading (using GZIP), and won't upload a backup if the SQLite database hasn't changed since the last upload took place. Finally, only the cluster Leader performs the upload.
 
-Backups are controlled via a special configuration file, which is passed to `rqlited` using the `-auto-backup` flag. 
+Backups are controlled via a special configuration file, which is supplied to `rqlited` using the `-auto-backup` flag.
 
 ### Amazon S3
-To configure automatic backups to an [S3 bucket](https://aws.amazon.com/s3/), pass the following configuration file to rqlite:
+To configure automatic backups to an [S3 bucket](https://aws.amazon.com/s3/), create a file with the following (example) contents and supply the file path to rqlite:
 ```json
 {
 	"version": 1,
