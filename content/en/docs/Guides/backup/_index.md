@@ -7,7 +7,7 @@ weight: 40
 ## Backing up rqlite
 rqlite supports hot backing up a node. You can retrieve a copy of the underlying SQLite database via the [rqlite shell](/docs/cli/), or by directly access the API. Retrieving a full copy of the SQLite database is the recommended way to backup a rqlite system.
 
-To backup to a file via the rqlite shell issue the following command:
+To backup to a file using the rqlite shell issue the following command:
 ```
 127.0.0.1:4001> .backup bak.sqlite3
 backup file written successfully
@@ -41,9 +41,9 @@ The isolation offered by binary backups is `READ COMMITTED`. This means that any
 See the [SQLite documentation](https://www.sqlite.org/isolation.html) for more details.
 
 ## Automatic Backups
-rqlite supports automatically backing up the underlying SQLite database to Cloud-hosted storage. The backup process can be configured to run periodically and uploads the entire SQLite database to the Cloud each time. It does compress the backup before uploading (using GZIP), and won't upload a backup if the SQLite database hasn't changed since the last upload took place. Finally, only the cluster Leader performs the upload.
+rqlite supports automatically backing up its data to Cloud-hosted storage. The backup process can be configured to run periodically, which will result in rqlite uploading a GZIP-compressed snapshot of its SQLite database to the Cloud. To save network traffic rqlite will not upload a backup if the SQLite database hasn't changed since the last upload took place, and only the cluster Leader performs the upload.
 
-Backups are controlled via a special configuration file, which is supplied to `rqlited` using the `-auto-backup` flag.
+Backups are controlled via a special configuration file, which is supplied to `rqlited` using the `-auto-backup` flag. In the event that you lose your rqlite cluster you can use the backup in the Cloud to [recover your rqlite system](https://rqlite.io/docs/guides/backup/#restoring-from-sqlite).
 
 ### Amazon S3
 To configure automatic backups to an [S3 bucket](https://aws.amazon.com/s3/), create a file with the following (example) contents and supply the file path to rqlite:
