@@ -41,7 +41,7 @@ The isolation offered by binary backups is `READ COMMITTED`. This means that any
 See the [SQLite documentation](https://www.sqlite.org/isolation.html) for more details.
 
 ## Automatic Backups
-rqlite supports automatically backing up its data to Cloud-hosted storage. The backup process can be configured to run periodically, which will result in rqlite uploading a GZIP-compressed snapshot of its SQLite database to the Cloud. To save network traffic rqlite will not upload a backup if the SQLite database hasn't changed since the last upload took place, and only the cluster Leader performs the upload.
+rqlite supports automatically, and periodically, backing up its data to Cloud-hosted storage. To save network traffic rqlite uploads a compressed snapshot of its SQLite database, and will not upload a backup if the SQLite database hasn't changed since the last upload took place. Only the cluster Leader performs the upload.
 
 Backups are controlled via a special configuration file, which is supplied to `rqlited` using the `-auto-backup` flag. In the event that you lose your rqlite cluster you can use the backup in the Cloud to [recover your rqlite system](https://rqlite.io/docs/guides/backup/#restoring-from-sqlite).
 
@@ -61,13 +61,12 @@ To configure automatic backups to an [S3 bucket](https://aws.amazon.com/s3/), cr
 	}
 }
 ```
-`interval` is configurable and must be set to a [Go duration string](https://pkg.go.dev/maze.io/x/duration#ParseDuration). In the example above a backup will be uploaded every 5 minutes. You must also supply your Access Key, Secret Key, S3 bucket name, and the bucket's region. The backup will be stored in the bucket at `path`. Leave all other fields as is.
+`interval` is configurable and must be set to a [Go duration string](https://pkg.go.dev/maze.io/x/duration#ParseDuration). In the example above, rqlite will check every 5 minutes if an upload is required, and do so if needed. You must also supply your Access Key, Secret Key, S3 bucket name, and the bucket's region. The backup will be stored in the bucket at `path`. Leave all other fields as is.
 
 ### Other configuration options
-If you wish to disable compression of the backup add `no_compress: true` to the top-level portion of the configuration file. The configuration file also supports variable expansion -- this means any string starting with `$` will be replaced with that [value from Environment variables](https://pkg.go.dev/os#ExpandEnv) when it is loaded by rqlite.
+If you wish to disable compression of the backup add `no_compress: true` to the top-level section of the configuration file. The configuration file also supports variable expansion -- this means any string starting with `$` will be replaced with that [value from Environment variables](https://pkg.go.dev/os#ExpandEnv) when it is loaded by rqlite.
 
 ## Restoring from SQLite
-
 rqlite supports loading a node directly from two sources, either of which can be used to initialize your system from preexisting SQLite data, or to restore from an existing [node backup](/docs/guides/backup/):
 - **An actual SQLite database file**. This is the fastest way to initialize a rqlite node from an existing SQLite database. Even large SQLite databases can be loaded into rqlite in a matter of seconds. This is the recommended way to initialize your rqlite node from existing SQLite data. In addition any preexisting SQLite database is completely overwritten by this type of load operation, so it's safe to perform regardless of any data already loaded into your rqlite cluster. Finally, this type of load request can be sent to any node. The receiving node will transparently forward the request to the Leader as needed, and return the response of the Leader to the client. If you would prefer to be explicitly redirected to the Leader, add `redirect` as a URL query parameter.
 - **SQLite dump in text format**. This is another convenient manner to initialize a system from an existing SQLite database (or other database). In constrast to loading an actual SQLite file, the behavior of this type of load operation is **undefined** if there is already data loaded into your rqlite cluster.  **Note that if your source database is large, the operation can be quite slow.** If you find the restore times to be too long, you should first load the SQL statements directly into a SQLite database, and then restore rqlite using the resulting SQLite database file.
