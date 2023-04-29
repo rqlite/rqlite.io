@@ -5,7 +5,7 @@ description: "How to monitor rqlite"
 weight: 50
 ---
 ## Status API
-rqlite serves diagnostic and statistical information, as well as basic information about the underlying Raft system, at `/status`. Assuming the rqlite node is started with default settings you can issue a `curl` command like so to retrieve this information:
+rqlite serves diagnostic and statistical information, as well as detailed information about the underlying Raft system, at `/status`. Assuming the rqlite node is started with default settings you can issue a `curl` command like so to retrieve this information:
 
 ```bash
 curl localhost:4001/status?pretty
