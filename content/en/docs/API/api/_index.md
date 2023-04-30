@@ -6,6 +6,7 @@ description: "How to write data and read it back"
 weight: 5
 date: 2017-01-05
 ---
+The first thing to know is that you can send your read and writes requests to any node in your cluster. For full details on how rqlite handles requests for you, check out [_How rqlite handles requests_](https://rqlite.io/docs/api/api/#how-rqlite-handles-requests).
 
 Each rqlite node exposes an HTTP API allowing data to be inserted into, and read back from, the database. Any changes to the database  (`INSERT`, `UPDATE`, `DELETE`) **must** be sent to the `/db/execute` endpoint, and reads (`SELECT`) should be sent to the `/db/query` endpoint. _It is important to use the correct endpoint for the operation you wish to perform._
 
