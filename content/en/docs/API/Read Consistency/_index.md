@@ -7,11 +7,11 @@ weight: 20
 date: 2017-01-05
 ---
 
-_rqlite has been run through Jepsen-style testing. You can read about it [here](https://github.com/wildarch/jepsen.rqlite/blob/main/doc/blog.md)._
+_You do not need to know the information on this page to use rqlite well, it's mostly for advanced users. rqlite has also been run through Jepsen-style testing. You can read about it [here](https://github.com/wildarch/jepsen.rqlite/blob/main/doc/blog.md)._
 
-Even though serving queries does not require Raft consensus (because the database is not changed), [queries should generally be served by the Leader](https://github.com/rqlite/rqlite/issues/5). Why is this? Because, without this check, queries on a node could return results that are out-of-date i.e. _stale_.  This could happen for one, or both, of the following two reasons:
+Even though serving queries does not require Raft consensus (because the database is not changed), [queries should generally be served by the cluster Leader](https://github.com/rqlite/rqlite/issues/5). Why is this? Because, without this check, queries on a node could return results that are out-of-date i.e. _stale_.  This could happen for one, or both, of the following two reasons:
 
- * The node, while still part of the cluster, has fallen behind the Leader in terms of updates to its underlying database.
+ * The node that received your request , while still part of the cluster, has fallen behind the Leader in terms of updates to its underlying database.
  * The node is no longer part of the cluster, and has stopped receiving Raft log updates.
 
 This is why rqlite offers selectable read consistency levels of _weak_ (the default), _strong_, and _none_. Each is explained below, and examples of each are shown at the end of this page.
@@ -19,20 +19,20 @@ This is why rqlite offers selectable read consistency levels of _weak_ (the defa
 ## Weak
 >_Weak_ consistency is used if you don't specify any level.
 
-_Weak_ instructs the node to check that it is the Leader, before querying the local SQLite file. Checking Leader state only involves checking state local to the node, so is very fast. There is, however, a very small window of time (milliseconds by default) during which the node may return stale data if a Leader-election is in progress. This is because after the local Leader check, but before the local SQLite database is read, another node could be elected Leader and make changes to the cluster. As result the node may not be quite up-to-date with the rest of cluster.
+_Weak_ instructs the node receiving the read request to check that it is the Leader, before querying the local SQLite file. Checking Leader state only involves checking state local to the node, so is very fast. There is, however, a very small window of time (milliseconds by default) during which the node may return stale data if a Leader-election is in progress. This is because after the local Leader check, but before the local SQLite database is read, another node could be elected Leader and make changes to the cluster. As result the node may not be quite up-to-date with the rest of cluster.
 
-If the node determines it is not the Leader, the node will transparently forward the request to the Leader. The node then waits for the response from the Leader, and then returns that response to the client.
+If the node determines it is not the Leader, the node will transparently forward the request to the Leader, which will in turn perform a _Weak_ read of its database. The node then waits for the response from the Leader, and then returns that response to the client.
 
 ## Strong
-To avoid even the issues associated with _weak_ consistency, rqlite also offers _strong_. In this mode, the Leader sends the query through the Raft consensus system, ensuring that the Leader **remains** the Leader at all times during query processing. When using _strong_ you can be sure that the database reflects every change sent to it prior to the query. However, this will involve the Leader contacting at least a quorum of nodes, and will therefore increase query response times.
+To avoid even the issues associated with _weak_ consistency, rqlite also offers _strong_. In this mode, the node receiving the request sends the query through the Raft consensus system, ensuring that the cluster Leader **remains** the Leader at all times during the processing of the query. When using _strong_ you can be sure that the database reflects every change sent to it prior to the query. However, this will involve the Leader contacting at least a quorum of nodes, and will therefore increase query response times.
 
 If a query request is sent to a Follower, and _strong_ consistency is specified, the Follower will transparently forward the request to the Leader. The Follower waits for the response from the Leader, and then returns that response to the client.
 
 ## None
-With _none_, the node simply queries its local SQLite database, and does not perform any Leadership check. This offers the fastest query response, but suffers from the potential issues outlined above, whereby there is a very small change of _Stale Reads_ if the Leader changes during the query.
+With _none_, the node receving your read request simply queries its local SQLite database, and does not perform any Leadership check. This offers the fastest query response, but suffers from the potential issues outlined above, whereby there is a chance of _Stale Reads_ if the Leader changes during the query, of if the node is disconnected from the clsuter.
 
 ### Limiting read staleness
-You can tell the node not return results (effectively) staler than a certain duration, however. If a read request sets the query parameter `freshness` to a [Go duration string](https://golang.org/pkg/time/#Duration), the node serving the read will check that less time has passed since it was last in contact with the Leader, than that specified via freshness. If more time has passed the node will return an error. `freshness` is ignored for all consistency levels except `none`, and is also ignored if set to zero.
+You can tell the receiving node not return results staler than a certain duration, however. If a read request sets the query parameter `freshness` to a [Go duration string](https://golang.org/pkg/time/#Duration), the node serving the read will check that less time has passed since it was last in contact with the Leader, than that specified via freshness. If more time has passed the node will return an error. `freshness` is ignored for all consistency levels except `none`, and is also ignored if set to zero.
 
 > **The `freshness` parameter is always ignored if the node serving the query is the Leader**. Any read, when served by the Leader, is always going to be within any possible freshness bound.
 
@@ -59,7 +59,8 @@ curl -G 'localhost:4001/db/query?level=none' --data-urlencode 'q=SELECT * FROM f
 
 # Query the node, telling it simply to read the SQLite database directly.
 # The read request will be successful only if the node last heard from the
-# Leader no more than 1 second ago.
+# Leader no more than 1 second ago. This provides very fast reads, but sets
+# an upper bound of 1 seconod on how old the returned data iis.
 curl -G 'localhost:4001/db/query?level=none&freshness=1s' --data-urlencode 'q=SELECT * FROM foo'
 
 # The read request will be served by the node if it believes it is the Leader,
