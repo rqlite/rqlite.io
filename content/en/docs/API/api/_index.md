@@ -112,7 +112,7 @@ Response:
     "time": 0.000185964
 }
 ```
-This form will have a map per row returned, with each column name as a key. This form can be more convenient for clients, as many programming languages will support loading the `rows` object directly into a array-of-maps data type.
+This form will have a map per row returned, with each column name as a key. This form can be more convenient for clients, as many programming languages will support loading the `rows` object directly into an array-of-maps data type.
 
 ## Parameterized Statements
 While the "raw" API described above can be convenient and simple to use, it is vulnerable to [SQL Injection attacks](https://owasp.org/www-community/attacks/SQL_Injection). To protect against this issue, rqlite also supports [SQLite parameterized statements](https://www.sqlite.org/lang_expr.html#varparam), for both read and writes. To use this feature, send the SQL statement and values as distinct elements within a new JSON array, as follows:
