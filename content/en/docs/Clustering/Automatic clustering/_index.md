@@ -139,7 +139,7 @@ docker run rqlite/rqlite -disco-mode=etcd-kv -disco-config '{"endpoints":["examp
 
 ## Next Steps
 ### Customizing your configuration
-For detailed control over Discovery configuration `-disco-confg` can either be an actual JSON string, or a path to a file containing a JSON-formatted configuration. The former option may be more convenient if the configuration you need to supply is very short, as in the examples above.
+For detailed control over Discovery configuration `-disco-confg` can either be an actual JSON string, or a path to a file containing a JSON-formatted configuration. The former option may be more convenient if the configuration you need to supply is very short, as in the examples above. The Disconvery configuration also supports _Enviroment Variable_ expansion, so any variable starting with `$` will be replaced with that value from the environment.
 
 The examples above demonstrates simple configurations, and most real deployments may require more detailed configuration. For example, your Consul system might be reachable over HTTPS. To more fully configure rqlite for Discovery, consult the relevant configuration specification below. You must create a JSON-formatted configuration which matches that described in the source code.
 
