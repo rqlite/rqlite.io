@@ -55,13 +55,14 @@ To configure automatic backups to an [S3 bucket](https://aws.amazon.com/s3/), cr
 	"sub": {
 		"access_key_id": "$ACCESS_KEY_ID",
 		"secret_access_key": "$SECRET_ACCESS_KEY_ID",
+		"endpoint": "$ENDPOINT",
 		"region": "$BUCKET_REGION",
 		"bucket": "$BUCKET_NAME",
 		"path": "backups/db.sqlite3.gz"
 	}
 }
 ```
-`interval` is configurable and must be set to a [Go duration string](https://pkg.go.dev/maze.io/x/duration#ParseDuration). In the example above, rqlite will check every 5 minutes if an upload is required, and do so if needed. You must also supply your Access Key, Secret Key, S3 bucket name, and the bucket's region. The backup will be stored in the bucket at `path`, which should also be set to your preferred value. Leave all other fields as is.
+`interval` is configurable and must be set to a [Go duration string](https://pkg.go.dev/maze.io/x/duration#ParseDuration). In the example above, rqlite will check every 5 minutes if an upload is required, and do so if needed. You must also supply your Access Key, Secret Key, S3 bucket name, and the bucket's region, but setting the Endpoint is optional. The backup will be stored in the bucket at `path`, which should also be set to your preferred value. Leave all other fields as is.
 
 ### Other configuration options
 If you wish to disable compression of the backup add `no_compress: true` to the top-level section of the configuration file. The configuration file also supports variable expansion -- this means any string starting with `$` will be replaced with that [value from Environment variables](https://pkg.go.dev/os#ExpandEnv) when it is loaded by rqlite.
@@ -136,3 +137,26 @@ curl -XPOST 'localhost:4001/db/execute?pretty' -H "Content-Type: application/jso
     "PRAGMA foreign_keys = 1"
 ]'
 ```
+
+## Restoring from Cloud Storage
+rqlite supports restoring a node from a backup previously uploaded to Cloud-based storage. If enabled, rqlite will download the SQLite data stored in the cloud, and initialize your system with it. Note that rqlite will only do this if the node has no pre-existing data, and is not already part of a cluster. If either of these conditions is true, any request to automatically restore will be ignroed.
+
+### Amazon S3
+To initiate an automatic restore from a backup in an [S3 bucket](https://aws.amazon.com/s3/), create a file with the following (example) contents and supply the file path to rqlite using the command line option `-auto-restore`:
+```json
+{
+	"version": 1,
+	"type": "s3",
+	"timeout": "60s",
+	"sub": {
+		"access_key_id": "$ACCESS_KEY_ID",
+		"secret_access_key": "$SECRET_ACCESS_KEY_ID",
+		"endpoint": "$ENDPOINT",
+		"region": "$BUCKET_REGION",
+		"bucket": "$BUCKET_NAME",
+		"path": "backups/db.sqlite3.gz"
+	}
+}
+```
+### Other configuration options
+If you wish an rqlite node to continue starting up even if it fails to perform a requested restore operation, add `continue_on_failure: true` to the top-level section of the JSON configuration file.
