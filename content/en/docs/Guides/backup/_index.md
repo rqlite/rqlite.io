@@ -139,7 +139,7 @@ curl -XPOST 'localhost:4001/db/execute?pretty' -H "Content-Type: application/jso
 ```
 
 ## Restoring from Cloud Storage
-rqlite supports restoring a node from a backup previously uploaded to Cloud-based storage. If enabled, rqlite will download the SQLite data stored in the cloud, and initialize your system with it. Note that rqlite will only do this if the node has no pre-existing data, and is not already part of a cluster. If either of these conditions is true, any request to automatically restore will be ignroed.
+rqlite supports restoring a node from a backup previously uploaded to Cloud-based storage. If enabled, rqlite will download the SQLite data stored in the cloud, and initialize your system with it. Note that rqlite will only do this if the node has no pre-existing data, and is not already part of a cluster. If either of these conditions is true, any request to automatically restore will be ignored. Both compressed and non-compressed backups are handled automatically by rqlite as during the restore process.
 
 ### Amazon S3
 To initiate an automatic restore from a backup in an [S3 bucket](https://aws.amazon.com/s3/), create a file with the following (example) contents and supply the file path to rqlite using the command line option `-auto-restore`:
