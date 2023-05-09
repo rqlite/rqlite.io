@@ -90,8 +90,6 @@ where `host` is any node in the cluster. If you do not remove a failed node the 
 If you cannot bring sufficient nodes back online such that the cluster can elect a leader, follow the instructions in the section titled _Dealing with failure_.
 
 ### Automatically removing failed nodes
-> **This functionality was introduced in version 7.11.0. It does not exist in earlier releases.**
-
 rqlite supports automatically removing both voting (the default type) and non-voting (read-only) nodes that have been non-reachable for a configurable period of time. A non-reachable node is defined as a node that the Leader cannot heartbeat with. To enable reaping of voting nodes set `-raft-reap-node-timeout` to a non-zero time interval. Likewise, to enable reaping of non-voting (read-only) nodes set `-raft-reap-read-only-node-timeout`.
 
 It is recommended that these values be set conservatively, especially for voting nodes. Setting them too low may mean you don't account for the normal kinds of network outages and tempoary failures that can affect distributed systems such as rqlite. Note that the timeout clock is reset if a cluster elects a new Leader.
