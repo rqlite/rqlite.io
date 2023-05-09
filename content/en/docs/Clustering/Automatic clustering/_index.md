@@ -88,20 +88,20 @@ Let's assume your Consul cluster is running at `http://example.com:8500`. Let's 
 Node 1:
 ```bash
 rqlited -node-id $ID1 -http-addr=$HOST1:4001 -raft-addr=$HOST1:4002 \
--disco-mode consul-kv -disco-config '{"address":"example.com:8500"}' data
+-disco-key rqlite1 -disco-mode consul-kv -disco-config '{"address":"example.com:8500"}' data
 ```
 Node 2:
 ```bash
 rqlited -node-id $ID2 -http-addr=$HOST2:4001 -raft-addr=$HOST2:4002 \
--disco-mode consul-kv -disco-config '{"address":"example.com:8500"}' data
+-disco-key rqlite1 -disco-mode consul-kv -disco-config '{"address":"example.com:8500"}' data
 ```
 Node 3:
 ```bash
 rqlited -node-id $ID3 -http-addr=$HOST3:4001 -raft-addr=$HOST3:4002 \
--disco-mode consul-kv -disco-config '{"address":"example.com:8500"}' data
+-disco-key rqlite1 -disco-mode consul-kv -disco-config '{"address":"example.com:8500"}' data
 ```
 
-These three nodes will automatically find each other, and cluster. You can start the nodes in any order and at anytime. Furthermore, the cluster Leader will continually update Consul with its address. This means other nodes can be launched later and automatically join the cluster, even if the Leader changes. Refer to the [_Next Steps_](#next-steps) documentation below for further details on Consul configuration.
+These three nodes will automatically find each other, and cluster. You can start the nodes in any order, and at anytime. Furthermore, the cluster Leader will continually update Consul with its address. This means other nodes can be launched later and automatically join the cluster, even if the Leader changes. `-disco-key` is optional, but using it allows you use a single Consul system to bootstrap multiple rqlite clusters -- simply use a different key for each cluster. Refer to the [_Next Steps_](#next-steps) documentation below for further details on Consul configuration.
 
 #### Docker
 It's even easier with Docker, as you can launch every node almost identically:
@@ -118,19 +118,19 @@ Let's assume etcd is available at `example.com:2379`.
 Node 1:
 ```bash
 rqlited -node-id $ID1 -http-addr=$HOST1:4001 -raft-addr=$HOST1:4002 \
-	-disco-mode etcd-kv -disco-config '{"endpoints":["example.com:2379"]}' data
+-disco-key rqlite1 -disco-mode etcd-kv -disco-config '{"endpoints":["example.com:2379"]}' data
 ```
 Node 2:
 ```bash
 rqlited -node-id $ID2 -http-addr=$HOST2:4001 -raft-addr=$HOST2:4002 \
-	-disco-mode etcd-kv -disco-config '{"endpoints":["example.com:2379"]}' data
+-disco-key rqlite1 -disco-mode etcd-kv -disco-config '{"endpoints":["example.com:2379"]}' data
 ```
 Node 3:
 ```bash
 rqlited -node-id $ID3 -http-addr=$HOST3:4001 -raft-addr=$HOST3:4002 \
-	-disco-mode etcd-kv -disco-config '{"endpoints":["example.com:2379"]}' data
+-disco-key rqlite1 -disco-mode etcd-kv -disco-config '{"endpoints":["example.com:2379"]}' data
 ```
- Like with Consul autoclustering, the cluster Leader will continually report its address to etcd.  Refer to the [_Next Steps_](#next-steps) documentation below for further details on etcd configuration.
+ Like with Consul autoclustering, the cluster Leader will continually report its address to etcd. Again `-disco-key` is optional, but using it allows you use a single etcd system to bootstrap multiple rqlite clusters -- simply use a different key for each cluster. Refer to the [_Next Steps_](#next-steps) documentation below for further details on etcd configuration.
 
  #### Docker
 ```bash
@@ -141,19 +141,19 @@ docker run rqlite/rqlite -disco-mode=etcd-kv -disco-config '{"endpoints":["examp
 ### Customizing your configuration
 For detailed control over Discovery configuration `-disco-confg` can either be an actual JSON string, or a path to a file containing a JSON-formatted configuration. The former option may be more convenient if the configuration you need to supply is very short, as in the examples above. The Discovery configuration also supports _Enviroment Variable_ expansion, so any variable starting with `$` will be replaced with that value from the environment.
 
-The examples above demonstrates simple configurations, and most real deployments may require more detailed configuration. For example, your Consul system might be reachable over HTTPS. To more fully configure rqlite for Discovery, consult the relevant configuration specification below. You must create a JSON-formatted configuration which matches that described in the source code.
+The examples above demonstrates simple configurations, and most real deployments may require more detailed configuration. For example, your Consul system might be reachable only over HTTPS. To more fully configure rqlite for Discovery, consult the relevant configuration specification below. You must create a JSON-formatted configuration which matches that described in the source code.
 
 - [Full Consul configuration description](https://github.com/rqlite/rqlite-disco-clients/blob/main/consul/config.go)
 - [Full etcd configuration description](https://github.com/rqlite/rqlite-disco-clients/blob/main/etcd/config.go)
 - [Full DNS configuration description](https://github.com/rqlite/rqlite-disco-clients/blob/main/dns/config.go)
 - [Full DNS SRV configuration description](https://github.com/rqlite/rqlite-disco-clients/blob/main/dnssrv/config.go)
 
-#### Running multiple different clusters
+#### Running multiple different rqlite clusters
 If you wish a single Consul or etcd key-value system to support multiple rqlite clusters, then set the `-disco-key` command line argument to a different value for each cluster. To run multiple rqlite clusters with DNS, use a different domain name per cluster.
 
 ## Design
-When using Automatic Bootstrapping, each node notifies all other nodes of its existence. The first node to have a record of enough nodes (set by `-boostrap-expect`) forms the cluster. Only one node can bootstrap the cluster, any other node that attempts to do so later will fail, and instead become a Follower in the new cluster.
+When using _Automatic Bootstrapping_, each node notifies all other nodes of its existence. The first node to have been contacted by enough other nodes (set by `-boostrap-expect`) boostraps the cluster. Only one node can bootstrap a cluster, so any other node that attempts to do so later will fail, and instead become a _Follower_ in the new cluster.
 
-When using either Consul or etcd for automatic clustering, rqlite uses the key-value store of each system. In each case the Leader atomically sets its HTTP URL, allowing other nodes to discover it. To prevent multiple nodes updating the Leader key at once, nodes uses a check-and-set operation, only updating the Leader key if its value has not changed since it was last read by the node. See [this blog post](https://www.philipotoole.com/rqlite-7-0-designing-node-discovery-and-automatic-clustering/) for more details on the design.
+When using either Consul or etcd for automatic clustering, rqlite uses the key-value store of those systems. In each case only one node will succeed in atomically setting its HTTP URL in the key-value store. This node will then declare itself Leader, and other nodes will then join with it. To prevent multiple nodes updating the Leader key at once, nodes uses a check-and-set operation, only updating the Leader key if its value has not changed since it was last read by the node. See [this blog post](https://www.philipotoole.com/rqlite-7-0-designing-node-discovery-and-automatic-clustering/) for more details on the design.
 
-For DNS-based discovery, the rqlite nodes simply resolve the hostname, and use the returned network addresses, once the number of returned addresses is at least as great as the `-bootstrap-expect` value. Clustering then proceeds as though the network addresses were passed at the command line via `-join`.
+For DNS-based discovery, the rqlite nodes simply resolve the hostname, and use the returned network addresses, once the number of returned addresses is at least as great as the `-bootstrap-expect` value. Boostrapping then proceeds as though the network addresses were passed at the command line via `-join`.
