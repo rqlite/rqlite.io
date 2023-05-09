@@ -21,7 +21,6 @@ An rqlite node addresses this issue by _rewriting_ received SQL statements that 
 ## What does rqlite rewrite?
 
 ### `RANDOM()`
-> :warning: **This functionality was introduced in version 7.7.0. It does not exist in earlier releases.**
 
 Any SQL statement containing `RANDOM()` is rewritten following these rules:
 - the statement is part of a write-request i.e. the request is sent to the `/db/execute` HTTP API.
