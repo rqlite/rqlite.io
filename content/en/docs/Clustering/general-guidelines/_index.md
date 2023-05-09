@@ -74,7 +74,7 @@ It is possible to change a node's Raft address between restarts. Simply pass the
 **Note that this process only works if your cluster has, in addition to the node with the changing address, a quorum (at least) of nodes up running**. If your cluster does not meet this requirement, see the section titled _Dealing with failure_.
 
 ## Removing or replacing a node
-If a node fails completely and is not coming back, or if you shut down a node because you wish to deprovision it, its record should also be removed from the cluster. To remove the record of a node from a cluster, execute the following command at the rqlite CLI:
+If a node fails completely and is not coming back, or if you shut down a node because you wish to deprovision it, its record should also be removed from the cluster (a node can be configured to do this automatically on shutdown if you prefer -- see later). To remove the record of a node from a cluster, execute the following command at the rqlite CLI:
 
 ```
 127.0.0.1:4001> .remove <node raft ID>
@@ -88,6 +88,9 @@ curl -XDELETE http://host:4001/remove -d '{"id": "<node raft ID>"}'
 where `host` is any node in the cluster. If you do not remove a failed node the Leader will continually attempt to communicate with that node. **Note that the cluster must be functional -- there must still be an operational Leader -- for this removal to be successful**. If, after a node failure, a given cluster does not have a quorum of nodes still running, you must bring back the failed node. Any attempt to remove it will fail as there will be no Leader to respond to the node-removal request.
 
 If you cannot bring sufficient nodes back online such that the cluster can elect a leader, follow the instructions in the section titled _Dealing with failure_.
+
+### Removing a node automatically on shutdown
+Sometimes it makes sense for a node to automatically remove itself when it gracefully shuts down. If you want this behaviour, pass `raft-cluster-remove-shutdown=true` to rqlite at launch time. If the node is shut down **gracefully** (it receives `SIGTERM` for example) it will first contact the Leader and remove itself from the cluster, and then the rqlite process will terminate. This will means the Leader will not continue to contact the node after it shuts down. The cluster quorum size is also reduced as a result of this removal operation.
 
 ### Automatically removing failed nodes
 rqlite supports automatically removing both voting (the default type) and non-voting (read-only) nodes that have been non-reachable for a configurable period of time. A non-reachable node is defined as a node that the Leader cannot heartbeat with. To enable reaping of voting nodes set `-raft-reap-node-timeout` to a non-zero time interval. Likewise, to enable reaping of non-voting (read-only) nodes set `-raft-reap-read-only-node-timeout`.
