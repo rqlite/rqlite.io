@@ -37,7 +37,7 @@ Yes. If a read request must be serviced by the Leader, however, rqlite will tran
 Some reads, depending on the requested [_read consistency_](/docs/api/read-consistency/), do not need to serviced by the Leader, and in that case the node can service the read regardless of whether it contact the Leader or not.
 
 ## rqlite is distributed. Does that mean it can increase SQLite performance?
-Yes, but only for reads. It does not provide any scaling for writes, since all writes must go through the leader. **rqlite is distributed primarily for replication and fault tolerance, not for performance**. In fact write performance is reduced relative to a standalone SQLite database, because of the round-trips between nodes and the need to write to the Raft log.
+Yes, but only for reads (and only if you then select `none` as your [_Read Consistency_](/docs/api/read-consistency/) level). It does not provide any scaling for writes, since all writes must go through the Leader. **rqlite is distributed primarily for replication and fault tolerance, not for performance**. In fact write performance is reduced relative to a standalone SQLite database, because of the round-trips between nodes and the need to write to the Raft log.
 
 ## What is the best way to increase rqlite performance?
 The simplest way to increase performance is to use higher-performance disks and a lower-latency network. This is known as _scaling vertically_. You could also consider using [Queued Writes](/docs/api/queued-writes/), or [Bulk Updates](/docs/api/bulk-api/) if you wish to improve write performance specifically.
