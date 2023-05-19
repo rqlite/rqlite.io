@@ -209,8 +209,8 @@ Now let's perform an `INSERT` and `SELECT` in the same request, including attemp
 ```bash
 curl -XPOST 'localhost:4001/db/request?pretty&timings' -H "Content-Type: application/json" -d '[
     ["INSERT INTO foo(name, age) VALUES(?, ?)", "fiona", 20],
-    ["SELECT * FROM foo", "fiona"],
-    ["SELECT * FROM bar", "fiona"]
+    ["SELECT * FROM foo"],
+    ["SELECT * FROM bar"]
 ]'
 ```
 This time the response includes both results and rows from all those operations, as well as one record indicating a query failed.
