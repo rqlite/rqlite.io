@@ -188,7 +188,7 @@ With the _Unified Endpoint_ you can send read and writes requests in one operati
 
 Create a table:
 ```bash
-curl -XPOST 'localhost:4001/db/request?request&pretty&timings' -H "Content-Type: application/json" -d '[
+curl -XPOST 'localhost:4001/db/request?pretty&timings' -H "Content-Type: application/json" -d '[
     "CREATE TABLE foo (id INTEGER NOT NULL PRIMARY KEY, name TEXT, age INTEGER)"
 ]'
 ```
