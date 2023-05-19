@@ -62,7 +62,7 @@ You can set the Node ID (`-node-id`) to anything you wish, as long as it's uniqu
 ### Listening on all interfaces
 You can pass `0.0.0.0` to both `-http-addr` and `-raft-addr` if you wish a node to listen on all interfaces.
 
-However you must then set `-http-adv-addr` and `-raft-adv-addr` to the actual network address (or hostname) the node can be reached on (`adv` stands for "advertised" address). This is so other nodes will use correct address to reach the node listening on `0.0.0.0`. If you didn't do this, then the node would advertise that it was contactable on `0.0.0.0`, which is a non-routable address.
+However you must then set `-http-adv-addr` and `-raft-adv-addr` to the actual network address (or hostname) the node can be reached on (`adv` stands for "advertised" address). This is so other nodes will use correct address to reach the node listening on `0.0.0.0`. If you didn't do this, then the node would advertise that it was contactable on `0.0.0.0`, which isn't a reachable address.
 
 ### Through the firewall
 On some networks, like AWS EC2 cloud, nodes may have an IP address that is not routable from outside the firewall. Instead these nodes are addressed using a different IP address. You can still form a rqlite cluster however -- check out [this tutorial](https://www.philipotoole.com/rqlite-v3-0-1-globally-replicating-sqlite/) for an example. The key thing is that you must set `-http-adv-addr` and `-raft-adv-addr` so a routable address is broadcast to other nodes.
