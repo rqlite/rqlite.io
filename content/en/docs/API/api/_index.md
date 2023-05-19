@@ -205,10 +205,11 @@ In this case, the output looks the same as when using the `/db/execute` endpoint
     "time": 0.01125789
 }
 ```
-Now let's perform an `INSERT` and `SELECT` in the same request, including attempting to access a non-existent table.
+Now let's perform an `INSERT` and `SELECT` in the same request, including attempting to access a non-existent table. And let's request the _Associative_ response form.
 ```bash
-curl -XPOST 'localhost:4001/db/request?pretty&timings' -H "Content-Type: application/json" -d '[
+curl -XPOST 'localhost:4001/db/request?pretty&timings&associative' -H "Content-Type: application/json" -d '[
     ["INSERT INTO foo(name, age) VALUES(?, ?)", "fiona", 20],
+    ["INSERT INTO foo(name, age) VALUES(?, ?)", "declan", 30],
     ["SELECT * FROM foo"],
     ["SELECT * FROM bar"]
 ]'
@@ -220,33 +221,28 @@ This time the response includes both results and rows from all those operations,
         {
             "last_insert_id": 1,
             "rows_affected": 1,
-            "time": 0.000041121
+            "time": 0.000074612,
+            "rows": null
         },
         {
-            "columns": [
-                "id",
-                "name",
-                "age"
+            "last_insert_id": 2,
+            "rows_affected": 1,
+            "time": 0.000044645,
+            "rows": null
+        },
+        {
+            "types": { "age": "integer", "id": "integer", "name": "text"},
+            "rows": [
+                {"age": 20, "id": 1, "name": "fiona"},
+                {"age": 30, "id": 2, "name": "declan"}
             ],
-            "types": [
-                "integer",
-                "text",
-                "integer"
-            ],
-            "values": [
-                [
-                    1,
-                    "fiona",
-                    20
-                ]
-            ],
-            "time": 0.00005361
+            "time": 0.000055248
         },
         {
             "error": "no such table: bar"
         }
     ],
-    "time": 0.01048798
+    "time": 0.010571084
 }
 ```
 The _Unified Endpoint_ supports transactions, Associative responses, Read Consistency levels, and Parameterized Statements. Just set the relevant Query URL parameters, as described earlier on this page.
