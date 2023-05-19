@@ -8,7 +8,12 @@ date: 2017-01-05
 ---
 The first thing to know is that you can send your read and writes requests to any node in your cluster. For full details on how rqlite handles requests for you, check out [_How rqlite handles requests_](https://rqlite.io/docs/api/api/#how-rqlite-handles-requests).
 
-Each rqlite node exposes an HTTP API allowing data to be inserted into, and read back from, the database. Any changes to the database  (`INSERT`, `UPDATE`, `DELETE`) **must** be sent to the `/db/execute` endpoint, and reads (`SELECT`) should be sent to the `/db/query` endpoint. _It is important to use the correct endpoint for the operation you wish to perform._
+Each rqlite node exposes an HTTP API allowing data to be inserted into, and read back from, the database. Specifically there are three special endpoints:
+- `/db/execute` which accepts write requests (`INSERT`, `UPDATE`, `DELETE`)
+- `/db/query` which accepts read requests (`SELECT`)
+- `/db/request` which accepts both read and write requests. This endpoint is known as the [_Unified Endpoint_](/docs/api/api/#unified-endpoint).
+
+**Which endpoint should you use?** If you know ahead of time whether you are doing reads or writes, it's probably best to choose the endpoint dedicated to that type of request (either `/db/execute` or `/db/query`), as you will know precisely what to expect when rqlite responds. This encourages the most robust interaction with rqlite. In contrast the structure of the response from `/db/request` will depend on whether you send read or write requests, and may require you (or your code) to inspect the response more closely before parsing it. But `/db/request` can be more convenient in some cases, as you don't need to worry about choosing a particular endpoint ahead of time -- just send all your requests to `/db/request`.
 
 The best way to understand the API is to work through the simple examples below. There are also [client libraries available](/docs/api/client-libraries/).
 
@@ -145,7 +150,6 @@ curl -XPOST 'localhost:4001/db/query?pretty&timings' -H "Content-Type: applicati
     ["SELECT * FROM foo WHERE name=:name", {"name": "fiona"}]
 ]'
 ```
-
 ## Transactions
 A **form** of transactions are supported. To execute statements within a transaction, add `transaction` to the URL. An example of the above operation executed within a transaction is shown below.
 
@@ -178,6 +182,72 @@ curl -XPOST 'localhost:4001/db/execute?pretty&timings' -H "Content-Type: applica
     "time": 2.478862
 }
 ```
+
+## Unified Endpoint
+With the _Unified Endpoint_ you can send read and writes requests in one operation, to the same endpoint. Let's work through an example.
+
+Create a table:
+```bash
+curl -XPOST 'localhost:4001/db/execute?request&pretty&timings' -H "Content-Type: application/json" -d '[
+    "CREATE TABLE foo (id INTEGER NOT NULL PRIMARY KEY, name TEXT, age INTEGER)"
+]'
+```
+In this case, the output looks the same as when using the `/db/execute` endpoint.
+```json
+{
+    "results": [
+        {
+            "time": 0.000277428
+        }
+    ],
+    "time": 0.01125789
+}
+```
+Now let's perform an `INSERT` and `SELECT` in the same request, including attempting to access a non-existent table.
+```bash
+curl -XPOST 'localhost:4001/db/request?pretty&timings' -H "Content-Type: application/json" -d '[
+    ["INSERT INTO foo(name, age) VALUES(?, ?)", "fiona", 20],
+    ["SELECT * FROM foo", "fiona"],
+    ["SELECT * FROM bar", "fiona"]
+]'
+```
+This time the response includes both results and rows from all those operations, as well as one record indicating a query failed.
+```json
+{
+    "results": [
+        {
+            "last_insert_id": 1,
+            "rows_affected": 1,
+            "time": 0.000041121
+        },
+        {
+            "columns": [
+                "id",
+                "name",
+                "age"
+            ],
+            "types": [
+                "integer",
+                "text",
+                "integer"
+            ],
+            "values": [
+                [
+                    1,
+                    "fiona",
+                    20
+                ]
+            ],
+            "time": 0.00005361
+        },
+        {
+            "error": "no such table: bar"
+        }
+    ],
+    "time": 0.01048798
+}
+```
+The _Unified Endpoint_ supports transactions, Associative responses, Read Consistency levels, and Parameterized Statements. Just set the relevant Query URL parameters, as described earlier on this page.
 
 ## PRAGMA Directives
 
