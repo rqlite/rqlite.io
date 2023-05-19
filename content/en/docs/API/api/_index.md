@@ -165,7 +165,7 @@ When a transaction takes place either both statements will succeed, or neither. 
 The behaviour of rqlite if you explicitly issue `BEGIN`, `COMMIT`, `ROLLBACK`, `SAVEPOINT`, and `RELEASE` to control your own transactions is **not defined**. This is because the behavior of a cluster if it fails while such a manually-controlled transaction is not yet defined. It is important to control transactions only through the query parameters shown above.
 
 ## Handling Errors
-If an error occurs while processing a request, it will be indicated via the presence of an `error` key in the JSON response. For example:
+Errors are indicated in two ways. Some error conditions will be flagged via `4xx` or `5xx` HTTP status codes, so you should always check that first. However, even if rqlite responds with HTTP `200` you should check for any errors that occurred while processing the request, which usually indicates an error at the database-level. These will be indicated via the presence of an `error` key in the JSON response. For example:
 
 ```bash
 curl -XPOST 'localhost:4001/db/execute?pretty&timings' -H "Content-Type: application/json" -d "[
