@@ -186,6 +186,8 @@ curl -XPOST 'localhost:4001/db/execute?pretty&timings' -H "Content-Type: applica
 ## Unified Endpoint
 With the _Unified Endpoint_ you can send read and writes requests in one operation, to the same endpoint. Let's work through an example.
 
+>rqlite uses the SQLite function [sqlite3_stmt_readonly()](https://www.sqlite.org/c3ref/stmt_readonly.html) to determine if a SQL statement is a read or a write.
+
 Create a table:
 ```bash
 curl -XPOST 'localhost:4001/db/request?pretty&timings' -H "Content-Type: application/json" -d '[
