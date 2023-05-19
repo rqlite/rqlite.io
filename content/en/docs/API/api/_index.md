@@ -290,7 +290,7 @@ The rqlite CLI supports issuing `PRAGMA` directives. For example:
 +----------------------------+
 ```
 
-`PRAGMA` directives may also be issued using the `/db/execute` or `/db/query` endpoint. For example:
+`PRAGMA` directives may also be issued using the `/db/execute`, `/db/query`, or `/db/request`, endpoint. For example:
 ```bash
 $ curl -G 'localhost:4001/db/query?pretty&timings' --data-urlencode 'q=PRAGMA foreign_keys'                                                                        
 {                                                                                                                                                                                                                        
