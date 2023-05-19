@@ -245,7 +245,7 @@ This time the response includes both results and rows from all those operations,
     "time": 0.010571084
 }
 ```
-The _Unified Endpoint_ supports transactions, Associative responses, Read Consistency levels, and Parameterized Statements. Just set the relevant Query URL parameters, as described earlier on this page.
+The _Unified Endpoint_ supports transactions, Associative responses, [Read Consistency](/docs/api/read-consistency/) levels, and Parameterized Statements. Just set the relevant Query URL parameters, as described earlier on this page.
 
 ## PRAGMA Directives
 
