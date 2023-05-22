@@ -8,7 +8,7 @@ date: 2017-01-05
 ---
 The first thing to know is that you can send your read and writes requests to any node in your cluster. For full details on how rqlite handles requests for you, check out [_How rqlite handles requests_](https://rqlite.io/docs/api/api/#how-rqlite-handles-requests).
 
-Each rqlite node exposes an HTTP API allowing data to be inserted into, and read back from, the database. Specifically there are three special endpoints:
+Each rqlite node exposes an HTTP API allowing data to be inserted into, and read back from, the database. Specifically there are three endpoints to know:
 - `/db/execute` which accepts write requests (`INSERT`, `UPDATE`, `DELETE`)
 - `/db/query` which accepts read requests (`SELECT`)
 - `/db/request` which accepts both read and write requests. This endpoint is known as the [_Unified Endpoint_](/docs/api/api/#unified-endpoint).
@@ -245,7 +245,7 @@ This time the response includes both results and rows from all those operations,
     "time": 0.010571084
 }
 ```
-The _Unified Endpoint_ supports transactions, Associative responses, [Read Consistency](/docs/api/read-consistency/) levels, and Parameterized Statements. Just set the relevant Query URL parameters, as described earlier on this page.
+The _Unified Endpoint_ supports transactions, Associative responses, [Read Consistency](/docs/api/read-consistency/) levels, and Parameterized Statements. Just set the relevant Query URL parameters, as described earlier on this page. [_Queued Writes_](/docs/api/queued-writes/), however, are **not** supported by the Unified Endpoint.
 
 ## PRAGMA Directives
 
