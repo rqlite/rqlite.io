@@ -38,6 +38,16 @@ You could also increase the `replicas` count in `rqlite-3-nodes.yaml` and reappl
 
 > **It is important that your rqlite cluster is healthy and fully functional before scaling up. It is also critical that DNS is working properly too.** If this is not the case, some of the new nodes may become standalone single-node clusters, as they will be unavailable to connect to the Leader. 
 
-Shrinking the cluster, however, will require some manual intervention. As well reducing `replicas`, you will also need to [explicitly remove](/docs/clustering/#removing-or-replacing-a-node) the deprovisioned nodes, or the Leader will continually attempt to contact those nodes. **You should also note that you can't simply grow a cluster again by increasing the replica count after shrinking it**, as the nodes must be manually rejoined to the cluster in that case. A Kubernetes Operator may help here, but requires extra development.
+### Shrinking the cluster
+Scaling your cluster down is also possible, but there are some important details to be aware of. Let's work through an example.
 
-> **Be careful that you don't reduce the replica count such that there is no longer a quorum of nodes available. If you do this you will render your cluster unusable, and need to perform a manual recovery.** The manual recovery process is [fully documented](/docs/clustering/#dealing-with-failure).
+Say you have a 3-node cluster, and you want to return to a single-node cluster. You could do this by issuing the following command:
+```bash
+kubectl scale statefulsets rqlite --replicas=1
+```
+However, from the point of view of the remaining rqlite node, the other two nodes have **failed** -- and the single-node system doesn't have a quorum now. This means your cluster is effectively offline, and you would need to bring at least 1 node back online before you could use your rqlite system again. There are two ways to avoid this situation. however.
+
+- Remove one 1 node at a time, and [explicitly remove the node](/docs/clustering/#removing-or-replacing-a-node) that has been take offline. This will tell the remaining nodes that the cluster has been shrunk, which should also reduce the quorum requirements. **Be careful that you don't reduce the replica count such that there is no longer a quorum of nodes available. If you do this, and deprovision the offline nodes permanently, you may render your cluster unusable, and need to perform a manual recovery.** The manual recovery process is [fully documented](/docs/clustering/#dealing-with-failure).
+- Enable `-raft-cluster-remove-shutdown=true` when launching your rqlite nodes. With this option enabled a node will self-remove itselt from the cluster before it shuts down (assuming a graceful stop). This is basically the same as the first option, but means you don't have to manually remove the node.
+
+Scaling up again after shrinking your cluster is also possible, simply issue your scale-up command again.
