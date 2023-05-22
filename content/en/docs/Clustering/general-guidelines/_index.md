@@ -92,7 +92,7 @@ where `host` is any node in the cluster. If you do not remove a failed node the 
 If you cannot bring sufficient nodes back online such that the cluster can elect a leader, follow the instructions in the section titled _Dealing with failure_.
 
 ### Removing a node automatically on shutdown
->This option is currently only supported on clusters that do not enable Basic Auth  on the HTTP API.
+>This option is currently only supported on clusters that do not enable Basic Auth on the HTTP API.
 
 Sometimes it makes sense for a node to automatically remove itself when it gracefully shuts down. If you want this behaviour, pass `-raft-cluster-remove-shutdown=true` to rqlite at launch time. If the node is shut down **gracefully** (it receives `SIGTERM` for example) it will first contact the Leader and remove itself from the cluster, and then the rqlite process will terminate. As a result the Leader will not continue to contact the node after it shuts down. This removal operation also reduces the cluster quorum size.
 
