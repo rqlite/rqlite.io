@@ -32,7 +32,7 @@ If a query request is sent to a Follower, and _strong_ consistency is specified,
 With _none_, the node receving your read request simply queries its local SQLite database, and does not perform any Leadership check. This offers the fastest query response, but suffers from the potential issues outlined above, whereby there is a chance of _Stale Reads_ if the Leader changes during the query, of if the node is disconnected from the clsuter.
 
 ### Limiting read staleness
-You can tell the receiving node not return results staler than a certain duration, however. If a read request sets the query parameter `freshness` to a [Go duration string](https://golang.org/pkg/time/#Duration), the node serving the read will check that less time has passed since it was last in contact with the Leader, than that specified via freshness. If more time has passed the node will return an error. `freshness` is ignored for all consistency levels except `none`, and is also ignored if set to zero.
+You can tell the receiving node not to return results staler than a certain duration, however. If a read request sets the query parameter `freshness` to a [Go duration string](https://golang.org/pkg/time/#Duration), the node serving the read will check that less time has passed since it was last in contact with the Leader, than that specified via freshness. If more time has passed the node will return an error. `freshness` is ignored for all consistency levels except `none`, and is also ignored if set to zero.
 
 > **The `freshness` parameter is always ignored if the node serving the query is the Leader**. Any read, when served by the Leader, is always going to be within any possible freshness bound.
 
