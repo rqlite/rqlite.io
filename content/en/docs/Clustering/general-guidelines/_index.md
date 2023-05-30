@@ -18,11 +18,23 @@ Clusters with a greater number of nodes start to become unwieldy, due to the num
 It is possible to run larger clusters if you just need nodes [from which you only need to read from](/docs/clustering/read-only-nodes/). When it comes to the Raft protocol, these nodes do not count towards `N`, since they do not [vote](https://raft.github.io/).
 
 ## Clusters with an even-number of nodes
-There is little point running clusters with even numbers of voting i.e. Raft nodes. To see why this is imagine you have one cluster of 3 nodes, and a second cluster of 4 nodes. In each case, for the cluster to reach consensus on a given change, a majority of nodes within the cluster are required to have agreed to the change.
+Running clusters with an even number of voting i.e. _Raft_ nodes is often an inefficient setup, providing little practical value. Consider, for instance, a comparison between two clusters: one containing three nodes and another containing four nodes. The collective agreement - or consensus - within these clusters is crucial for successfully executing a database write operation. A majority of nodes within the cluster must concur on a given change for this operation to be successful.
 
-Specifically, a majority is defined as `(N/2)+1` where `N` is the number of nodes in the cluster. For a 3-node a majority is 2; for a 4-node cluster a majority is 3. Therefore a 3-node cluster can tolerate the failure of a single node. However a 4-node cluster can also only tolerate a failure of a single node.
+The definition of this "majority" is `(N/2)+1`, where `N` is the cluster's node count. So, for a 3-node cluster, the majority is 2, and for a 4-node cluster, it stands at 3. As such, a 3-node cluster can withstand the failure of one node without losing its ability to reach a consensus. However, **a 4-node cluster offers the same tolerance level**, meaning it too can only endure the loss of a single node without impeding its functionality.
 
-So a 4-node cluster is no more fault-tolerant than a 3-node cluster, so running a 4-node cluster provides no advantage over a 3-node cluster. Only a 5-node cluster can tolerate the failure of 2 nodes. An analogous argument applies to 5-node vs. 6-node clusters, and so on.
+This redundancy illustrates why running a 4-node cluster offers no distinct advantage over operating a 3-node cluster - both setups possess equivalent fault tolerance. Only a 5-node cluster improves fault tolerance, capable of handling the failure of two nodes. The same logic applies to 5-node vs. 6-node clusters, and so on.
+
+### The relationship between cluster sizes and Quorum
+The term _Quorum_ refers to the minimum number of nodes required to reach a consensus. It's calculated as `(N/2)+1`, where `N` indicates the cluster size. _Fault tolerance_ describes the maximum number of nodes that can fail without impairing the cluster's write functionality.
+
+Below is a table summarizing the quorum and fault tolerance for different cluster sizes:
+| Cluster size (N) | Quorum | Fault tolerance |
+| :---             | :----: | :----:          |
+| 1                | 1      | 0 nodes         |
+| 2                | 2      | 0 nodes         |
+| 3                | 2      | 1 node          |
+| 4                | 3      | 1 node          |
+| 5                | 3      | 2 nodes         |
 
 ## Creating a cluster
 _This section describes manually creating a cluster. If you wish rqlite nodes to automatically find other, and form a cluster, check out [auto-clustering](/docs/clustering/automatic-clustering/)._
@@ -152,29 +164,3 @@ Next simply create entries for all the nodes you plan to bring up (in the exampl
 
 Once recovery is completed, the `peers.json` file is renamed to `peers.info`. `peers.info` will not trigger further recoveries, and simply acts as a record for future reference. It may be deleted at anytime.
 
-## Example Cluster Sizes
-_Quorum is defined as (N/2)+1 where N is the size of the cluster._
-
-### 2-node cluster
-Quorum of a 2-node cluster is 2.
-
-If 1 node fails, quorum can no longer reached. The failing node must be recovered, as the failed node cannot be removed, and a new node cannot be added to the cluster to takes its place. This is why you shouldn't run 2-node clusters, except for testing purposes. In general it doesn't make much sense to run clusters with even-number of nodes at all.
-
-If you remove a single node from a fully-functional 2-node cluster, quorum will be reduced to 1 since you will be left with a 1-node cluster.
-
-### 3-node cluster
-Quorum of a 3-node cluster is 2.
-
-If 1 node fails, the cluster can still reach quorum. Remove the failing node, or restart it. If you remove the node, quorum remains at 2. You should add a new node to get the cluster back to 3 nodes in size. If 2 nodes fail, the cluster will not be able to reach quorum. You must instead restart at least one of the nodes.
-
-If you remove a single node from a fully-functional 3-node cluster, quorum will be unchanged since you now have a 2-node cluster.
-
-### 4-node cluster
-Quorum of a 4-node cluster is 3.
-
-The situation is similar for a 3-node cluster, in the sense that it can only tolerate the failure of a single node. If you remove a single node from a fully-functional 4-node cluster, quorum will decrease to 2 you now have a 3-node cluster.
-
-### 5-node cluster
-Quorum of a 5-node cluster is 3.
-
-With a 5-node cluster, the cluster can tolerate the failure of 2 nodes. However if 3 nodes fail, at least one of those nodes must be restarted before you can make any change. If you remove a single node from a fully-functional 5-node cluster, quorum will be unchanged since you now have a 4-node cluster.
