@@ -58,9 +58,9 @@ If the client is on the same side of the partition as a quorum of nodes, there w
 It may be possible to make partitions clearer to clients in a future release.
 
 ## Can I run a single node?
-Sure. Many people do so, as they like accessing a SQLite database over HTTP. Of course, you won't have any redundancy or fault tolerance if you only run a single node.
+Sure. Many people do so, as they like accessing a SQLite database over HTTP. Of course, you won't have any redundancy or fault tolerance if you only run a single node. If the single node fails you will nneed to restart it.
 
-It's important to understand, however, that "single-node" means a single-node *cluster* -- in other words, a cluster with a configured size of one node. A 3-node cluster, in which two nodes fail, is not a single-node cluster. In that case you've got a 3-node cluster, which is offline.
+It's important to understand, however, that "single-node" means a single-node *cluster* -- in other words, a cluster with a configured size of one node. A 3-node cluster, in which two nodes fail, is not a single-node cluster. In that case you've still got a 3-node cluster, but one which is offline.
 
 ## How can I change my multi-node cluster to a single-node system?
 You can't simply shut down all the nodes except one, and expect the single node to work normally, due to Raft quorum requirements -- but you do have options. One thing you can do is to [backup your cluster](https://rqlite.io/docs/guides/backup/), and then load the data into a new single node you bring up. This is probably the simplest way to do it, and will be fast. Alternatively you can explicitly force the configuration of your cluster to be single node, by following the [_Dealing with Failure_](https://rqlite.io/docs/clustering/general-guidelines/#recovering-a-cluster-that-has-permanently-lost-quorum) guide, and using a configuration file that only contains a single node.
