@@ -6,6 +6,8 @@ weight: 10
 ---
 This pages provides an example of how to run rqlite as a Kubernetes [StatefulSet](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/). Full source for the configuration described below is available in the [rqlite Kubernetes Configuration repo](https://github.com/rqlite/kubernetes-configuration).
 
+The following directions assume you have a Kubernetes cluster already available. Visit [kubernetes.io](https://kubernetes.io/) to learn how to deploy Kubernetes.
+
 ## Creating a cluster 
 ### Create Services
 The first thing to do is to create two [Kubernetes _Services_](https://kubernetes.io/docs/concepts/services-networking/service). The first service, `rqlite-svc-internal`, is [_Headless_](https://kubernetes.io/docs/concepts/services-networking/service/#headless-services) and allows the nodes to find each other and cluster automatically. It shouldn't be used by rqlite clients. It is the second service, `rqlite-svc`, that is for clients to talk to the cluster -- this service will get a Cluster IP address which those clients can connect to.
