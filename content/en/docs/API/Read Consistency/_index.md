@@ -29,7 +29,7 @@ To avoid even the issues associated with _weak_ consistency, rqlite also offers 
 If a query request is sent to a Follower, and _strong_ consistency is specified, the Follower will transparently forward the request to the Leader. The Follower waits for the response from the Leader, and then returns that response to the client.
 
 ## None
-With _none_, the node receving your read request simply queries its local SQLite database, and does not perform any Leadership check. This offers the fastest query response, but suffers from the potential issues outlined above, whereby there is a chance of _Stale Reads_ if the Leader changes during the query, of if the node is disconnected from the clsuter.
+With _none_, the node receving your read request simply queries its local SQLite database, and does not perform any Leadership check -- in fact, the node could be completely disconnected from the rest of the cluster, but the query will still be successful. This offers the fastest query response, but suffers from the potential issues outlined above, whereby there is a chance of _Stale Reads_ if the Leader changes during the query, of if the node is disconnected from the clsuter.
 
 ### Limiting read staleness
 You can tell the receiving node not to return results staler than a certain duration, however. If a read request sets the query parameter `freshness` to a [Go duration string](https://golang.org/pkg/time/#Duration), the node serving the read will check that less time has passed since it was last in contact with the Leader, than that specified via freshness. If more time has passed the node will return an error. `freshness` is ignored for all consistency levels except `none`, and is also ignored if set to zero.
