@@ -29,12 +29,12 @@ To avoid even the issues associated with _weak_ consistency, rqlite also offers 
 If a query request is sent to a Follower, and _strong_ consistency is specified, the Follower will transparently forward the request to the Leader. The Follower waits for the response from the Leader, and then returns that response to the client.
 
 ## None
-With _none_, the node receving your read request simply queries its local SQLite database, and does not perform any Leadership check -- in fact, the node could be completely disconnected from the rest of the cluster, but the query will still be successful. This offers the fastest query response, but suffers from the potential issues outlined above, whereby there is a chance of _Stale Reads_ if the Leader changes during the query, of if the node is disconnected from the clsuter.
+With _none_, the node receving your read request simply queries its local SQLite database, and does not perform any Leadership check -- in fact, the node could be completely disconnected from the rest of the cluster, but the query will still be successful. This offers the fastest query response, but suffers from the potential issues outlined above, whereby there is a chance of _Stale Reads_ if the Leader changes during the query, or if the node has become disconneted from the clsuter.
 
 ### Limiting read staleness
-You can tell the receiving node not to return results staler than a certain duration, however. If a read request sets the query parameter `freshness` to a [Go duration string](https://golang.org/pkg/time/#Duration), the node serving the read will check that less time has passed since it was last in contact with the Leader, than that specified via freshness. If more time has passed the node will return an error. `freshness` is ignored for all consistency levels except `none`, and is also ignored if set to zero.
+You can tell the receiving node not to return results staler than a certain duration, however. If a read request sets the query parameter `freshness` to a [Go duration string](https://golang.org/pkg/time/#Duration), the node serving the read will check that less time has passed since it was last in contact with the Leader, than that specified via freshness. If more time has passed the node will return an error. This approach can be useful if you want to maximize successful query operations, but are willing to tolerate occassional, short-lived networking issues between nodes.
 
-> **The `freshness` parameter is always ignored if the node serving the query is the Leader**. Any read, when served by the Leader, is always going to be within any possible freshness bound.
+> **The `freshness` parameter is always ignored if the node serving the query is the Leader**. Any read, when served by the Leader, is always going to be within any possible freshness bound.  `freshness` is also ignored for all consistency levels except `none`, and is also ignored if set to zero. 
 
 If you decide to deploy [read-only nodes](/docs/clustering/read-only-nodes/) however, _none_ combined with `freshness` can be a particularly effective at adding read scalability to your system. You can use lots of read-only nodes, yet be sure that a given node serving a request has not fallen too far behind the Leader (or even become disconnected from the cluster).
 
@@ -49,7 +49,8 @@ Examples of enabling each read consistency level for a simple query is shown bel
 
 ```bash
 # Default query options. The read request will be served by the node if it believes
-# it is the leader, otherwise it forwards the request to the Leader. Same as weak.
+# it is the leader, otherwise it transparently forwards the request to the Leader, and
+# waits for a response from the Leader. Same as weak.
 curl -G 'localhost:4001/db/query' --data-urlencode 'q=SELECT * FROM foo'
 
 # Query the node, telling it simply to read the SQLite database directly.
@@ -60,7 +61,7 @@ curl -G 'localhost:4001/db/query?level=none' --data-urlencode 'q=SELECT * FROM f
 # Query the node, telling it simply to read the SQLite database directly.
 # The read request will be successful only if the node last heard from the
 # Leader no more than 1 second ago. This provides very fast reads, but sets
-# an upper bound of 1 seconod on how old the returned data iis.
+# an upper bound of 1 seconod on how old the returned data is.
 curl -G 'localhost:4001/db/query?level=none&freshness=1s' --data-urlencode 'q=SELECT * FROM foo'
 
 # The read request will be served by the node if it believes it is the Leader,
