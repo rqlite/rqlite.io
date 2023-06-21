@@ -10,31 +10,12 @@ weight: 5
 
 But if you do want to run a cluster, you should understand the basic requirement for systems built on the [Raft protocol](https://raft.github.io/). For a cluster of `N` nodes in size to remain operational, at least `(N/2)+1` nodes must be up and running, and be in contact with each other. For a single-node system (N=1) then (obviously) that single node must be running. For a 3-node cluster (N=3) at least 2 nodes must be running. For N=5, at least 3 nodes should be running, and so on.
 
-Clusters of 3, 5, 7, or 9, nodes are most practical. Clusters of those sizes can tolerate failures of 1, 2, 3, and 4 nodes respectively.
+Clusters of 3, 5, 7, or 9, nodes are most practical Clusters of those sizes can tolerate failures of 1, 2, 3, and 4 nodes respectively. It also doesn't make much sense [to run clusters with an even number of nodes](https://rqlite.io/docs/clustering/general-guidelines/#clusters-with-an-even-number-of-nodes).
 
-Clusters with a greater number of nodes start to become unwieldy, due to the number of nodes that must be contacted before a database change can take place. There is no intrinsic limit to the number of nodes comprising a cluster, but the operational overload can increase with little benefit.
+Clusters with a larger number of nodes start to become unwieldy, due to the number of nodes that must be contacted before a database change can take place. There is no intrinsic limit to the number of nodes comprising a cluster, but the operational overload may increase with little benefit.
 
 ### Read-only nodes
-It is possible to run larger clusters if you just need nodes [from which you only need to read from](/docs/clustering/read-only-nodes/). When it comes to the Raft protocol, these nodes do not count towards `N`, since they do not [vote](https://raft.github.io/).
-
-## Clusters with an even-number of nodes
-Running clusters with an even number of voting i.e. _Raft_ nodes is often an inefficient setup, providing little practical value. Consider, for instance, a comparison between two clusters: one containing three nodes and another containing four nodes. The collective agreement - or consensus - within these clusters is crucial for successfully executing a database write operation. A majority, or _Quorum_, of nodes within the cluster must concur on a given change for this operation to be successful.
-
-The definition of this "majority" is `(N/2)+1`, where `N` is the cluster's node count. So, for a 3-node cluster, the majority is 2, and for a 4-node cluster, it stands at 3. As such, a 3-node cluster can withstand the failure of one node without losing its ability to reach a consensus. However, **a 4-node cluster offers the same tolerance level**, meaning it too can only endure the loss of a single node without impeding its functionality.
-
-This illustrates why running a 4-node cluster offers no distinct advantage over operating a 3-node cluster - both setups possess equivalent fault tolerance. Only a 5-node cluster improves fault tolerance, capable of handling the failure of two nodes. The same logic applies to 5-node vs. 6-node clusters, and so on.
-
-### The relationship between cluster sizes and Quorum
-The term _Quorum_ refers to the minimum number of nodes required to reach a consensus. It's calculated as `(N/2)+1`, where `N` indicates the cluster size. _Fault tolerance_ describes the maximum number of nodes that can fail without impairing the cluster's write functionality.
-
-Below is a table summarizing the quorum and fault tolerance for different cluster sizes:
-| Cluster size (N) | Quorum | Fault tolerance |
-| :---             | :----: | :----:          |
-| 1                | 1      | 0 nodes         |
-| 2                | 2      | 0 nodes         |
-| 3                | 2      | 1 node          |
-| 4                | 3      | 1 node          |
-| 5                | 3      | 2 nodes         |
+It is possible to run larger clusters if you just need nodes [from which you only need to read](/docs/clustering/read-only-nodes/). When it comes to the Raft protocol, these nodes do not count towards `N`, since they do not [vote](https://raft.github.io/).
 
 ## Creating a cluster
 _This section describes manually creating a cluster. If you wish rqlite nodes to automatically find other, and form a cluster, check out [auto-clustering](/docs/clustering/automatic-clustering/)._
@@ -48,7 +29,7 @@ $ rqlited -node-id 1 -http-addr host1:4001 -raft-addr host1:4002 ~/node
 ```
 _It's called the "Raft" address because that will be the port the node will use for communications related to the Raft distributed consensus protocol._
 
-With this command a single node is started, listening for client requests on port 4001 and listening on port 4002 for intra-cluster communication and cluster-join requests from other nodes. Note that the addresses passed to `-http-addr` and `-raft-addr` must be reachable from other nodes so that nodes can find each other over the network -- these addresses will be broadcast to other nodes during the _Join_ operation. If a node needs to bind to one address, but advertise a different address to other nodes, you must also set `-http-adv-addr` and `-raft-adv-addr`.
+With this command a single node is started, listening for client requests on port 4001 and listening on port 4002 for intra-cluster communication requests from other nodes. Note that the addresses passed to `-http-addr` and `-raft-addr` must be reachable from other nodes so that nodes can find each other over the network -- these addresses will be broadcast to other nodes during the _Join_ operation. If a node needs to bind to one address, but advertise a different address to other nodes, you must also set `-http-adv-addr` and `-raft-adv-addr`.
 
 `-node-id` can be any string, as long as it's unique for the cluster. It also shouldn't change, once chosen for this node. The network addresses can change however. This node stores its state at `~/node`.
 
@@ -59,7 +40,7 @@ $ rqlited -node-id 2 -http-addr host2:4001 -raft-addr host2:4002 -join http://ho
 ```
 _If a node receives a join request, and that node is not actually the leader of the cluster, the receiving node will automatically redirect the requesting node to the Leader node. As a result a node can actually join a cluster by contacting any node in the cluster. You can also specify multiple join addresses, and the node will try each address until joining is successful._
 
-Once executed you now have a cluster of two nodes. Of course, for fault-tolerance you need a 3-node cluster, so launch a third node like so on _host3_:
+Once executed you now have a cluster of two nodes. But for fault-tolerance you actually need a 3-node cluster, so launch a third node like so on _host3_:
 ```bash
 # Run this on host 3:
 $ rqlited -node-id 3 -http-addr host3:4001 -raft-addr host3:4002 -join http://host1:4001 ~/node
@@ -165,4 +146,29 @@ Below is an example, of bringing a 3-node cluster back online.
 Next simply create entries for all the nodes you plan to bring up (in the example above that's 3 nodes). You must confirm that nodes you don't include here have indeed failed and will not later rejoin the cluster. Ensure that this file is the same across all remaining rqlite nodes. At this point, you can restart your rqlite cluster. In the example above, this means you'd start 3 nodes.
 
 Once recovery is completed, the `peers.json` file is renamed to `peers.info`. `peers.info` will not trigger further recoveries, and simply acts as a record for future reference. It may be deleted at anytime.
+
+## Clusters with an even-number of nodes
+Running clusters with an even number of voting i.e. _Raft_ nodes is often an inefficient setup, providing little practical value. Consider, for instance, a comparison between two clusters: one containing three nodes and another containing four nodes. The collective agreement - or consensus - within these clusters is crucial for successfully executing a database write operation. A majority, or _Quorum_, of nodes within the cluster must concur on a given change for this operation to be successful.
+
+The definition of this "majority" is `(N/2)+1`, where `N` is the cluster's node count. So, for a 3-node cluster, the majority is 2, and for a 4-node cluster, it stands at 3. As such, a 3-node cluster can withstand the failure of one node without losing its ability to reach a consensus. However, **a 4-node cluster offers the same tolerance level**, meaning it too can only endure the loss of a single node without impeding its functionality.
+
+This illustrates why running a 4-node cluster offers no distinct advantage over operating a 3-node cluster - both setups possess equivalent fault tolerance. Only a 5-node cluster improves fault tolerance, capable of handling the failure of two nodes. The same logic applies to 5-node vs. 6-node clusters, and so on.
+
+### The relationship between cluster sizes and Quorum
+The term _Quorum_ refers to the minimum number of nodes required to reach a consensus. It's calculated as `(N/2)+1`, where `N` indicates the cluster size. _Fault tolerance_ describes the maximum number of nodes that can fail without impairing the cluster's write functionality.
+
+Below is a table summarizing the quorum and fault tolerance for different cluster sizes:
+| Cluster size (N) | Quorum | Fault tolerance |
+| :---             | :----: | :----:          |
+| 1                | 1      | 0 nodes         |
+| 2                | 2      | 0 nodes         |
+| 3                | 2      | 1 node          |
+| 4                | 3      | 1 node          |
+| 5                | 3      | 2 nodes         |
+
+## Further reading
+_Because rqlite uses the same Raft implementation as Hashicorp Consul, much of its excellent documentation also applies to rqlite._
+
+- [Consul and the Raft Consensus Protocol](https://developer.hashicorp.com/consul/docs/architecture/consensus)
+- [Consul Reference Architecture](https://developer.hashicorp.com/consul/tutorials/production-deploy/reference-architecture)
 
