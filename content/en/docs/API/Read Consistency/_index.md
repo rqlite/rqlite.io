@@ -61,7 +61,7 @@ curl -G 'localhost:4001/db/query?level=none' --data-urlencode 'q=SELECT * FROM f
 # Query the node, telling it simply to read the SQLite database directly.
 # The read request will be successful only if the node last heard from the
 # Leader no more than 1 second ago. This provides very fast reads, but sets
-# an upper bound of 1 seconod on how old the returned data is.
+# an upper bound of 1 second on how old the returned data is.
 curl -G 'localhost:4001/db/query?level=none&freshness=1s' --data-urlencode 'q=SELECT * FROM foo'
 
 # The read request will be served by the node if it believes it is the Leader,
