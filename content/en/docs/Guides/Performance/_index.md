@@ -53,17 +53,17 @@ mount -t tmpfs -o size=512m tmpfs /mnt/ramdisk
 **This comes with risks, however**. The behavior of rqlite when a node fails, but committed entries the Raft log have not actually been permanently persisted, **is not defined**. But if your policy is to completely deprovision your rqlite node, or rqlite cluster, in the event of any node failure, this option may be of interest to you. Perhaps you always rebuild your rqlite cluster from a different source of data, so can recover an rqlite cluster regardless of its state. Testing shows that using rqlite with a memory-only file system can result in 100x improvement in performance.
 
 ### Improving read-write concurrency
-SQLite can offer better concurrent read and write support when using an on-disk database, compared to in-memory databases. But as explained above, using an on-disk SQLite database can significant impact performance. But since the database-update performance will be so much better with an in-memory database, improving read-write concurrency may not be needed in practise.
+SQLite can offer better concurrent read and write support when using an on-disk database, compared to in-memory databases. But as explained above, using an on-disk SQLite database may impact write performance. But since the database-update performance will be so much better with an in-memory database, improving read-write concurrency may not be needed in practise.
 
 However, if you enable an on-disk SQLite database, but then place the SQLite database on a memory-backed file system, you can have the best of both worlds. You can dedicate your disk to the Raft log, but still get better read-write concurrency with SQLite. You can specify the SQLite database file path via the `-on-disk-path` flag.
 
-An alternative approach would be to place the SQLite on-disk database on a disk different than that storing the Raft log, but this is unlikely to be as performant as an in-memory file system for the SQLite database.
+An alternative approach would be to place the SQLite on-disk database on a disk different than that storing the Raft log, but this may still not be as performant as an in-memory file system for the SQLite database.
 
 ## In-memory Database Limits
 
 > **rqlite was not designed for very large datasets**: While there are no hardcoded limits in the rqlite software, the nature of Raft means that the entire SQLite database is periodically copied to disk, and occasionally copied, in full, between nodes. Your hardware may not be able to process those large data operations successfully. You should test your system carefully when working with multi-GB databases.
 
-In-memory SQLite databases (the default configuration) are currently limited to 2GiB in size. One way to get around this limit is to use an on-disk database, by passing `-on-disk` to `rqlited`. But this could impact write-performance significantly, since disk is slower than memory. If you switch to on-disk SQLite, and find write-performance suffers, there are a couple of ways to address this. One option is to place the Raft log on one disk, and the SQLite database on a different disk.
+In-memory SQLite databases (the default configuration) are currently limited to 2GiB in size. One way to get around this limit is to use an on-disk database, by passing `-on-disk` to `rqlited`. But this could impact write-performance, since disk is slower than memory. However, when running in on-disk mode, rqlite uses SQLite WAL mode, which does use the disk efficiently. If you switch to on-disk SQLite, and find write-performance suffers, there are a couple of ways to address this. One option is to place the Raft log on one disk, and the SQLite database on a different disk.
 
 Another option is to run rqlite in on-disk mode but place the SQLite database file on a memory-backed filesystem. That way you can use larger databases, and still have performance similar to running with an in-memory SQLite database.
 
