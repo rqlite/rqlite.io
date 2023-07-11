@@ -150,7 +150,7 @@ To initiate an automatic restore from a backup in an [S3 bucket](https://aws.ama
 	"version": 1,
 	"type": "s3",
 	"timeout": "60s",
-        "continue_on_failure": false,
+	"continue_on_failure": false,
 	"sub": {
 		"access_key_id": "$ACCESS_KEY_ID",
 		"secret_access_key": "$SECRET_ACCESS_KEY_ID",
