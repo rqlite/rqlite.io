@@ -161,4 +161,4 @@ To initiate an automatic restore from a backup in an [S3 bucket](https://aws.ama
 	}
 }
 ```
-If you wish an rqlite node to continue starting up even if it fails to perform the restore operation, set `continue_on_failure: true`.
+By default rqlite will exit with an error if it fails to download the backup file. If you wish an rqlite node to continue starting up even if the download fails, set `continue_on_failure: true`.
