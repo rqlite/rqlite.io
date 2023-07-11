@@ -150,6 +150,7 @@ To initiate an automatic restore from a backup in an [S3 bucket](https://aws.ama
 	"version": 1,
 	"type": "s3",
 	"timeout": "60s",
+        "continue_on_failure": false,
 	"sub": {
 		"access_key_id": "$ACCESS_KEY_ID",
 		"secret_access_key": "$SECRET_ACCESS_KEY_ID",
@@ -160,5 +161,4 @@ To initiate an automatic restore from a backup in an [S3 bucket](https://aws.ama
 	}
 }
 ```
-### Other configuration options
-If you wish an rqlite node to continue starting up even if it fails to perform a requested restore operation, add `continue_on_failure: true` to the top-level section of the JSON configuration file.
+If you wish an rqlite node to continue starting up even if it fails to perform the restore operation, set `continue_on_failure: true`.
