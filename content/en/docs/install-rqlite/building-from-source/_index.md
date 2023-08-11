@@ -46,12 +46,11 @@ go install google.golang.org/protobuf/cmd/protoc-gen-go
 export GOBIN=$GOPATH/bin
 export PATH=$PATH:$GOBIN
 export DEST_DIR=$GOPATH/src
-
-export SRC_DIR=$GOPATH/src/github.com/rqlite/rqlite/command
-protoc -I=$SRC_DIR --proto_path=$GOPATH/src/github.com/rqlite/rqlite --go_out=$DEST_DIR $SRC_DIR/command.proto
-
-export SRC_DIR=$GOPATH/src/github.com/rqlite/rqlite/cluster
-protoc -I=$SRC_DIR --proto_path=$GOPATH/src/github.com/rqlite/rqlite --go_out=$DEST_DIR $SRC_DIR/message.proto
+export SRC_DIR=$GOPATH/src/github.com/rqlite/rqlite
+export PROTO_PATH=$GOPATH/src/github.com/rqlite/rqlite
+for f in command/command.proto cluster/message.proto; do
+  protoc -I=$SRC_DIR --proto_path=$PROTO_PATH --go_out=$DEST_DIR $SRC_DIR/$f
+done
 ```
 
 ### Speeding up the build process
