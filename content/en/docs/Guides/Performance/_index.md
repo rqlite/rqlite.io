@@ -40,7 +40,7 @@ The more SQLite statements you can include in a single request to a rqlite node,
 By using the [bulk API](/docs/api/bulk-api/), transactions, or both, throughput will increase significantly, often by 2 orders of magnitude. This speed-up is due to the way Raft and SQLite work. So for high throughput, execute as many operations as possible within a single request, transaction, or both.
 
 ### Queued Writes
-If you can tolerate a small risk of some data loss in the event that a node crashes, you could consider using [Queued Writes](/docs/api/queued-writes/). Using Queued Writes can easily give you orders of magnitude improvement in perfomance, without any need to change client code.
+If you can tolerate a small risk of some data loss in the event that a node crashes, you could consider using [Queued Writes](/docs/api/queued-writes/). Using Queued Writes can easily give you orders of magnitude improvement in performance, without any need to change client code.
 
 ### Use more powerful hardware
 Obviously running rqlite on better disks, better networks, or both, will improve performance.
