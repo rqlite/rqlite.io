@@ -68,7 +68,7 @@ It is possible to change a node's Raft address between restarts. Simply pass the
 
 **Note that this process only works if your cluster has, in addition to the node with the changing address, a quorum (at least) of nodes up running**. If your cluster does not meet this requirement, see the section titled _Dealing with failure_.
 
-> :warning: One result of this is that you can't change the network identifier of all nodes in a cluster **at the same time**. An example of when this might happens is if a node always comes up with a new network identifier at start-up, and you decide to restart your entire cluster at once. Since no node can contact any other node -- because all the network identifiers have changed -- then Raft can't operate, and Raft consensus is required when changing any node's network address. Another way of syaing this is that you must only change a minority of node addresses at once.
+> One result of this is that you can't change the network identifier of all nodes in a cluster **at the same time**. An example of when this might happens is if a node always comes up with a new network identifier at start-up, and you decide to restart your entire cluster at once. Since no node can contact any other node -- because all the network identifiers have changed -- then Raft can't operate, and Raft consensus is required when changing any node's network address. Another way of syaing this is that you must only change a minority of node addresses at once.
 
 ## Removing or replacing a node
 If a node fails completely and is not coming back, or if you shut down a node because you wish to deprovision it, its record should also be removed from the cluster (a node can be configured to do this automatically on shutdown if you prefer -- see later). To remove the record of a node from a cluster, execute the following command at the rqlite CLI:
@@ -87,7 +87,7 @@ where `host` is any node in the cluster. If you do not remove a failed node the 
 If you cannot bring sufficient nodes back online such that the cluster can elect a leader, follow the instructions in the section titled _Dealing with failure_.
 
 ### Removing a node automatically on shutdown
-> :warning: This option is **not supported** on clusters which enable Basic Auth on the HTTP API.
+> This option is **not supported** on clusters which enable Basic Auth on the HTTP API.
 
 Sometimes it makes sense for a node to automatically remove itself when it gracefully shuts down. If you want this behaviour, pass `-raft-cluster-remove-shutdown=true` to rqlite at launch time. If the node is shut down **gracefully** (it receives `SIGTERM` for example) it will first contact the Leader and remove itself from the cluster, and then the rqlite process will terminate. As a result the Leader will not continue to contact the node after it shuts down. This removal operation also reduces the cluster quorum size.
 
