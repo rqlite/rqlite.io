@@ -17,7 +17,7 @@ Even though serving queries does not require Raft consensus (because the databas
 This is why rqlite offers selectable read consistency levels of _weak_ (the default), _strong_, and _none_. Each is explained below, and examples of each are shown at the end of this page.
 
 ## Weak
->_Weak_ consistency is used if you don't specify any level.
+>_Weak_ consistency is used if you don't specify any level, or if an unrecognized level is specified.
 
 _Weak_ instructs the node receiving the read request to check that it is the Leader, before querying the local SQLite file. Checking Leader state only involves checking state local to the node, so is very fast. There is, however, a very small window of time (milliseconds by default) during which the node may return stale data if a Leader-election is in progress. This is because after the local Leader check, but before the local SQLite database is read, another node could be elected Leader and make changes to the cluster. As result the node may not be quite up-to-date with the rest of cluster.
 
