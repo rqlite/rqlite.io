@@ -48,7 +48,7 @@ export PATH=$PATH:$GOBIN
 export DEST_DIR=$GOPATH/src
 export SRC_DIR=$GOPATH/src/github.com/rqlite/rqlite
 export PROTO_PATH=$GOPATH/src/github.com/rqlite/rqlite
-for f in command/command.proto cluster/message.proto snapshot/stream_header.proto; do
+for f in command/command.proto cluster/message.proto; do
   protoc -I=$SRC_DIR --proto_path=$PROTO_PATH --go_out=$DEST_DIR $SRC_DIR/$f
 done
 ```
