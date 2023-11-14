@@ -18,6 +18,10 @@ There are client libraries available for a variety of programming languages, inc
 - https://github.com/rqlite/pyrqlite
 - https://github.com/rqlite/sqlalchemy-rqlite
 
+### Rust
+- https://docs.rs/rqlite/latest/rqlite
+- https://docs.rs/rqlite_client/
+
 ### Javascript
 - https://github.com/rqlite/rqlite-js
 - https://gitlab.com/jdesodt/seneca-rqlite-store
