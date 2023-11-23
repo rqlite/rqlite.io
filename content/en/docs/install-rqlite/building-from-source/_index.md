@@ -56,7 +56,7 @@ done
 ### Speeding up the build process
 It can be rather slow to rebuild rqlite, due to the repeated compilation of the SQLite source code. You can compile and install the SQLite libary once, so subsequent builds are much faster. To do so, execute the following commands:
 ```bash
-cd $GOPATH
+cd $GOPATH/src/github.com/rqlite/rqlite
 go install github.com/rqlite/go-sqlite3
 ```
 
