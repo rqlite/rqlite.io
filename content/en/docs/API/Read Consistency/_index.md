@@ -55,7 +55,7 @@ curl -G 'localhost:4001/db/query' --data-urlencode 'q=SELECT * FROM foo'
 
 # Query the node, telling it simply to read the SQLite database directly.
 # No guarantees on how old the data is. In fact, the node may not even be
-# connected to the cluster. Provides the shortest possible query response time.
+# connected to the cluster. Provides the fastest possible query response.
 curl -G 'localhost:4001/db/query?level=none' --data-urlencode 'q=SELECT * FROM foo'
 
 # Query the node, telling it simply to read the SQLite database directly.
