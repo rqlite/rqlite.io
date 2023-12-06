@@ -43,6 +43,9 @@ runtime:
 ```bash
 curl localhost:4001/nodes?pretty
 
+# Request an improved JSON format, which is easier for parsing.
+curl localhost:4001/nodes?pretty&ver=2
+
 # Also check non-voting nodes.
 curl localhost:4001/nodes?nonvoters&pretty
 

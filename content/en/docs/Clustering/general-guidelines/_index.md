@@ -31,19 +31,19 @@ _It's called the "Raft" address because that will be the port the node will use 
 
 With this command a single node is started, listening for client requests on port 4001 and listening on port 4002 for intra-cluster communication requests from other nodes. Note that the addresses passed to `-http-addr` and `-raft-addr` must be reachable from other nodes so that nodes can find each other over the network -- these addresses will be broadcast to other nodes during the _Join_ operation. If a node needs to bind to one address, but advertise a different address to other nodes, you must also set `-http-adv-addr` and `-raft-adv-addr`.
 
-`-node-id` can be any string, as long as it's unique for the cluster. It also shouldn't change, once chosen for this node. The network addresses can change however. This node stores its state at `~/node`.
+`-node-id` can be any string, as long as it's unique for the cluster. It also shouldn't change, once chosen for this node. The network addresses can change however. This node stores its state in `~/node`.
 
 To join a second node to this leader, execute the following command on _host2_:
 ```bash
 # Run this on host 2:
-$ rqlited -node-id 2 -http-addr host2:4001 -raft-addr host2:4002 -join http://host1:4001 ~/node
+$ rqlited -node-id 2 -http-addr host2:4001 -raft-addr host2:4002 -join host1:4002 ~/node
 ```
 _If a node receives a join request, and that node is not actually the leader of the cluster, the receiving node will automatically redirect the requesting node to the Leader node. As a result a node can actually join a cluster by contacting any node in the cluster. You can also specify multiple join addresses, and the node will try each address until joining is successful._
 
 Once executed you now have a cluster of two nodes. But for fault-tolerance you actually need a 3-node cluster, so launch a third node like so on _host3_:
 ```bash
 # Run this on host 3:
-$ rqlited -node-id 3 -http-addr host3:4001 -raft-addr host3:4002 -join http://host1:4001 ~/node
+$ rqlited -node-id 3 -http-addr host3:4001 -raft-addr host3:4002 -join host1:4002 ~/node
 ```
 _When simply restarting a node, there is no further need to pass `-join`. However, if a node does attempt to join a cluster it is already a member of, and neither its node ID or Raft network address has changed, then the cluster Leader will ignore the join request as there is nothing to do -- the joining node is already a fully-configured member of the cluster. However, if either the node ID or Raft network address of the joining node has changed, the cluster Leader will first automatically remove the joining node from the cluster configuration before processing the join request. For most applications this is an implementation detail which can be safely ignored, and cluster-joins are basically idempotent._
 
@@ -87,8 +87,6 @@ where `host` is any node in the cluster. If you do not remove a failed node the 
 If you cannot bring sufficient nodes back online such that the cluster can elect a leader, follow the instructions in the section titled _Dealing with failure_.
 
 ### Removing a node automatically on shutdown
-> This option is **not supported** on clusters which enable Basic Auth on the HTTP API.
-
 Sometimes it makes sense for a node to automatically remove itself when it gracefully shuts down. If you want this behaviour, pass `-raft-cluster-remove-shutdown=true` to rqlite at launch time. If the node is shut down **gracefully** (it receives `SIGTERM` for example) it will first contact the Leader and remove itself from the cluster, and then the rqlite process will terminate. As a result the Leader will not continue to contact the node after it shuts down. This removal operation also reduces the cluster quorum size.
 
 ### Automatically removing failed nodes

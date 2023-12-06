@@ -6,6 +6,7 @@ weight: 40
 ---
 ## Backing up rqlite
 rqlite supports hot backing up a node. You can retrieve a copy of the underlying SQLite database via the [rqlite shell](/docs/cli/), or by directly access the API. Retrieving a full copy of the SQLite database is the recommended way to backup a rqlite system.
+> Backing up rqlite involves making a brand new copy of the SQLite database on disk. Make sure you have enough free disk space or the backup operation will fail.
 
 To backup to a file using the rqlite shell issue the following command:
 ```
@@ -40,10 +41,19 @@ The isolation offered by binary backups is `READ COMMITTED`. This means that any
 
 See the [SQLite documentation](https://www.sqlite.org/isolation.html) for more details.
 
+### Requesting a VACUUMed copy
+You can request that the backup copy of the SQLite database, served by the API, first be [vacuumed](https://www.sqlite.org/lang_vacuum.html). This can be done via the API like so:
+```bash
+curl -s -XGET localhost:4001/db/backup?vacuum -o bak.sql
+```
+Be sure to study the SQLite VACUUM documentation before enabling this feature, as it may not be suitable for your purposes.
+
 ## Automatic Backups
 rqlite supports automatically, and periodically, backing up its data to Cloud-hosted storage. To save network traffic rqlite uploads a compressed snapshot of its SQLite database, and will not upload a backup if the SQLite database hasn't changed since the last upload took place. Only the cluster Leader performs the upload.
 
 Backups are controlled via a special configuration file, which is supplied to `rqlited` using the `-auto-backup` flag. In the event that you lose your rqlite cluster you can use the backup in the Cloud to [recover your rqlite system](https://rqlite.io/docs/guides/backup/#restoring-from-sqlite).
+
+> Automatically backing up rqlite involves making a brand new copy of the SQLite database on disk. Make sure you have enough free disk space or the backup operation will fail.
 
 ### Amazon S3
 To configure automatic backups to an [S3 bucket](https://aws.amazon.com/s3/), create a file with the following (example) contents and supply the file path to rqlite:
@@ -52,6 +62,7 @@ To configure automatic backups to an [S3 bucket](https://aws.amazon.com/s3/), cr
 	"version": 1,
 	"type": "s3",
 	"interval": "5m",
+	"vacuum": false,
 	"sub": {
 		"access_key_id": "$ACCESS_KEY_ID",
 		"secret_access_key": "$SECRET_ACCESS_KEY_ID",
@@ -62,7 +73,7 @@ To configure automatic backups to an [S3 bucket](https://aws.amazon.com/s3/), cr
 	}
 }
 ```
-`interval` is configurable and must be set to a [Go duration string](https://pkg.go.dev/maze.io/x/duration#ParseDuration). In the example above, rqlite will check every 5 minutes if an upload is required, and do so if needed. You must also supply your Access Key, Secret Key, S3 bucket name, and the bucket's region, but setting the Endpoint is optional. The backup will be stored in the bucket at `path`, which should also be set to your preferred value. Leave all other fields as is.
+`interval` is configurable and must be set to a [Go duration string](https://pkg.go.dev/maze.io/x/duration#ParseDuration), `vacuum` is optional and, if set to `true`, instructs rqlite to first [`VACUUM`](https://www.sqlite.org/lang_vacuum.html) the backup copy before it uploads it. In the example above, rqlite will check every 5 minutes if an upload is required, and do so if needed. You must also supply your Access Key, Secret Key, S3 bucket name, and the bucket's region, but setting the Endpoint is optional. The backup will be stored in the bucket at `path`, which should also be set to your preferred value. Leave all other fields as is.
 
 ### Other configuration options
 If you wish to disable compression of the backup add `no_compress: true` to the top-level section of the configuration file. The configuration file also supports variable expansion -- this means any string starting with `$` will be replaced with that [value from Environment variables](https://pkg.go.dev/os#ExpandEnv) when it is loaded by rqlite.

@@ -13,27 +13,27 @@ For simplicity, let's assume you want to run a 3-node rqlite cluster. The networ
 Node 1:
 ```bash
 rqlited -node-id 1 -http-addr=$HOST1:4001 -raft-addr=$HOST1:4002 \
--bootstrap-expect 3 -join http://$HOST1:4001,http://$HOST2:4001,http://$HOST3:4001 data
+-bootstrap-expect 3 -join $HOST1:4002,$HOST2:4002,$HOST3:4002 data
 ```
 Node 2:
 ```bash
 rqlited -node-id 2 -http-addr=$HOST2:4001 -raft-addr=$HOST2:4002 \
--bootstrap-expect 3 -join http://$HOST1:4001,http://$HOST2:4001,http://$HOST3:4001 data
+-bootstrap-expect 3 -join $HOST1:4002,$HOST2:4002,$HOST3:4002 data data
 ```
 Node 3:
 ```bash
 rqlited -node-id 3 -http-addr=$HOST3:4001 -raft-addr=$HOST3:4002 \
--bootstrap-expect 3 -join http://$HOST1:4001,http://$HOST2:4001,http://$HOST3:4001 data
+-bootstrap-expect 3 -join $HOST1:4002,$HOST2:4002,$HOST3:4002 data data
 ```
 
-`-bootstrap-expect` should be set to the number of nodes that must be available before the bootstrapping process will commence, in this case 3. You also set `-join` to the HTTP URL of all 3 nodes in the cluster. **It's also required that each launch command has the same values for `-bootstrap-expect` and `-join`.**
+`-bootstrap-expect` should be set to the number of nodes that must be available before the bootstrapping process will commence, in this case 3. You also set `-join` to the Radr addresses of all 3 nodes in the cluster. **It's also required that each launch command has the same values for `-bootstrap-expect` and `-join`.**
 
 After the cluster has formed, you can launch more nodes with the same options. A node will always attempt to first perform a normal cluster-join using the given join addresses, before trying the bootstrap approach.
 
 ### Docker
 With Docker you can launch every node identically:
 ```bash
-docker run rqlite/rqlite -bootstrap-expect 3 -join http://$HOST1:4001,http://$HOST2:4001,http://$HOST3:4001
+docker run rqlite/rqlite -bootstrap-expect 3 -join $HOST1:4002,$HOST2:4002,$HOST3:4002
 ```
 where `$HOST[1-3]` are the expected network addresses of the containers.
 
@@ -152,6 +152,6 @@ If you wish a single Consul or etcd key-value system to support multiple rqlite 
 ## Design
 When using _Automatic Bootstrapping_, each node notifies all other nodes of its existence. The first node to have been contacted by enough other nodes (set by `-boostrap-expect`) boostraps the cluster. Only one node can bootstrap a cluster, so any other node that attempts to do so later will fail, and instead become a _Follower_ in the new cluster.
 
-When using either Consul or etcd for automatic clustering, rqlite uses the key-value store of those systems. In each case only one node will succeed in atomically setting its HTTP URL in the key-value store. This node will then declare itself Leader, and other nodes will then join with it. To prevent multiple nodes updating the Leader key at once, nodes uses a check-and-set operation, only updating the Leader key if its value has not changed since it was last read by the node. See [this blog post](https://www.philipotoole.com/rqlite-7-0-designing-node-discovery-and-automatic-clustering/) for more details on the design.
+When using either Consul or etcd for automatic clustering, rqlite uses the key-value store of those systems. In each case only one node will succeed in atomically setting its HTTP URL and Raft address in the key-value store. This node will then declare itself Leader, and other nodes will then join with it. To prevent multiple nodes updating the Leader key at once, nodes uses a check-and-set operation, only updating the Leader key if its value has not changed since it was last read by the node. See [this blog post](https://www.philipotoole.com/rqlite-7-0-designing-node-discovery-and-automatic-clustering/) for more details on the design.
 
 For DNS-based discovery, the rqlite nodes simply resolve the hostname, and use the returned network addresses, once the number of returned addresses is at least as great as the `-bootstrap-expect` value. Boostrapping then proceeds as though the network addresses were passed at the command line via `-join`.
