@@ -18,7 +18,7 @@ There have also been a series of presentations to various groups -- both industr
 - [Presentation](https://docs.google.com/presentation/d/1lSNrZJUbAGD-ZsfD8B6_VPLVjq5zb7SlJMzDblq2yzU/edit?usp=sharing) given to the University of Pittsburgh, April 2018.
 - [Presentation]( https://www.philipotoole.com/2021-rqlite-cmu-tech-talk) given to the [Carnegie Mellon Database Group](https://db.cs.cmu.edu/), [September 2021](https://db.cs.cmu.edu/events/vaccination-2021-rqlite-the-distributed-database-built-on-raft-and-sqlite-philip-otoole/). There is also a [video recording](https://www.youtube.com/watch?v=JLlIAWjvHxM) of the talk.
 - [Presentation](https://docs.google.com/presentation/d/1E0MpQbUA6JOP2GjA60CNN0ER8fia0TP6kdJ41U9Jdy4/edit#slide=id.p) given to Hacker Nights NYC, March 2022.
-- [_Build your own Distributed System using Go_](https://www.philipotoole.com/gophercon2023) given at GopherCon 2023. While not specifically about rqlite, it describes the key principles behind building a system such as rqlite.
+- [_Build your own Distributed System using Go_](https://www.philipotoole.com/gophercon2023) given at [GopherCon](https://www.gophercon.com/) 2023. While not specifically about rqlite, it explains the key principles behind building a system such as rqlite.
 
 ## Blog posts
 
@@ -45,7 +45,7 @@ You can find many other details on rqlite from the [rqlite blog](https://www.phi
 The Raft layer always creates a file -- it creates the _Raft log_. This log stores the set of committed SQLite commands, in the order which they were executed. This log is authoritative record of every change that has happened to the system. It may also contain some read-only queries as entries, depending on read-consistency choices. Since every node in an rqlite cluster applies the entries log in exactly the same way, this guarantees that the SQLite database is the same on every node.
 
 ### SQLite
-By default, the SQLite layer doesn't create a file. Instead, it creates the database in memory. rqlite can create the SQLite database on disk, if so configured at start-time, by passing `-on-disk` to `rqlited` at startup. Regardless of whether rqlite creates a database entirely in memory, or on disk, the SQLite database is completely recreated everytime `rqlited` starts, using the information stored in the Raft log.
+SQLite runs in [WAL mode](https://www.sqlite.org/wal.html) and with [`SYNCHRONOUS=off`](https://www.sqlite.org/pragma.html#pragma_synchronous). In normal operation this configuration risks database corruption in the event of crash, but does provide substantially better write performance. However, since the SQLite database is completely recreated everytime `rqlited` starts, using the information stored in the Raft log, corruption is a non-issue.
 
 ## Log Compaction and Truncation
 rqlite automatically performs log compaction, so that disk usage due to the log remains bounded. After a configurable number of changes rqlite snapshots the SQLite database, and truncates the Raft log. This is a technical feature of the Raft consensus system, and most users of rqlite need not be concerned with this.
