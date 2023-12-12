@@ -249,9 +249,14 @@ The _Unified Endpoint_ supports transactions, Associative responses, [Read Consi
 
 ## PRAGMA Directives
 
-You can issue [`PRAGMA`](https://www.sqlite.org/pragma.html) directives to rqlite, and they will be passed to the underlying SQLite database. Certain `PRAGMA` directives, which alter the operation of the SQLite database, may not make sense in the context of rqlite (since rqlite does not given direct control over its connections to the SQLite database). Furthermore some `PRAGMA` directives may even break rqlite. 
+You can issue [`PRAGMA`](https://www.sqlite.org/pragma.html) directives to rqlite, and they will be passed to the underlying SQLite database. Certain `PRAGMA` directives, which alter the operation of the SQLite database, may not make sense in the context of rqlite (since rqlite does not given direct control over its connections to the SQLite database). `PRAGMA` directives which just return information about the SQLite database, without changing its operation, are always safe.
 
-`PRAGMA` directives which just return information about the SQLite database, without changing its operation, are always safe.
+Some `PRAGMA` directives will intefere with the proper operation of rqlite. They include:
+- `PRAGMA journal_mode` - rqlite requires the SQLite database to be in WAL mode at all times.
+- `PRAGMA wal_checkpoint` - rqlite requires exlusive control over the WAL. Don't checkpoint it.
+- `PRAGMA VACUUM` - the behaviour of rqlite is undefined when this command is issued.
+  
+If you have a question about a particular `PRAGMA` command, you should discuss it on the [rqlite Slack](https://rqlite.io/), or ask a question on [GitHub](https://github.com/rqlite/rqlite/).
 
 ### Issuing a `PRAGMA` directive
 The rqlite CLI supports issuing `PRAGMA` directives. For example:
