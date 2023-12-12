@@ -7,7 +7,7 @@ weight: 40
 rqlite can be compiled for a wide variety of operating systems and platforms.
 
 ## Building rqlite
-*Building rqlite requires Go 1.18 or later. [gvm](https://github.com/moovweb/gvm) is a great tool for installing and managing your versions of Go.*
+*Building rqlite requires Go 1.21 or later. [gvm](https://github.com/moovweb/gvm) is a great tool for installing and managing your versions of Go.*
 
 One goal of rqlite is to keep the build process as simple as possible, to aid development and debugging. Download, build, and run rqlite like so (tested on 64-bit Ubuntu 20.04, macOS, and Windows):
 
