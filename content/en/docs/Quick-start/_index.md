@@ -10,6 +10,12 @@ $ rqlited -node-id 1 node1
 ```
 Once launched rqlite will be listening on [http://localhost:4001](http://localhost:4001).
 
+### Docker
+`docker run rqlite/rqlite`
+
+### macOS
+`homebrew rqlite`
+
 ## Inserting records
 Let's insert some records using the [rqlite shell](/docs/cli), using standard SQLite commands. 
 ```
