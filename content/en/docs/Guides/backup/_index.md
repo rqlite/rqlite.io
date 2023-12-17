@@ -84,7 +84,7 @@ rqlite supports loading a node directly from SQLite data. This can be useful if 
 > rqlite does not support loading SQLite database files which are in `wal` mode. If your SQLite database is in `wal` mode, convert it (or a copy of it) to `delete` mode first by issuing the command `PRAGMA journal_mode=delete`.
 
 ### Booting with a SQLite Database
-_Booting_ is a specialized process that enables rapid initialization of a node from a SQLite database image. This method is designed for **high-efficiency data loading, particularly suited for disaster recovery or initializing a large database quickly**. Unlike the other restore processes, _Booting_  bypasses most of the [Raft consensus system](https://raft.github.io/), significantly reducing the load time. The only limiting factor is how fast your disks are, and loading multi-GB SQLite files is possible via _Booting_.
+_Booting_ is a specialized process that enables rapid initialization of a node from a SQLite database image. This method is designed for **high-efficiency data loading, particularly suited for disaster recovery or initializing a large database quickly**. Unlike the other restore processes described below, _Booting_  bypasses most of the [Raft consensus system](https://raft.github.io/), significantly reducing the load time. The only limiting factor is how fast your disks are, and loading multi-GB SQLite files is possible via _Booting_.
 
 There is an important limitation however -- _Booting_  is designed **exclusively for single-node setups**. After a successful _boot_ however, the node is ready for normal operation and can be scaled to a multi-node cluster as needed. Just [join new nodes](/docs/clustering/) to the booted node.
 
@@ -95,7 +95,7 @@ curl -XPOST 'http://localhost:4001/db/boot' \
      -H "Content-Type: application/octet-stream" \
      --data-binary @your_database_file.sqlite
 ```
-You can also use the rqlite [shell](/docs/cli/).
+You can also use the rqlite [shell](/docs/cli/):
 ```
 ~ $ rqlite
 Welcome to the rqlite CLI. Enter ".help" for usage hints.
@@ -110,7 +110,7 @@ node booted successfully
 ```
 
 ### Loading a node
-rqlite supports _loading_ a node from two sources. _Loading_ can take longer than _Booting_ but supports rqlite clusters.
+rqlite supports _loading_ a node from two sources. _Loading_ can take longer than _Booting_ but supports existing clusters.
 
 - **An actual SQLite database file**. This is usually a fast way to initialize a rqlite node from an existing SQLite database, though can very memory-intensive if the database file size is greater than a few 100 MBs. It is convenient however as _Load_ requests can be sent to any node in a cluster and the receiving node receiving will transparently forward the request to the Leader as needed, and return the response of the Leader to the client. If you would prefer to be explicitly redirected to the Leader, add `redirect` as a URL query parameter.
 
