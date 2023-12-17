@@ -64,7 +64,7 @@ rqlite supports authentication encryption of all inter-node traffic<sup>1</sup>.
 ```
 
 ## Basic Auth
-The HTTP API supports [Basic Auth](https://tools.ietf.org/html/rfc2617). Each rqlite node can be passed a JSON-formatted configuration file, which configures valid usernames and associated passwords for that node. The password string can be in cleartext or [bcrypt hashed](https://en.wikipedia.org/wiki/Bcrypt).
+The HTTP API supports [Basic Auth](https://tools.ietf.org/html/rfc2617). Each rqlite node can be passed a JSON-formatted configuration file, which configures valid usernames and associated passwords for that node.
 
 Since the configuration file only controls the node local to it, it's important to ensure the configuration is identical on each node for consistent behaviour.
 
@@ -94,7 +94,7 @@ An example configuration file is shown below.
   },
   {
     "username": "mary",
-    "password": "$2a$10$fKRHxrEuyDTP6tXIiDycr.nyC8Q7UMIfc31YMyXHDLgRDyhLK3VFS",
+    "password": "secret2",
     "perms": ["query", "backup", "join"]
   },
   {
