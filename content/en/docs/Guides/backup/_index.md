@@ -84,7 +84,7 @@ rqlite supports loading a node directly from SQLite data. This can be useful if 
 > rqlite does not support loading SQLite database files which are in `wal` mode. If your SQLite database is in `wal` mode, convert it (or a copy of it) to `delete` mode first by issuing the command `PRAGMA journal_mode=delete`.
 
 ### Booting with a SQLite Database
-_Booting_ is a specialized process that enables rapid initialization of a node from a SQLite database image. This method is designed for **high-efficiency data loading, particularly suited for disaster recovery or initializing a large database quickly**. Unlike the other restore processes described below, _Booting_  bypasses most of the [Raft consensus system](https://raft.github.io/), significantly reducing the load time. The only limiting factor is how fast your disks are, and loading multi-GB SQLite files is possible via _Booting_.
+_Booting_ is a specialized process that enables rapid initialization of a node from a SQLite database image. This method is designed for **high-efficiency data loading, particularly suited for disaster recovery or initializing a large database quickly** though you can use it with any size of database. Unlike the other restore processes described below, _Booting_  bypasses most of the [Raft consensus system](https://raft.github.io/), significantly reducing the load time. The only limiting factor is how fast your disks are, and loading multi-GB SQLite files is possible via _Booting_.
 
 There is an important limitation however -- _Booting_  is designed **exclusively for single-node setups**. After a successful _boot_ however, the node is ready for normal operation and can be scaled to a multi-node cluster as needed. Just [join new nodes](/docs/clustering/) to the booted node.
 
