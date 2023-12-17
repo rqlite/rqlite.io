@@ -63,10 +63,8 @@ rqlite supports authentication encryption of all inter-node traffic<sup>1</sup>.
       Mutual TLS is disabled by default.
 ```
 
-## Basic Auth
-The HTTP API supports [Basic Auth](https://tools.ietf.org/html/rfc2617). Each rqlite node can be passed a JSON-formatted configuration file, which configures valid usernames and associated passwords for that node.
-
-Since the configuration file only controls the node local to it, it's important to ensure the configuration is identical on each node for consistent behaviour.
+## Configuring Usernames and Passwords
+The HTTP API supports [Basic Auth](https://tools.ietf.org/html/rfc2617). Each rqlite node can be passed a JSON-formatted configuration file, which configures valid usernames and associated passwords for that node. In otherwords if you want every node in a cluster to accept identical credentials for a given user, you must ensure the configuration file for every node contains the same information for that user. But the configuration does not **need** to be identical under every node.
 
 ### User-level permissions
 rqlite, via the configuration file, also supports user-level permissions. Each user can be granted one or more of the following permissions:
@@ -126,7 +124,7 @@ curl -G 'https://mary:secret2@localhost:4001/db/query?pretty&timings' \
 ```
 
 ### Avoiding passwords at the command line
-The above example suffer from one shortcoming -- the password for user `bob` is entered at the command line. This is not ideal, as someone with access to the process table could learn the password. You can avoid this via the `-join-as` option, which will tell rqlite to retrieve the password from the configuration file. **Note that a cluster will use this same user if and when it issues an automatic _remove_ operation on shut down.**
+The above example suffer from one shortcoming -- the password for user `bob` is entered at the command line. This is not ideal, as someone with access to the process table could learn the password. You can avoid this via the `-join-as` option, which will tell rqlite to retrieve the password from the configuration file. **Note that a cluster will use this same user if and when it contacts the Leader to issue an automatic _remove_ operation on shut down.**
 ```bash
 rqlited -auth config.json -http-addr localhost:4003 -http-cert server.crt \
 -http-key key.pem -raft-addr :4004 -join https://localhost:4001 -join-as bob \
