@@ -46,7 +46,7 @@ You can request that the backup copy of the SQLite database, served by the API, 
 ```bash
 curl -s -XGET localhost:4001/db/backup?vacuum -o bak.sql
 ```
-Be sure to study the SQLite VACUUM documentation before enabling this feature, as it may not be suitable for your purposes.
+>Be sure to study the SQLite VACUUM documentation before enabling this feature, as it may alter the backup you receive in a way you do not want.
 
 ## Automatic Backups
 rqlite supports automatically, and periodically, backing up its data to Cloud-hosted storage. To save network traffic rqlite uploads a compressed snapshot of its SQLite database, and will not upload a backup if the SQLite database hasn't changed since the last upload took place. Only the cluster Leader performs the upload.
