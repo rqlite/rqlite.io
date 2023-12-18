@@ -110,9 +110,9 @@ node booted successfully
 ```
 
 ### Loading a node
-rqlite supports _loading_ a node from two sources. _Loading_ can take longer than _Booting_ but supports existing clusters.
+rqlite supports _loading_ a node from two sources. _Loading_ can take longer than _Booting_ but you can send a _Load_ request to a cluster. This can make it more convenient.
 
-- **An actual SQLite database file**. This is usually a fast way to initialize a rqlite node from an existing SQLite database, though can very memory-intensive if the database file size is greater than a few 100 MBs. It is convenient however as _Load_ requests can be sent to any node in a cluster and the receiving node receiving will transparently forward the request to the Leader as needed, and return the response of the Leader to the client. If you would prefer to be explicitly redirected to the Leader, add `redirect` as a URL query parameter.
+- **An actual SQLite database file**. This is usually a fast way to initialize a rqlite system from an existing SQLite database, though can very memory-intensive if the database file size is greater than a few 100 MBs. You can also send the request to any node in the cluster and that node will transparently forward the request to the Leader. If you would prefer to be explicitly redirected to the Leader, add `redirect` as a URL query parameter.
 
 - **SQLite dump in text format**. This is another convenient manner to initialize a system from an existing SQLite database (or other database). The behavior of this type of load operation is **undefined** if there is already data loaded into your rqlite cluster.  **Note that this operation may be quite slow.** If you find the restore times to be too long, you should first load the SQL statements directly into a SQLite database, and then _boot_ or _load_ your rqlite system using the resulting SQLite database file.
 
