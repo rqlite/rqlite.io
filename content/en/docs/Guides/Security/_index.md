@@ -66,6 +66,8 @@ rqlite supports encryption of all inter-node traffic. TLS is again used, and mut
 ## Configuring Usernames and Passwords
 The HTTP API supports [Basic Auth](https://tools.ietf.org/html/rfc2617). Each rqlite node can be passed a JSON-formatted configuration file, which configures valid usernames and associated passwords for **that** node. In otherwords if you want every node in a cluster to accept identical credentials for a given user, you must ensure the configuration file for every node contains the same information for that user. But the configuration does not **need** to be identical under every node.
 
+>The 7.x series supported bcrypted password hashes, as well as plaintext passwords. The use of bcrypted hashes was flawed in the 7.x series, and support has been removed for bcrypted hashes in the 8.x series. If you are running the 7.x series you should replace any use of bcrypted hashes with plaintext passwords (and secure the Credentials configuration).
+
 ### User-level permissions
 rqlite, via the configuration file, also supports user-level permissions. Each user can be granted one or more of the following permissions:
 - _all_: user can perform all operations on a node.
