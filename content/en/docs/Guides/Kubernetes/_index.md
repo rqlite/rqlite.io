@@ -53,3 +53,6 @@ However, from the point of view of the remaining rqlite node, the other two node
 - Enable `-raft-cluster-remove-shutdown=true` when launching your rqlite nodes. With this option enabled a node will self-remove itselt from the cluster before it shuts down (assuming a graceful stop). This is basically the same as the first option, but means you don't have to manually remove the node.
 
 Scaling up again after shrinking your cluster is also possible, simply issue your scale-up command again.
+
+## Secrets management
+Depending on your use of rqlite, you may have to pass some _Secrets_ to a pod. For example, you may want to enable [User-level Permissions](https://rqlite.io/docs/guides/security/). One approach is to use [Kubernetes Secrets](https://kubernetes.io/docs/concepts/configuration/secret/) to pass this information to rqlite. See this [GitHub issue](https://github.com/rqlite/rqlite/issues/1488#issuecomment-1859328325) for more information.
