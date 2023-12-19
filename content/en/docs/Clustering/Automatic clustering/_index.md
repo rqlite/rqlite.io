@@ -29,7 +29,7 @@ rqlited -node-id 3 -http-addr=$HOST3:4001 -raft-addr=$HOST3:4002 \
 `-bootstrap-expect` should be set to the number of nodes that must be available before the bootstrapping process will commence, in this case 3. You also set `-join` to the **Raft** addresses of all 3 nodes in the cluster. **It's also required that each launch command has the same values for `-bootstrap-expect` and `-join`.**
 
 After the cluster has formed, you can launch more nodes with the same options. A node will always attempt to first perform a normal cluster-join using the given join addresses, before trying the bootstrap approach.
->In the 7.x release (and earlier) rqlite nodes joined other nodes by contacting the HTTP address of other nodes. This was changed in the 8.x to be the Raft addresses of other nodes. If you are running 7.x (or earlier) you will need to modify the instructions above. 
+>In the 7.x release (and earlier) rqlite nodes joined other nodes by contacting the HTTP address of those other nodes. This was changed in the 8.x to be the Raft addresses of other nodes. If you are running 7.x (or earlier) you will need to modify the instructions above. 
 
 ### Docker
 With Docker you can launch every node identically:
