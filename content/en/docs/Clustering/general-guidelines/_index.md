@@ -74,13 +74,13 @@ It is possible to change a node's Raft address between restarts. Simply pass the
 If a node fails completely and is not coming back, or if you shut down a node because you wish to deprovision it, its record should also be removed from the cluster (a node can be configured to do this automatically on shutdown if you prefer -- see later). To remove the record of a node from a cluster, execute the following command at the rqlite CLI:
 
 ```
-127.0.0.1:4001> .remove <node raft ID>
+127.0.0.1:4001> .remove <node ID>
 ```
 
 You can also make a direct call to the HTTP API to remove a node:
 
 ```
-curl -XDELETE http://host:4001/remove -d '{"id": "<node raft ID>"}'
+curl -XDELETE http://host:4001/remove -d '{"id": "<node ID>"}'
 ```
 where `host` is any node in the cluster. If you do not remove a failed node the Leader will continually attempt to communicate with that node. **Note that the cluster must be functional -- there must still be an operational Leader -- for this removal to be successful**. If, after a node failure, a given cluster does not have a quorum of nodes still running, you must bring back the failed node. Any attempt to remove it will fail as there will be no Leader to respond to the node-removal request.
 
