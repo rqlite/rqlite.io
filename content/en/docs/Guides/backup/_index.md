@@ -93,14 +93,14 @@ To boot a rqlite node listening on localhost, use the `/boot` endpoint, as shown
 ```bash
 curl -XPOST 'http://localhost:4001/boot' \
      -H "Content-Type: application/octet-stream" \
-     --data-binary @your_database_file.sqlite
+     --data-binary @largedb.sqlite
 ```
 You can also use the rqlite [shell](/docs/cli/):
 ```
 ~ $ rqlite
 Welcome to the rqlite CLI. Enter ".help" for usage hints.
 127.0.0.1:4001> .boot largedb.sqlite
-node booted successfully
+Node booted successfully
 127.0.0.1:4001> SELECT * FROM foo
 +----+-------+
 | id | name  |
@@ -159,7 +159,7 @@ sqlite> .exit
 ~ $ rqlite
 Welcome to the rqlite CLI. Enter ".help" for usage hints.
 127.0.0.1:4001> .restore mydb.sqlite
-database restored successfully
+Database restored successfully
 127.0.0.1:4001> SELECT * FROM foo
 +----+-------+
 | id | name  |
