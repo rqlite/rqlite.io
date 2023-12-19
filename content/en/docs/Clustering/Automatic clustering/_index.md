@@ -70,9 +70,9 @@ Using [DNS SRV](https://www.cloudflare.com/learning/dns/dns-records/dns-srv-reco
 To launch a node using DNS SRV boostrap, execute the following (example) command:
 ```bash
 rqlited -node-id $ID  -http-addr=$HOST:4001 -raft-addr=$HOST:4002 \
--disco-mode=dns-srv -disco-config='{"name":"rqlite.local","service":"rqlite-svc"}' -bootstrap-expect 3 data
+-disco-mode=dns-srv -disco-config='{"name":"rqlite.local","service":"rqlite-raft"}' -bootstrap-expect 3 data
 ```
-You would launch other nodes similarly, setting `$ID` and `$HOST` as required for each node. You would launch other nodes similarly. In the example above rqlite will lookup SRV records at `_rqlite-svc._tcp.rqlite.local`
+You would launch other nodes similarly, setting `$ID` and `$HOST` as required for each node. You would launch other nodes similarly. In the example above rqlite will lookup SRV records at `_rqlite-raft._tcp.rqlite.local`
 __________________________
 
 ## Kubernetes
