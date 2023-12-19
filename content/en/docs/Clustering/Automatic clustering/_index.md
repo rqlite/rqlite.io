@@ -26,9 +26,10 @@ rqlited -node-id 3 -http-addr=$HOST3:4001 -raft-addr=$HOST3:4002 \
 -bootstrap-expect 3 -join $HOST1:4002,$HOST2:4002,$HOST3:4002 data data
 ```
 
-`-bootstrap-expect` should be set to the number of nodes that must be available before the bootstrapping process will commence, in this case 3. You also set `-join` to the Radr addresses of all 3 nodes in the cluster. **It's also required that each launch command has the same values for `-bootstrap-expect` and `-join`.**
+`-bootstrap-expect` should be set to the number of nodes that must be available before the bootstrapping process will commence, in this case 3. You also set `-join` to the **Raft** addresses of all 3 nodes in the cluster. **It's also required that each launch command has the same values for `-bootstrap-expect` and `-join`.**
 
 After the cluster has formed, you can launch more nodes with the same options. A node will always attempt to first perform a normal cluster-join using the given join addresses, before trying the bootstrap approach.
+>In the 7.x release (and earlier) rqlite nodes joined other nodes by contacting the HTTP address of other nodes. This was changed in the 8.x to be the Raft addresses of other nodes. If you are running 7.x (or earlier) you will need to modify the instructions above. 
 
 ### Docker
 With Docker you can launch every node identically:
@@ -61,10 +62,10 @@ Node 3:
 $ rqlited -node-id 3 -http-addr=$HOST3:4001 -raft-addr=$HOST3:4002 \
 -disco-mode=dns -disco-config='{"name":"rqlite.cluster"}' -bootstrap-expect 3 data
 ```
-DNS is then configured such that resolving `rqlite.cluster` would return 3 IP addresses -- the IP addresses for `$HOST1`, `$HOST2`, and `$HOST3`. Note that when using DNS each rqlite node will assume the other nodes are listening on the same ports as it is listening on (4001 and 4002 in the example above), but the node will try both `http` and `https` protocols when joining with other nodes.
+DNS is then configured such that resolving `rqlite.cluster` would return 3 IP addresses -- the IP addresses for `$HOST1`, `$HOST2`, and `$HOST3`. Note that when using DNS each rqlite node will assume the other nodes are listening on the same Raft port as it is listening on (port 4002 in the example above).
 
 ### DNS SRV
-Using [DNS SRV](https://www.cloudflare.com/learning/dns/dns-records/dns-srv-record/) gives you more control over the rqlite node address details returned by DNS, including the HTTP port each node is listening on. This means that unlike using just simple DNS records, each rqlite node can be listening on a different HTTP port. Simple DNS records are probably good enough for most situations, however.
+Using [DNS SRV](https://www.cloudflare.com/learning/dns/dns-records/dns-srv-record/) gives you more control over the rqlite node address details returned by DNS, including the Raft port each node is listening on (which is the port used for _Join_ operations). This means that unlike using just simple DNS records, each rqlite node can be listening on a different Raft port. Simple DNS records are probably good enough for most situations, however.
 
 To launch a node using DNS SRV boostrap, execute the following (example) command:
 ```bash
