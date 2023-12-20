@@ -113,25 +113,16 @@ Starting a node with HTTPS enabled, node-to-node encryption, mutual TLS disabled
 rqlited -auth config.json -http-cert server.crt -http-key key.pem \
 -node-cert node.crt -node-key node-key.pem ~/node.1
 ```
-Bringing up a second node on the same host, joining it to the first node. This allows you to block nodes from joining a cluster, unless those nodes supply a password.
+Bringing up a second node on the same host, joining it to the first node, using _bob's_ credentials.
 ```bash
 rqlited -auth config.json -http-addr localhost:4003 -http-cert server.crt \
--http-key key.pem -raft-addr :4004 -join https://bob:secret1@localhost:4001 \
+-http-key key.pem -raft-addr :4004 -join localhost:4002 -join-as bob
 -node-cert node.crt -node-key node-key.pem ~/node.2
 ```
 Querying the node, as user _mary_.
 ```bash
 curl -G 'https://mary:secret2@localhost:4001/db/query?pretty&timings' \
 --data-urlencode 'q=SELECT * FROM foo'
-```
-
-### Avoiding passwords at the command line
-The above example suffer from one shortcoming -- the password for user `bob` is entered at the command line. This is not ideal, as someone with access to the process table could learn the password. You can avoid this via the `-join-as` option, which will tell rqlite to retrieve the password from the configuration file. **Note that a cluster will use this same user if and when it contacts the Leader to issue an automatic _remove_ operation on shut down.**
-```bash
-rqlited -auth config.json -http-addr localhost:4003 -http-cert server.crt \
--http-key key.pem -raft-addr :4004 -join https://localhost:4001 -join-as bob \
--node-cert node.crt -node-key node-key.pem \
-~/node.2
 ```
 
 ## How can I generate certificates and keys?
