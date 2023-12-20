@@ -9,7 +9,7 @@ Prebuilt binaries are available for a variety of systems including **Linux**, **
 ## Platforms
 
 ### Docker
-`docker run -p4001:4001 rqlite/rqlite`
+`docker run -p 4001:4001 rqlite/rqlite`
 
 Check out the [rqlite Docker page](https://hub.docker.com/r/rqlite/rqlite/) for more details on running rqlite nodes via Docker.
 
