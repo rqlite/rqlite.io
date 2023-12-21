@@ -7,7 +7,7 @@ weight: 10
 
 While [manually creating a cluster](/docs/clustering/) is straightforward, it requires starting one node first with distinct options to establish it as the _Leader_. However, rqlite clusters can also be formed automatically, streamlining the process significantly. This approach allows you to start all your nodes simultaneously, after which they communicate and self-organize into a cluster.
 
-An important aspect to note is that all the autoclustering methods described below are **idempotent**. This means that if a node is configured to autocluster but is already part of an existing cluster (including being a single-node system), then the autoclustering flags are effectively disregarded. This feature greatly simplifies automation:
+An important aspect to note is that all the autoclustering methods described below are **idempotent**. This means that if a node is configured to autocluster but is already part of an existing cluster (including being a single-node system), then the autoclustering flags are effectively ignored. This feature greatly simplifies automation:
 
 - **Ease of Deployment**: There's no need for complex logic to determine whether a node requires autoclustering. You can uniformly start nodes with autoclustering flags enabled, regardless of their current cluster membership status.
 - **Consistent Configuration**: It ensures a consistent startup configuration for all nodes, whether they are joining an existing cluster or forming a new one.
