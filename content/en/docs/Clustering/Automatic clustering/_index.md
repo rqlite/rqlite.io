@@ -5,9 +5,18 @@ description: "Dynamically form rqlite clusters and automate your deployment of r
 weight: 10
 ---
 
-## Automatic Bootstrapping
-While [manually creating a cluster](/docs/clustering/) is simple, it does suffer one drawback -- you must start one node first and with different options, so it can become the Leader. _Automatic Bootstrapping_, in contrast, allows you to start all the nodes at once, and in a very similar manner. **You just need to know the network addresses of the nodes ahead of time**.
+While [manually creating a cluster](/docs/clustering/) is straightforward, it requires starting one node first with distinct options to establish it as the _Leader_. However, rqlite clusters can also be formed automatically, streamlining the process significantly. This approach allows you to start all your nodes simultaneously, after which they communicate and self-organize into a cluster.
 
+An important aspect to note is that all the autoclustering methods described below are **idempotent**. This means that if a node is configured to autocluster but is already part of an existing cluster (including being a single-node system), then the autoclustering flags are automatically disregarded. This feature greatly simplifies automation:
+
+- **Ease of Deployment**: There's no need for complex logic to determine whether a node requires autoclustering. You can uniformly start nodes with autoclustering flags enabled, regardless of their current cluster membership status.
+- **Consistent Configuration**: It ensures a consistent startup configuration for all nodes, whether they are joining an existing cluster or forming a new one.
+- **Flexibility in Scaling**: Adding new nodes to an existing cluster or expanding the cluster becomes more straightforward, as the same configuration applies.
+
+This approach ensures a more flexible and error-tolerant approach to cluster management, making it easier to deploy and scale your rqlite deployment.
+
+## Automatic Bootstrapping
+_Automatic Bootstrapping_, allows you to start all the nodes at once, and in a very similar manner. **You just need to know the network addresses of the nodes ahead of time**. 
 For simplicity, let's assume you want to run a 3-node rqlite cluster. The network addresses of the nodes are `$HOST1`, `$HOST2`, and `$HOST3`. To bootstrap the cluster, use the `-bootstrap-expect` option like so:
 
 Node 1:
