@@ -13,6 +13,7 @@ There are client libraries available for a variety of programming languages, inc
 
 ### Typescript
 - https://github.com/rqlite/knex-rqlite
+- https://github.com/Tjstretchalot/tsrqdb
 
 ### Python
 - https://github.com/rqlite/pyrqlite
