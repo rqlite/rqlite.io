@@ -11,6 +11,8 @@ The Bulk API allows multiple updates or queries to be executed in a single reque
 
 A bulk update is contained within a single Raft log entry, so round-trips between nodes are at a minimum. This should result in much better throughput, if it is possible to use this kind of update. You can also ask rqlite to do the batching for you automatically, through the use of [_Queued Writes_](/docs/api/queued-writes/). This relieves the client of doing any batching before transmitting a request to rqlite.
 
+>If you have a large amount of pre-existing data, it may be much faster to instead [_restore_ a rqlite system](https://rqlite.io/docs/guides/backup/#restoring-from-sqlite) with your data.
+
 ## Updates
 Bulk updates are supported. To execute multiple statements in one HTTP call, simply include the statements in the JSON array:
 
