@@ -6,12 +6,12 @@ description: "How to write data and read it back"
 weight: 5
 date: 2017-01-05
 ---
-The first thing to know is that you can send your read and writes requests to any node in your cluster. For full details on how rqlite handles requests for you, check out [_How rqlite handles requests_](https://rqlite.io/docs/api/api/#how-rqlite-handles-requests).
-
 Each rqlite node exposes an HTTP API allowing data to be inserted into, and read back from, the database. Specifically there are three endpoints to know:
 - `/db/execute` which accepts write requests (`INSERT`, `UPDATE`, `DELETE`)
 - `/db/query` which accepts read requests (`SELECT`)
 - `/db/request` which accepts both read and write requests. This endpoint is known as the [_Unified Endpoint_](/docs/api/api/#unified-endpoint).
+
+You can send your read and writes requests to any node in your cluster. 
 
 **Which endpoint should you use?** If you know ahead of time whether you are doing reads or writes, it's probably best to choose the endpoint dedicated to that type of request (either `/db/execute` or `/db/query`), as you will know precisely what to expect when rqlite responds. This encourages the most robust interaction with rqlite. In contrast the structure of the response from `/db/request` will depend on whether you send read or write requests, and may require you (or your code) to inspect the response more closely before parsing it. But `/db/request` can be more convenient in some cases, as you don't need to worry about choosing a particular endpoint ahead of time -- just send all your requests to `/db/request`.
 
@@ -252,14 +252,14 @@ The _Unified Endpoint_ supports transactions, Associative responses, [Read Consi
 You can issue [`PRAGMA`](https://www.sqlite.org/pragma.html) directives to rqlite, and they will be passed to the underlying SQLite database. Certain `PRAGMA` directives, which alter the operation of the SQLite database, may not make sense in the context of rqlite (since rqlite does not given direct control over its connections to the SQLite database). `PRAGMA` directives which just return information about the SQLite database, without changing its operation, are always safe.
 
 Some `PRAGMA` directives will intefere with the proper operation of rqlite. They include:
-- `PRAGMA journal_mode` - rqlite requires the SQLite database to be in WAL mode at all times.
-- `PRAGMA wal_checkpoint` - rqlite requires exlusive control over the WAL. Don't checkpoint it.
+- `PRAGMA journal_mode` - rqlite **requires** the SQLite database to be in WAL mode at all times. Don't change the _journaling_ mode.
+- `PRAGMA wal_checkpoint` - rqlite **requires exlusive control over the WAL**. Don't checkpoint rqlite.
 - `PRAGMA VACUUM` - the behaviour of rqlite is undefined when this command is issued.
   
 If you have a question about a particular `PRAGMA` command, you should discuss it on the [rqlite Slack](https://rqlite.io/), or ask a question on [GitHub](https://github.com/rqlite/rqlite/).
 
 ### Issuing a `PRAGMA` directive
-The rqlite CLI supports issuing `PRAGMA` directives. For example:
+The rqlite CLI supports issuing many other `PRAGMA` directives. For example:
 ```
 127.0.0.1:4001> pragma compile_options
 +----------------------------+
@@ -315,7 +315,7 @@ $ curl -G 'localhost:4001/db/query?pretty&timings' --data-urlencode 'q=PRAGMA fo
 }$
 ```
 
-## How rqlite Handles Requests
+## Technical details
 _This section assumes a basic familiarity with the Raft protocol. A simple introduction to Raft can be found [here](http://thesecretlivesofdata.com/raft/)._
 
 >To make the very best use of the rqlite API, there are some details to know. But understanding the following information is **not required** to make use of rqlite.
