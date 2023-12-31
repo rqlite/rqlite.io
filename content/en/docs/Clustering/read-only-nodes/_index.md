@@ -21,3 +21,6 @@ Read-only nodes join a cluster in the [same manner as a voting node. They can al
 
 ### Handling failure
 If a read-only node becomes unreachable, the leader will continually attempt to reconnect until the node becomes reachable again, or the node is removed from the cluster. This is exactly the same behaviour as when a voting node fails. However, since read-only nodes do not vote, a failed read-only node will not prevent the cluster commiting changes via the Raft consensus mechanism.
+
+## Automatic clustering
+Read-only nodes are fully compatible with DNS-based, Consul-based, and etcd-based [_Automatic Clustering_](/docs/clustering/automatic-clustering/) methods. These nodes utilize the configured autoclustering to locate the cluster leader and join as standard read-only nodes. However, it's important to note that read-only nodes are not capable of bootstrapping a cluster. Therefore, setting the `-bootstrap-expect` flag to a non-zero value on a read-only node during launch will result in `rqlited` terminating.
