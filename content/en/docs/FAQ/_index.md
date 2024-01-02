@@ -40,7 +40,7 @@ Some reads, depending on the requested [_read consistency_](/docs/api/read-consi
 Yes, but only for reads (and only if you then select `none` as your [_Read Consistency_](/docs/api/read-consistency/) level). It does not provide any scaling for writes, since all writes must go through the Leader. **rqlite is distributed primarily for high-availability and fault tolerance, not for performance**. In fact write performance is reduced relative to a standalone SQLite database, because of the round-trips between nodes and the need to write to the Raft log.
 
 ## What is the best way to increase rqlite performance?
-The simplest way to increase performance is to use higher-performance disks and a lower-latency network. This is known as _scaling vertically_. You could also consider using [Queued Writes](/docs/api/queued-writes/), or [Bulk Updates](/docs/api/bulk-api/) if you wish to improve write performance specifically.
+The simplest way to increase performance is to use higher-performance disks and a lower-latency network. This is known as _scaling vertically_. You could also consider using [Queued Writes](/docs/api/queued-writes/), or [Bulk Updates](/docs/api/bulk-api/) if you wish to improve write performance specifically. You can also check out the detailed guide on [_Performance_](/docs/guides/performance/).
 
 ## Where does rqlite fit into the CAP theorem?
 The [CAP theorem](https://en.wikipedia.org/wiki/CAP_theorem) states that it is impossible for a distributed database to provide consistency, availability, and partition tolerance simulataneously -- that, in the face of a network partition, the database can be available or consistent, but not both.
@@ -58,15 +58,15 @@ If the client is on the same side of the partition as a quorum of nodes, there w
 It may be possible to make partitions clearer to clients in a future release.
 
 ## Can I run a single node?
-Sure. Many people do so, as they like accessing a SQLite database over HTTP. Of course, you won't have any redundancy or fault tolerance if you only run a single node. If the single node fails you will nneed to restart it.
+Sure. Many people do so, as they like accessing a SQLite database over HTTP. Of course, you won't have any redundancy or fault tolerance if you only run a single node. If the single node fails you will need to restart it.
 
-It's important to understand, however, that "single-node" means a single-node *cluster* -- in other words, a cluster with a configured size of one node. A 3-node cluster, in which two nodes fail, is not a single-node cluster. In that case you've still got a 3-node cluster, but one which is offline.
+It's important to understand, however, that "single-node" means a single-node *cluster* -- in other words, a cluster with a configured size of one node. A 3-node cluster, in which two nodes fail, is not a single-node cluster. In that case you've still got a 3-node cluster, but one which is offline due to lack of quorum.
 
 ## How can I change my multi-node cluster to a single-node system?
 You can't simply shut down all the nodes except one, and expect the single node to work normally, due to Raft quorum requirements -- but you do have options. One thing you can do is to [backup your cluster](https://rqlite.io/docs/guides/backup/), and then load the data into a new single node you bring up. This is probably the simplest way to do it, and will be fast. Alternatively you can explicitly force the configuration of your cluster to be single node, by following the [_Dealing with Failure_](https://rqlite.io/docs/clustering/general-guidelines/#recovering-a-cluster-that-has-permanently-lost-quorum) guide, and using a configuration file that only contains a single node.
 
 ## What is the maximum size of a cluster?
-There is no explicit maximum cluster size. However the [practical cluster size limit is about 9 _voting nodes_](/docs/clustering/). You can go bigger by adding [read-only nodes](/docs/clustering/read-only-nodes/).
+There is no explicit maximum cluster size. However the [practical cluster size limit is probably about 11 _voting nodes_](/docs/clustering/). You can go bigger by adding [read-only nodes](/docs/clustering/read-only-nodes/).
 
 ## Is rqlite a good match for a network of nodes that come and go -- perhaps thousands of them?
 Unlikely. While rqlite does support read-only nodes, allowing it to scale to many nodes, the consensus protocol at the core of rqlite works best when the **voting** nodes in the cluster don't continually come and go. While it won't break, it probably won't be practical.
