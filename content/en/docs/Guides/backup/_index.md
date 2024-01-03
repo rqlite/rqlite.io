@@ -81,8 +81,6 @@ If you wish to disable compression of the backup add `no_compress: true` to the 
 ## Restoring from SQLite
 rqlite supports loading a node directly from SQLite data. This can be useful if you wish to initialize your system from preexisting SQLite data, or to restore from an existing [node backup](/docs/guides/backup/).
 
-> rqlite does not support loading SQLite database files which are in `wal` mode. If your SQLite database is in `wal` mode, convert it (or a copy of it) to `delete` mode first by issuing the command `PRAGMA journal_mode=delete`.
-
 ### Booting with a SQLite Database
 _Booting_ is a specialized process that enables rapid initialization of a node from a SQLite database image. This method is designed for **high-efficiency data loading, particularly suited for disaster recovery or initializing a large database quickly** though you can use it with any size of database. Unlike the other restore processes described below, _Booting_  bypasses most of the [Raft consensus system](https://raft.github.io/), significantly reducing the load time. The only limiting factor is how fast your disks are, and loading multi-GB SQLite files is possible via _Booting_.
 
