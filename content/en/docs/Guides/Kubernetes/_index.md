@@ -56,3 +56,6 @@ Scaling up again after shrinking your cluster is also possible, simply issue you
 
 ## Secrets management
 Depending on your use of rqlite, you may have to pass some _Secrets_ to a pod. For example, you may want to enable [User-level Permissions](https://rqlite.io/docs/guides/security/). One approach is to use [Kubernetes Secrets](https://kubernetes.io/docs/concepts/configuration/secret/) to pass this information to rqlite. See this [GitHub issue](https://github.com/rqlite/rqlite/issues/1488#issuecomment-1859328325) for more information.
+
+## Helm support
+There are fully-featured [Helm Charts available for rqlite on GitHub](https://github.com/rqlite/helm-charts).
