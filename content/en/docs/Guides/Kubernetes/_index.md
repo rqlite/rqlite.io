@@ -4,11 +4,14 @@ linkTitle: "Kubernetes"
 description: "How to deploy and run rqlite on Kubernetes"
 weight: 10
 ---
-This page provides an example of how to run rqlite as a Kubernetes [StatefulSet](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/). Full source for the configuration described below is available in the [rqlite Kubernetes Configuration repo](https://github.com/rqlite/kubernetes-configuration).
-
 The following directions assume you have a Kubernetes cluster already available. Visit [kubernetes.io](https://kubernetes.io/) to learn how to deploy Kubernetes.
 
-## Creating a cluster 
+## Using Helm
+[Helm](https://helm.sh/) is a tool which helps you manage applications on Kubernetes. There are fully-featured [Helm Charts available for rqlite on GitHub](https://github.com/rqlite/helm-charts).
+
+## Manual
+You can also deploy your rqlite cluster on Kubernetes step-by-step, running rqlite as a Kubernetes [StatefulSet](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/). Full source for the configuration described below is available in the [rqlite Kubernetes Configuration repo](https://github.com/rqlite/kubernetes-configuration).
+
 ### Create Services
 The first thing to do is to create two [Kubernetes _Services_](https://kubernetes.io/docs/concepts/services-networking/service). The first service, `rqlite-svc-internal`, is [_Headless_](https://kubernetes.io/docs/concepts/services-networking/service/#headless-services) and allows the nodes to find each other and cluster automatically. It shouldn't be used by rqlite clients. It is the second service, `rqlite-svc`, that is for clients to talk to the cluster -- this service will get a Cluster IP address which those clients can connect to.
 
@@ -31,7 +34,7 @@ kubectl apply -f rqlite-3-nodes.yaml
 
 Note the `args` passed to rqlite in the YAML file. The arguments tell rqlite to use `dns` discovery mode, and to resolve the DNS name `rqlite-svc-internal` to find the IP addresses of other nodes in the cluster. Furthermore it tells rqlite to wait until three nodes are available (counting itself as one of those nodes) before attempting to form a cluster.
 
-## Scaling the cluster
+### Scaling the cluster
 You can grow the cluster at anytime, simply by setting the replica count to the desired cluster size. For example, to grow the above cluster to 9 nodes, you would issue the following command:
 ```bash
 kubectl scale statefulsets rqlite --replicas=9
@@ -40,7 +43,7 @@ You could also increase the `replicas` count in `rqlite-3-nodes.yaml` and reappl
 
 > **It is important that your rqlite cluster is healthy and fully functional before scaling up. It is also critical that DNS is working properly too.** If this is not the case, some of the new nodes may become standalone single-node clusters, as they will be unavailable to connect to the Leader. 
 
-### Shrinking the cluster
+#### Shrinking the cluster
 Scaling your cluster down is also possible, but there are some important details to be aware of. Let's work through an example.
 
 Say you have a 3-node cluster, and you want to return to a single-node cluster. You could do this by issuing the following command:
@@ -56,6 +59,3 @@ Scaling up again after shrinking your cluster is also possible, simply issue you
 
 ## Secrets management
 Depending on your use of rqlite, you may have to pass some _Secrets_ to a pod. For example, you may want to enable [User-level Permissions](https://rqlite.io/docs/guides/security/). One approach is to use [Kubernetes Secrets](https://kubernetes.io/docs/concepts/configuration/secret/) to pass this information to rqlite. See this [GitHub issue](https://github.com/rqlite/rqlite/issues/1488#issuecomment-1859328325) for more information.
-
-## Helm support
-There are fully-featured [Helm Charts available for rqlite on GitHub](https://github.com/rqlite/helm-charts).
