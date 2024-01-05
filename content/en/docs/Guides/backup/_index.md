@@ -5,7 +5,7 @@ description: "Backing up and restoring your rqlite system"
 weight: 40
 ---
 ## Backing up rqlite
-rqlite supports hot backing up a node. You can retrieve a copy of the underlying SQLite database via the [rqlite shell](/docs/cli/), or by directly access the API. Retrieving a full copy of the SQLite database is the recommended way to backup a rqlite system.
+rqlite supports hot backing up a node. You can retrieve a copy of the underlying SQLite database via the [rqlite shell](/docs/cli/), or by directly accessing the API. Retrieving a full copy of the SQLite database is the recommended way to backup a rqlite system.
 
 To backup to a file using the rqlite shell issue the following command:
 ```
