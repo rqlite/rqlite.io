@@ -220,6 +220,8 @@ rqlite supports restoring a node from a backup previously uploaded to Cloud-base
 
 Under the covers this process uses the _Load_ approach described above, which means it can be memory-intensive if the database file is large.
 
+In most cases you will define the same `sub` object values for both backup and restore configuration files, since the means of accessing cloud storage is the same in both cases.
+
 ### Amazon S3
 To initiate an automatic restore from a backup in an [S3 bucket](https://aws.amazon.com/s3/), create a file with the following (example) contents and supply the file path to rqlite using the command line option `-auto-restore`:
 ```json
@@ -239,4 +241,4 @@ To initiate an automatic restore from a backup in an [S3 bucket](https://aws.ama
 ```
 By default rqlite will exit with an error if it fails to download the backup file. If you wish an rqlite node to continue starting up even if the download fails, set `continue_on_failure: true`.
 
-In most cases you will define the same `sub` object values for both backup and restore configuration files.
+Note that the `sub` configuration examples for non-Amazon S3 storage (such was Wasabi and MinIO) from the Automated Backups section above apply here as well.
