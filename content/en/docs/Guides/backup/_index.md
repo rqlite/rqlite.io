@@ -48,7 +48,7 @@ curl -s -XGET localhost:4001/db/backup?vacuum -o bak.sql
 >Be sure to study the SQLite VACUUM documentation before enabling this feature, as it may alter the backup you receive in a way you do not want. Enabling VACUUM also involves making a second copy of the SQLite database. Make sure you have enough free disk space or the backup operation will fail.
 
 ## Automatic Backups
-rqlite supports automatically, and periodically, backing up its data to S3-compatible Cloud-hosted storage. To save network traffic rqlite uploads a compressed snapshot of its SQLite database, and will not upload a backup if the SQLite database hasn't changed since the last upload took place. Only the cluster Leader performs the upload.
+rqlite supports automatically, and periodically, backing up its data to S3-compatible Cloud-hosted storage. To save network traffic rqlite uploads a compressed snapshot of its SQLite database, and will not upload a backup if the SQLite database hasn't changed since the last upload took place. Only the Leader performs the upload.
 
 Backups are controlled via a special configuration file, which is supplied to `rqlited` using the `-auto-backup` flag. In the event that you lose your rqlite cluster you can use the backup in the Cloud to [recover your rqlite system](https://rqlite.io/docs/guides/backup/#restoring-from-sqlite).
 
@@ -74,7 +74,7 @@ To configure automatic backups to an [Amazon S3 bucket](https://aws.amazon.com/s
 `interval` is configurable and must be set to a [Go duration string](https://pkg.go.dev/maze.io/x/duration#ParseDuration), `vacuum` is optional and, if set to `true`, instructs rqlite to first [`VACUUM`](https://www.sqlite.org/lang_vacuum.html) the backup copy before it uploads it. In the example above, rqlite will check every 5 minutes if an upload is required, and do so if needed. You must also supply your Access Key, Secret Key, S3 bucket name, and the bucket's region. The backup will be stored in the bucket at `path`, which should also be set to your preferred value. Leave all other fields as is.
 
 ### Non-Amazon S3 Storage
-Provided they implement an S3-compliant API, rqlite can back up to non-Amazon cloud storage such as [Wasabi](https://wasabi.com/), [Backblaze B2](https://www.backblaze.com/cloud-storage), or self-hosted solutions such as [MinIO](https://min.io/).  This is done by specifying the `endpoint` field in the `sub` object, and, where needed, the `force_path_style` field.
+rqlite can back up to any non-Amazon cloud storage that exposes an S3-compliant API. Examples include [Wasabi](https://wasabi.com/), [Backblaze B2](https://www.backblaze.com/cloud-storage), or self-hosted solutions such as [MinIO](https://min.io/). This is done by specifying the `endpoint` field in the `sub` object, and, where needed, the `force_path_style` field.
 
 Wasabi supports virtual-host-style URL formats (as with native S3), but does require an explicit endpoint based on the bucket's region. The example below targets a bucket called `rqlite-kq7z9xg` in Wasabi's eu-central-1 region:
 
@@ -241,4 +241,5 @@ To initiate an automatic restore from a backup in an [S3 bucket](https://aws.ama
 ```
 By default rqlite will exit with an error if it fails to download the backup file. If you wish an rqlite node to continue starting up even if the download fails, set `continue_on_failure: true`.
 
-Note that the `sub` configuration examples for non-Amazon S3 storage (such was Wasabi and MinIO) from the Automated Backups section above apply here as well.
+### Other S3-Compliant Providers
+The `sub` configuration examples for non-Amazon S3 storage from the *Automated Backups* section above apply equally well to *Automatic Restores*. This allows you to download a previously uploaded backup from, for example, Wasabi and MinIO.
