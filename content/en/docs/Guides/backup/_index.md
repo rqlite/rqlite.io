@@ -95,8 +95,7 @@ Wasabi supports virtual-host-style URL formats (as with native S3), but does req
 }
 ```
 
-For MinIO deployments that use path-style requests (which is MinIO's default
-configuration), you'll also need to set `force_path_style` to true:
+For MinIO deployments that use [path-style requests](https://docs.aws.amazon.com/AmazonS3/latest/userguide/VirtualHosting.html#path-style-access) (which is MinIO's default configuration), you'll also need to set `force_path_style` to true:
 
 ```json
 {
