@@ -20,7 +20,9 @@ curl -s -XGET localhost:4001/db/backup -o bak.sqlite3
 ```
 Note that if the node is not the Leader, the node will transparently forward the request to Leader, wait for the backup data from the Leader, and return it to the client. If, instead, you want a backup of SQLite database of the actual node that receives the request, add `noleader` to the URL as a query parameter. 
 
-If you do not wish a Follower to transparently forward a backup request to a Leader, add `redirect` to the URL as a query parameter. In that case if a Follower receives a backup request the Follower will respond with [HTTP 301 Moved Permanently](https://en.wikipedia.org/wiki/HTTP_301) and include the address of the Leader as the `Location` header in the response. It is then up the clients to re-issue the command to the Leader. **If you are backing up a large database (100MB or more), it is recommended that you request the backup directly from the Leader**.
+If you do not wish a Follower to transparently forward a backup request to a Leader, add `redirect` to the URL as a query parameter. In that case if a Follower receives a backup request the Follower will respond with [HTTP 301 Moved Permanently](https://en.wikipedia.org/wiki/HTTP_301) and include the address of the Leader as the `Location` header in the response. It is then up the clients to re-issue the command to the Leader. 
+
+> If you are backing up a large database (100MB or more), you may get much faster backups by requesting your backup directly from the Leader.
 
 In either case the generated file can then be used to restore a node (or cluster) using the [restore API](/docs/guides/backup/#restoring-from-sqlite).
 
