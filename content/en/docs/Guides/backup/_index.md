@@ -82,7 +82,7 @@ To configure automatic backups to an [Amazon S3 bucket](https://aws.amazon.com/s
 ```
 `interval` is configurable and must be set to a [Go duration string](https://pkg.go.dev/maze.io/x/duration#ParseDuration), `vacuum` is optional and, if set to `true`, instructs rqlite to first [`VACUUM`](https://www.sqlite.org/lang_vacuum.html) the backup copy before it uploads it. In the example above, rqlite will check every 5 minutes if an upload is required, and do so if needed. You must also supply your Access Key, Secret Key, S3 bucket name, and the bucket's region. The backup will be stored in the bucket at `path`, which should also be set to your preferred value. Leave all other fields as is.
 
-### Non-Amazon S3 Storage
+### Other S3-Compliant Providers
 rqlite can back up to any non-Amazon cloud storage that exposes an S3-compliant API. Examples include [Wasabi](https://wasabi.com/), [Backblaze B2](https://www.backblaze.com/cloud-storage), or self-hosted solutions such as [MinIO](https://min.io/). This is done by specifying the `endpoint` field in the `sub` object, and, where needed, the `force_path_style` field.
 
 Wasabi supports virtual-host-style URL formats (as with native S3), but does require an explicit endpoint based on the bucket's region. The example below targets a bucket called `rqlite-kq7z9xg` in Wasabi's eu-central-1 region:
