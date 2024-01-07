@@ -61,7 +61,7 @@ rqlite supports automatically, and periodically, backing up its data to S3-compa
 
 Backups are controlled via a special configuration file, which is supplied to `rqlited` using the `-auto-backup` flag. In the event that you lose your rqlite cluster you can use the backup in the Cloud to [recover your rqlite system](https://rqlite.io/docs/guides/backup/#restoring-from-sqlite).
 
-> Automatically backing up rqlite involves making a brand new copy of the SQLite database on disk. Make sure you have enough free disk space or the backup operation will fail.
+> Automatically backing up rqlite involves making a brand new copy of the SQLite database on disk. Make sure you have enough free disk space or the backup operation may fail.
 
 ### Amazon S3
 To configure automatic backups to an [Amazon S3 bucket](https://aws.amazon.com/s3/), create a file with the following (example) contents and supply the file path to rqlite's `-auto-backup` flag:
