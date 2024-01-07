@@ -49,6 +49,13 @@ curl -s -XGET localhost:4001/db/backup?vacuum -o bak.sql
 ```
 >Be sure to study the SQLite VACUUM documentation before enabling this feature, as it may alter the backup you receive in a way you do not want. Enabling VACUUM may temporarily double the disk usage of rqlite. Make sure you have enough free disk space or the backup operation may fail.
 
+### Cmpresseded backups
+An automatically compressed copy of the database is available. To download a [GZIP](https://www.gzip.org/)-compressed copy, add `compress` as a query parameter. For example:
+```bash
+curl -s -XGET localhost:4001/db/backup?compress -o bak.sql
+```
+You can combine `compress` with `vacuum` for the smallest possible download.
+
 ## Automatic Backups
 rqlite supports automatically, and periodically, backing up its data to S3-compatible Cloud-hosted storage. To save network traffic rqlite uploads a compressed snapshot of its SQLite database, and will not upload a backup if the SQLite database hasn't changed since the last upload took place. Only the Leader performs the upload.
 
