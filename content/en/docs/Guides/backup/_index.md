@@ -37,11 +37,6 @@ The API can also be accessed directly:
 curl -s -XGET localhost:4001/db/backup?fmt=sql -o bak.sql
 ```
 
-### Backup isolation level
-The isolation offered by binary backups is `READ COMMITTED`. This means that any changes due to transactions to the database, that take place during the backup, will be reflected immediately once the transaction is committed, but not before.
-
-See the [SQLite documentation](https://www.sqlite.org/isolation.html) for more details.
-
 ### Requesting a VACUUMed copy
 You can request that the backup copy of the SQLite database, served by the API, first be [vacuumed](https://www.sqlite.org/lang_vacuum.html). This can be done via the API like so:
 ```bash
@@ -49,22 +44,22 @@ curl -s -XGET localhost:4001/db/backup?vacuum -o bak.sql
 ```
 >Be sure to study the SQLite VACUUM documentation before enabling this feature, as it may alter the backup you receive in a way you do not want. Enabling VACUUM may temporarily double the disk usage of rqlite. Make sure you have enough free disk space or the backup operation may fail.
 
-### Cmpresseded backups
+### Compresseded backups
 An automatically compressed copy of the database is available. To download a [GZIP](https://www.gzip.org/)-compressed copy, add `compress` as a query parameter. For example:
 ```bash
 curl -s -XGET localhost:4001/db/backup?compress -o bak.sql
 ```
-You can combine `compress` with `vacuum` for the smallest possible download.
+You can combine `compress` with `vacuum` (`?compress&vacuum`) for the smallest possible download.
 
 ## Automatic Backups
-rqlite supports automatically, and periodically, backing up its data to S3-compatible Cloud-hosted storage. To save network traffic rqlite uploads a compressed snapshot of its SQLite database, and will not upload a backup if the SQLite database hasn't changed since the last upload took place. Only the Leader performs the upload.
+rqlite supports automatically, and periodically, backing up its data to S3-compatible Cloud-hosted storage. To save network traffic rqlite uploads a **compressed** copy of its SQLite database, and will not upload a backup if the SQLite database hasn't changed since the last upload took place. Only the Leader performs the upload.
 
 Backups are controlled via a special configuration file, which is supplied to `rqlited` using the `-auto-backup` flag. In the event that you lose your rqlite cluster you can use the backup in the Cloud to [recover your rqlite system](https://rqlite.io/docs/guides/backup/#restoring-from-sqlite).
 
-> Automatically backing up rqlite involves making a brand new copy of the SQLite database on disk. Make sure you have enough free disk space or the backup operation may fail.
+> Automatically backing up rqlite involves making a copy of the SQLite database on disk. Make sure you have enough free disk space or the backup operation may fail.
 
 ### Amazon S3
-To configure automatic backups to an [Amazon S3 bucket](https://aws.amazon.com/s3/), create a file with the following (example) contents and supply the file path to rqlite's `-auto-backup` flag:
+To configure automatic backups to an [Amazon S3 bucket](https://aws.amazon.com/s3/), create a file with the following (example) contents and pass the file path to rqlite's `-auto-backup` flag:
 ```json
 {
 	"version": 1,
@@ -158,7 +153,7 @@ Node booted successfully
 ### Loading a node
 rqlite supports _loading_ a node from two sources. _Loading_ can take longer than _Booting_ but you can send a _Load_ request to a cluster. This can make it more convenient.
 
-- **An actual SQLite database file**. This is usually a fast way to initialize a rqlite system from an existing SQLite database, though can very memory-intensive if the database file size is greater than a few 100 MBs. You can also send the request to any node in the cluster and that node will transparently forward the request to the Leader. If you would prefer to be explicitly redirected to the Leader, add `redirect` as a URL query parameter.
+- **An actual SQLite database file**. This is usually a fast way to initialize a rqlite system from an existing SQLite database, though can be very memory-intensive if the database file size is greater than a few 100 MBs. You can also send the request to any node in the cluster and that node will transparently forward the request to the Leader. If you would prefer to be explicitly redirected to the Leader, add `redirect` as a URL query parameter.
 
 - **SQLite dump in text format**. This is another convenient manner to initialize a system from an existing SQLite database (or other database). The behavior of this type of load operation is **undefined** if there is already data loaded into your rqlite cluster.  **Note that this operation may be quite slow.** If you find the restore times to be too long, you should first load the SQL statements directly into a SQLite database, and then _boot_ or _load_ your rqlite system using the resulting SQLite database file.
 
