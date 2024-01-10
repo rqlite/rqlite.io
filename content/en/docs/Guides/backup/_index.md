@@ -223,8 +223,7 @@ curl -XPOST 'localhost:4001/db/execute?pretty' -H "Content-Type: application/jso
 
 ## Restoring from Cloud Storage
 rqlite supports restoring a node from a backup previously uploaded to Cloud-based storage. If enabled and **the node has no pre-existing data**, rqlite will download the SQLite data stored in the cloud, and initialize your system with it. Also note that if you bootstrap a new cluster and pass `-auto-restore` to each node, only the node that becomes the Leader will actually install the data. The other nodes will pick up the data through the normal Raft consensus mechanism. Both compressed and non-compressed backups are handled automatically by rqlite during the restore process.
-
-Under the covers this process uses the _Load_ approach described above, which means it can be memory-intensive if the database file is large.
+>Under the covers _Automatic Restore_ uses the _Load_ approach described above, which means it can be memory-intensive if the database file is large i.e. 100MB in size or greater. Be sure to monitor your system when dealing with large data sets.
 
 In most cases you will define the same `sub` object values for both backup and restore configuration files, since the means of accessing cloud storage is the same in both cases.
 
