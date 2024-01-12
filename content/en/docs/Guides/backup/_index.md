@@ -18,7 +18,7 @@ You can also access the rqlite API directly, via a HTTP `GET` request to the end
 ```bash
 curl -s -XGET localhost:4001/db/backup -o bak.sqlite3
 ```
->So that rqlite doesn't have to make an extra copy of the SQLite database during the backup process, the backup copy returned by rqlite is always in [WAL](https://www.sqlite.org/wal.html) mode. If you wish, you can always change the backup copy to DELETE mode using the SQLite shell.
+>So that rqlite doesn't have to make an extra copy of the SQLite database during the backup process, the backup copy returned by rqlite is always in [WAL](https://www.sqlite.org/wal.html) mode. If you wish, you can always change the backup copy to [DELETE mode using the SQLite shell](https://www.sqlite.org/pragma.html#pragma_journal_mode).
 
 Note that if the node is not the Leader, the node will transparently forward the request to Leader, wait for the backup data from the Leader, and return it to the client. If, instead, you want a backup of SQLite database of the actual node that receives the request, add `noleader` to the URL as a query parameter. 
 
