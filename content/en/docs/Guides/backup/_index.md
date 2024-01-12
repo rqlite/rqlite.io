@@ -18,6 +18,8 @@ You can also access the rqlite API directly, via a HTTP `GET` request to the end
 ```bash
 curl -s -XGET localhost:4001/db/backup -o bak.sqlite3
 ```
+>So that rqlite doesn't have to make an extra copy of the SQLite database during the backup process, the backup copy returned by rqlite is always in [WAL](https://www.sqlite.org/wal.html) mode. If you wish, you can always change the backup copy to DELETE mode using the SQLite shell.
+
 Note that if the node is not the Leader, the node will transparently forward the request to Leader, wait for the backup data from the Leader, and return it to the client. If, instead, you want a backup of SQLite database of the actual node that receives the request, add `noleader` to the URL as a query parameter. 
 
 If you do not wish a Follower to transparently forward a backup request to a Leader, add `redirect` to the URL as a query parameter. In that case if a Follower receives a backup request the Follower will respond with [HTTP 301 Moved Permanently](https://en.wikipedia.org/wiki/HTTP_301) and include the address of the Leader as the `Location` header in the response. It is then up the clients to re-issue the command to the Leader. 
@@ -44,7 +46,7 @@ curl -s -XGET localhost:4001/db/backup?vacuum -o bak.sql
 ```
 >Be sure to study the SQLite VACUUM documentation before enabling this feature, as it may alter the backup you receive in a way you do not want. Enabling VACUUM may temporarily double the disk usage of rqlite. Make sure you have enough free disk space or the backup operation may fail.
 
-### Compresseded backups
+### Compressed backups
 An automatically compressed copy of the database is available. To download a [GZIP](https://www.gzip.org/)-compressed copy, add `compress` as a query parameter. For example:
 ```bash
 curl -s -XGET localhost:4001/db/backup?compress -o bak.sql
