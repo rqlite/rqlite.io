@@ -254,7 +254,6 @@ You can issue [`PRAGMA`](https://www.sqlite.org/pragma.html) directives to rqlit
 Some `PRAGMA` directives will intefere with the proper operation of rqlite. They include:
 - `PRAGMA journal_mode` - rqlite **requires** the SQLite database to be in WAL mode at all times. Don't change the _journaling_ mode.
 - `PRAGMA wal_checkpoint` - rqlite **requires exlusive control over the WAL**. Don't checkpoint rqlite.
-- `PRAGMA VACUUM` - the behaviour of rqlite is undefined when this command is issued.
   
 If you have a question about a particular `PRAGMA` command, you should discuss it on the [rqlite Slack](https://rqlite.io/), or ask a question on [GitHub](https://github.com/rqlite/rqlite/).
 
