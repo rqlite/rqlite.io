@@ -29,12 +29,13 @@ rqlite is compatible with [SQLite VACUUM](https://www.sqlite.org/lang_vacuum.htm
 ```bash
 curl -XPOST 'localhost:4001/db/execute' -H "Content-Type: application/json" -d '["VACUUM"]'
 ```
+
 You can even schedule `VACUUM` to take place periodically and automatically, via the `-auto-vacuum-int` command line flag. For example:
 ```bash
 rqlited -auto-vacuum-int=14d data # rqlite will run an automatic VACUUM every two weeks
 ```
 
->Be sure to study the SQLite VACUUM documentation, as VACUUM may alter the databsase in a way you do not want. Performing a VACUUM may temporarily double the disk usage of rqlite, so make sure you have enough free disk space or VACUUM may fail.
+>Be sure to study the SQLite VACUUM documentation, as VACUUM may alter the databsase in a way you do not want. Performing a VACUUM may temporarily double the disk usage of rqlite, so make sure you have enough free disk space or VACUUM may fail. Writes are also **blocked** while a VACUUM is taking place.
 
 ### Batching
 The more SQLite statements you can include in a single request to a rqlite node, the better the system will perform. 
