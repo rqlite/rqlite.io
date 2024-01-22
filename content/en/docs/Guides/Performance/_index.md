@@ -24,6 +24,11 @@ When running a rqlite cluster, network latency is also a factor -- and will beco
 
 There are a few ways to improve performance, but not all will be suitable for a given application.
 
+### VACUUM
+rqlite is compatible with `[VACUUM]`(https://www.sqlite.org/lang_vacuum.html). Issuing a `VACUUM` command will defragment the database, shrinking it to the smallest possible size. You can even schedule `VACUUM` to take place periodically in an automatic manner, via the `-auto-vacuum-int` commang line flag.
+
+>Be sure to study the SQLite VACUUM documentation before enabling this feature, as it may alter the backup you receive in a way you do not want. Enabling VACUUM may temporarily double the disk usage of rqlite. Make sure you have enough free disk space or the backup operation may fail.
+
 ### Batching
 The more SQLite statements you can include in a single request to a rqlite node, the better the system will perform. 
 
