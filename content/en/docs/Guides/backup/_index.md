@@ -42,14 +42,14 @@ curl -s -XGET localhost:4001/db/backup?fmt=sql -o bak.sql
 ### Requesting a VACUUMed copy
 You can request that the backup copy of the SQLite database, served by the API, first be [vacuumed](https://www.sqlite.org/lang_vacuum.html). This can be done via the API like so:
 ```bash
-curl -s -XGET localhost:4001/db/backup?vacuum -o bak.sql
+curl -s -XGET localhost:4001/db/backup?vacuum -o bak.sqlite3
 ```
 >Be sure to study the SQLite VACUUM documentation before enabling this feature, as it may alter the backup you receive in a way you do not want. Enabling VACUUM may temporarily double the disk usage of rqlite. Make sure you have enough free disk space or the backup operation may fail.
 
 ### Compressed backups
 An automatically compressed copy of the database is available. To download a [GZIP](https://www.gzip.org/)-compressed copy, add `compress` as a query parameter. For example:
 ```bash
-curl -s -XGET localhost:4001/db/backup?compress -o bak.sql
+curl -s -XGET localhost:4001/db/backup?compress -o bak.sqlite3.gz
 ```
 You can combine `compress` with `vacuum` (`?compress&vacuum`) for the smallest possible download.
 
