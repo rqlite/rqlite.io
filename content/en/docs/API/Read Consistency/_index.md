@@ -39,7 +39,7 @@ You can tell the receiving node not to return results staler than a certain dura
 If you decide to deploy [read-only nodes](/docs/clustering/read-only-nodes/) however, _none_ combined with `freshness` can be a particularly effective at adding read scalability to your system. You can use lots of read-only nodes, yet be sure that a given node serving a request has not fallen too far behind the Leader (or even become disconnected from the cluster).
 
 ## Which should I use?
-_Weak_ is almost certainly sufficient for your application, and is the default read consistency level. Unless your cluster Leader is continually changing while you're actually executing queries there will be never be any difference between _weak_ and _strong_ -- but using _strong_ will result in slower queries, which is not what most people want.
+_Weak_ is almost certainly sufficient for your application, and is the default read consistency level. Unless your cluster Leader is continually changing while you're actually executing queries there will be never be any difference between _weak_ and _strong_ -- but using _strong_ will result in much slower queries, which is not what most people want.
 
 ## How do I specify read consistency?
 To explicitly select consistency, set the query param `level` to the desired level. However, you should use _none_ with read-only nodes, unless you want those nodes to actually forward the query to the Leader.
