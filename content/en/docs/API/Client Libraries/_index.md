@@ -18,6 +18,7 @@ There are client libraries available for a variety of programming languages, inc
 ### Python
 - https://github.com/rqlite/pyrqlite
 - https://github.com/rqlite/sqlalchemy-rqlite
+- https://github.com/Tjstretchalot/rqdb
 
 ### Rust
 - https://docs.rs/rqlite/latest/rqlite
