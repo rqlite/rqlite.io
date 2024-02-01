@@ -45,8 +45,7 @@ Ensure you have the required tools installed, and that `GOPATH` is set.
 go install google.golang.org/protobuf/cmd/protoc-gen-go
 export GOBIN=$GOPATH/bin
 export PATH=$PATH:$GOBIN
-(cd $GOPATH/src/github.com/rqlite/rqlite/command/proto && protoc --go_out=. --go_opt=paths=source_relative command.proto)
-(cd $GOPATH/src/github.com/rqlite/rqlite/cluster/proto && protoc -I $GOPATH/src/github.com/rqlite/rqlite/ --proto_path $GOPATH/src/github.com/rqlite/rqlite/cluster/proto --go_out=. --go_opt=paths=source_relative message.proto)
+go generate ./...
 ```
 
 ### Speeding up the build process
