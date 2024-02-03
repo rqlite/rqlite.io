@@ -183,6 +183,14 @@ curl -XPOST 'localhost:4001/db/execute?pretty&timings' -H "Content-Type: applica
 }
 ```
 
+## Query Timeouts
+By default, SQL queries do not timeout. You can set a timeout by setting the `db_timeout` URL parameter. This parameter allows you to specify the maximum amount of time to spend processing the query before it is interrupted and an error returned. Note that this timeout is applied per SQL statement, not the entire HTTP request. An example request with a 2 second timeout is shown below.
+```bash
+curl -XPOST 'localhost:4001/db/execute?db_timeout=2s' -H "Content-Type: application/json" -d '[
+    ["INSERT INTO foo(name, age) VALUES(?, ?)", "fiona", 20]
+]'
+```
+
 ## Unified Endpoint
 With the _Unified Endpoint_ you can send read and writes requests in one operation, to the same endpoint. Let's work through an example.
 
@@ -330,14 +338,6 @@ Any writes to the SQLite database go through the Raft log, ensuring only changes
 If a Follower forwards a request to a Leader, by default the Leader must respond within 30 seconds. You can control this timeout by setting the `timeout` parameter. For example, to set a 2 minute timeout, you would issue the following request:
 ```bash
 curl -XPOST 'localhost:4001/db/execute?timeout=2m' -H "Content-Type: application/json" -d '[
-    ["INSERT INTO foo(name, age) VALUES(?, ?)", "fiona", 20]
-]'
-```
-
-### DB Query Timeout
-By default, SQL queries do not have a predefined timeout. You can set a timeout by sending a `db_timeout` query parameter in the request. This parameter allows you to specify the maximum amount of time to spend executing the query before it is interrupted.
-```bash
-curl -XPOST 'localhost:4001/db/execute?db_timeout=2s' -H "Content-Type: application/json" -d '[
     ["INSERT INTO foo(name, age) VALUES(?, ?)", "fiona", 20]
 ]'
 ```
