@@ -86,7 +86,7 @@ It supports [a form of transactions](/docs/api/api/#transactions). You can wrap 
 No, you must only change the database using the HTTP API. The moment you directly modify the SQLite file, including any changes to its journaling mode, under any node the behavior of rqlite is undefined. In otherwords, you run the risk of breaking your cluster.
 
 ## Can I read the SQLite file directly?
-Yes, you can read the SQLite file directly, some end-users do this in production, but it has not been deeply tested.
+Yes, you can read the SQLite file directly, some end-users do this in production, but it has not been deeply tested. But you must ensure your accesses are **read-only**. If you make any direct change to the SQLite database you risk breaking rqlite. If you do decide to read the SQLite file directly, one suggestion is to open an explicitly [read-only connection](https://www.sqlite.org/c3ref/open.html) for your reads.
 
 ## Can I use rqlite to replicate my SQLite database to a second node?
 Not in a simple sense, no. rqlite is not a SQLite database replication tool. While each node does have a full copy of the SQLite database, rqlite is not simply about replicating that database.
