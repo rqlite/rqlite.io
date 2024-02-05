@@ -15,13 +15,13 @@ On top of that, rqlite provides strong guarantees about what state any copy of t
 That said, it's always possible it's _too_ simple for your needs.
 
 ## How do I access the database?
-The primary way to access the database is via the [HTTP API](/docs/api/api/). You can access it directly, or use a [client library](https://github.com/rqlite). For more casual use you can use the [command line tool](/docs/cli/). It is also technically possible to [read the SQLite file directly](https://github.com/rqlite/rqlite/blob/master/DOC/FAQ.md#can-i-read-the-sqlite-file-directly), but it's not officially supported.
+The primary way to access the database is via the [HTTP API](/docs/api/api/). You can access it directly, or use a [client library](https://github.com/rqlite). For more casual use you can use the [command line tool](/docs/cli/). It is also technically possible to [read the SQLite file directly](/docs/faq/#can-i-read-the-sqlite-file-directly), but it's not officially supported.
 
 ## How do I monitor rqlite?
 Check out the [monitoring guide](/docs/guides/monitoring-rqlite/).
 
 ## Is it a drop-in replacement for SQLite?
-No. While it does use SQLite as its storage engine, you must only write to the database via the [HTTP API](https://github.com/rqlite/rqlite/blob/master/DOC/DATA_API.md). That said, since it basically exposes SQLite, all the power of that database is available. It is also possible that any system built on top of SQLite only needs small changes to work with rqlite.
+No. While it does use SQLite as its storage engine, you must only write to the database via the [HTTP API](/docs/api/api/). That said, since it basically exposes SQLite, all the power of that database is available. It is also possible that any system built on top of SQLite only needs small changes to work with rqlite.
 
 ## How do I deploy rqlite on Kubernetes?
 Check out the [Kubernetes deployment guide](/docs/guides/kubernetes/).
@@ -88,6 +88,8 @@ No, you must only change the database using the HTTP API. The moment you directl
 ## Can I read the SQLite file directly?
 Yes, you can read the SQLite file directly, some end-users do this in production, but it has not been deeply tested. But you must ensure your accesses are **read-only**. If you make any direct change to the SQLite database you risk breaking rqlite. If you do decide to read the SQLite file directly, one suggestion is to open an explicitly [read-only connection](https://www.sqlite.org/c3ref/open.html) for your reads.
 
+> Long-running reads can eventually interfere with the correct operation of rqlite. That's because rqlite periodically needs to _Snapshot_ the SQLite database, and this requires exclusive access to the database. Snapshotting usually takes only a few milliseconds to run, and if a Snapshot can't run, rqlite will retry later. Eventually, however, lack-of-Snapshotting may cause excessive disk usage and slower queries.
+
 ## Can I use rqlite to replicate my SQLite database to a second node?
 Not in a simple sense, no. rqlite is not a SQLite database replication tool. While each node does have a full copy of the SQLite database, rqlite is not simply about replicating that database.
 
@@ -99,6 +101,8 @@ In this regard rqlite currently offers exactly the same semantics as SQLite. Eac
 
 ## Do concurrent reads block each other?
 No, a read does not block other reads, nor does a read block a write -- as long as the reads do not use the _Strong_ consistency level.
+
+> This is generally true, but there is one situation where reads might block writes. Raft-based systems, such as rqlite, require that the database be copied to the Raft subsystem periodically and this process, known as _Snapshotting_, requires exclusive access to the database. Therefore a read can block Snapshotting, and since writes cannot take place during Snapshotting, it is possible for a read to block a write indirectly. Snapshotting usually takes only a few milliseconds to run however, so this is usually not an issue in practise.
 
 ## How is it different than dqlite?
 dqlite is library, written in C, that you need to integrate with your own software. That requires programming. rqlite is a standalone application -- it's a full [RDBMS](https://techterms.com/definition/rdbms) (albeit a relatively simple one). rqlite has everything you need to read and write data, and backup, maintain, and monitor the database itself.
