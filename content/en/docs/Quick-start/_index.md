@@ -46,8 +46,6 @@ $ rqlited -node-id 3 -http-addr localhost:4005 -raft-addr localhost:4006 -join l
 ```
 _This demonstration shows all 3 nodes running on the same host. In reality you probably wouldn't do this, and then you wouldn't need to select different -http-addr and -raft-addr ports for each rqlite node. Consult the [Clustering Guide](/docs/clustering/) for more details._
 
-> If running software older than 8.0 you must pass the HTTP address of the node you wish to join. In the example above you would pass `http://localhost:4001`.
-
 With just these few steps you've now got a fault-tolerant, distributed relational database. Running on each rqlite node will be a fully-replicated copy of the SQLite database. Any data you insert will be replicated across the cluster, in a durable and fault-tolerant manner. 
 
 ## Next steps
