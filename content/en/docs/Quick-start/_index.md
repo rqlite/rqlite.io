@@ -29,7 +29,7 @@ $ rqlite
 | CREATE TABLE foo (id INTEGER NOT NULL PRIMARY KEY, name TEXT)               |
 +-----------------------------------------------------------------------------+
 127.0.0.1:4001> INSERT INTO foo(name) VALUES("fiona")
-1 row affected (0.000080 sec)
+1 row affected
 127.0.0.1:4001> SELECT * FROM foo
 +----+-------+
 | id | name  |
