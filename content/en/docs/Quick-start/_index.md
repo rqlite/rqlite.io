@@ -6,7 +6,7 @@ weight: 10
 ---
 The quickest way to get running is to download a pre-built release binary, available on the [GitHub releases page](https://github.com/rqlite/rqlite/releases). Once installed, you can start a single rqlite node like so:
 ```bash
-$ rqlited -node-id 1 data1
+$ rqlited -node-id=1 data1
 ```
 Once launched rqlite will be listening on [http://localhost:4001](http://localhost:4001).
 
