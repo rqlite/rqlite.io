@@ -90,7 +90,16 @@ If you wish to check if the node is running, and responding to HTTP requests, re
 [+]node ok
 ```
 > Strictly speaking `readyz` indicates that the database is ready to respond to all write requests, and all read requests with _Weak_ or _Strong_ Read Consistency. A rqlite node can **always** respond to read requests with _None_ consistency, assuming the local database is accessible. Of course, the results you get back from a _None_ request may be quite a bit different than what the rest of the cluster considers _committed_.
-
+### sync flag
+You can tell `/readyz` to block until the node has received the log entry equal to Leader's Commit Index _as it was set by the latest Heartbeat received from the Leader_. This allows you to check that a node is "caught up" with the Leader. To enable this check add `sync` to the URL. For example:
+ ```bash
+ $ curl localhost:4001/readyz?sync&timeout=5s
+[+]node ok
+[+]leader ok
+[+]store ok
+[+]sync ok
+```
+In the example above `/readyz` will block, for at most 5 seconds, until the receiving node is in sync with the Leader's Commit Index. The timeout, if not explicitly set, is 30 seconds. If the node receiving such a request is itself the Leader, this flag has no effect as the Leader is always caught up with itself.
 ## expvar support
 rqlite also exports [expvar](https://pkg.go.dev/expvar) information, which are mostly counters of various rqlite activity. The standard expvar information, as well as some custom information, is exposed. This data can be retrieved like so (assuming the node is started in its default configuration):
 
