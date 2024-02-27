@@ -164,6 +164,70 @@ When a transaction takes place either both statements will succeed, or neither. 
 
 The behaviour of rqlite if you explicitly issue `BEGIN`, `COMMIT`, `ROLLBACK`, `SAVEPOINT`, and `RELEASE` to control your own transactions is **not defined**. This is because the behavior of a cluster if it fails while such a manually-controlled transaction is not yet defined. It is important to control transactions only through the query parameters shown above.
 
+## BLOB data
+Working with [BLOB](https://www.sqlite.org/datatype3.html) data may require specialized handling, depending on your use case. Examples of writing BLOB data, and reading it back, are shown below.
+
+**Writing BLOBs**
+
+The simplest way to insert BLOB data is to use the `X''` syntax.
+```bash
+curl -XPOST 'localhost:4001/db/execute?pretty&timings' -H "Content-Type: application/json" -d '[
+    "CREATE TABLE foo (data BLOB)"
+]'
+curl -XPOST 'localhost:4001/db/execute?pretty&timings' -H "Content-Type: application/json" -d '[
+    "INSERT INTO foo(data) VALUES(x'\''deadbeef'\'')"
+]'
+```
+**Reading BLOBs**
+
+Reading BLOB data back can be done using a regular query request.
+```bash
+curl -G 'localhost:4001/db/query?pretty' --data-urlencode 'q=SELECT * FROM foo'
+{
+    "results": [
+        {
+            "columns": [
+                "data"
+            ],
+            "types": [
+                "blob"
+            ],
+            "values": [
+                [
+                    "3q2+7w=="
+                ]
+            ]
+        }
+    ]
+}
+```
+Note that BLOB data is returned as [base64-encoded](https://en.wikipedia.org/wiki/Base64) strings. While this works well for many applications, it makes it difficult to know if the returned string represents an actual string that was inserted in the row, or an actual BLOB data. To instead have BLOB data returned as an array of byte values, add `blob_array` to your URL:
+```bash
+curl -G 'localhost:4001/db/query?pretty&blob_array' --data-urlencode 'q=SELECT * FROM foo'
+{
+    "results": [
+        {
+            "columns": [
+                "data"
+            ],
+            "types": [
+                "blob"
+            ],
+            "values": [
+                [
+                    [
+                        222,
+                        173,
+                        190,
+                        239
+                    ]
+                ]
+            ]
+        }
+    ]
+}
+```
+
 ## Handling Errors
 Errors are indicated in two ways. Some error conditions will be flagged via `4xx` or `5xx` HTTP status codes, so you should always check that first. However, even if rqlite responds with HTTP `200` you should check for any errors that occurred while processing the request, which usually indicates an error at the database-level. These will be indicated via the presence of an `error` key in the JSON response. For example:
 
