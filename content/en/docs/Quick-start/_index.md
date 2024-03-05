@@ -14,7 +14,7 @@ Once launched rqlite will be listening on [http://localhost:4001](http://localho
 `docker run -p 4001:4001 rqlite/rqlite`
 
 ### macOS
-`homebrew rqlite`
+`brew install rqlite`
 
 ## Inserting records
 Let's insert some records using the [rqlite shell](/docs/cli), using standard SQLite commands. 
