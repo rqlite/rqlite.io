@@ -6,7 +6,7 @@ description: "How to access rqlite via code"
 weight: 40
 date: 2017-01-05
 ---
-There are client libraries available for a variety of programming languages, including Python, Go, and Javascript, on the [rqlite GitHub page](https://github.com/rqlite).
+There are client libraries available for a variety of programming languages, including Python, Go, and Javascript, on the [rqlite GitHub page](https://github.com/rqlite). Many of these libraries are contributions from the community be sure to do your own evaluation.
 
 ### Go
 - https://github.com/rqlite/gorqlite
@@ -23,6 +23,7 @@ There are client libraries available for a variety of programming languages, inc
 ### Rust
 - https://docs.rs/rqlite/latest/rqlite
 - https://docs.rs/rqlite_client/
+- https://github.com/HaHa421/sqlx-rqlite
 
 ### Javascript
 - https://github.com/rqlite/rqlite-js
