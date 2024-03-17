@@ -24,6 +24,7 @@ There are client libraries available for a variety of programming languages, inc
 - https://docs.rs/rqlite/latest/rqlite
 - https://docs.rs/rqlite_client/
 - https://github.com/HaHa421/sqlx-rqlite
+- https://github.com/tomvoet/rqlite-rs
 
 ### Javascript
 - https://github.com/rqlite/rqlite-js
