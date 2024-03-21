@@ -3,7 +3,7 @@
 title: "UI Applications"
 linkTitle: "UI Applications"
 description: "UI Applications for rqlite"
-weight: 45
+weight: 27
 date: 2017-01-05
 ---
 
