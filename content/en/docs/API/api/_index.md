@@ -169,15 +169,17 @@ Working with [BLOB](https://www.sqlite.org/datatype3.html) data may require spec
 
 **Writing BLOBs**
 
-The simplest way to insert BLOB data is to use the `X''` syntax.
+The simplest way to insert BLOB data is to use the `X''` syntax. These are string literals containing hexadecimal data and preceded by a single "x" or "X" character, for xxample: `x'53514C697465'`.
 ```bash
 curl -XPOST 'localhost:4001/db/execute?pretty&timings' -H "Content-Type: application/json" -d '[
     "CREATE TABLE foo (data BLOB)"
 ]'
 curl -XPOST 'localhost:4001/db/execute?pretty&timings' -H "Content-Type: application/json" -d '[
-    "INSERT INTO foo(data) VALUES(x'\''deadbeef'\'')"
+    "INSERT INTO foo(data) VALUES(x'\''53514C697465'\'')"
 ]'
 ```
+In the example above it is up to you to encode your data before passing it to rqlite. In Go you can do this using [EncodeToString](https://pkg.go.dev/encoding/hex#EncodeToString).
+
 **Reading BLOBs**
 
 Reading BLOB data back can be done using a regular query request.
