@@ -397,6 +397,8 @@ With any rqlite cluster, all write-requests must be serviced by the cluster Lead
 
 Queries, by default, are also serviced by the cluster Leader. Like write-requests, Followers will, by default, transparently forward queries to the Leader, and respond to the client after receiving the response from the Leader. However, depending on the [read-consistency](/docs/api/read-consistency/) specified with the request, if a Follower received the query request it may serve that request directly and not contact the Leader. Which read-consistency level makes sense depends on your application.
 
+> If one node, when trying to contact a second node, fails to contact that node, it will return an error to the user. You can you have the first node automatically retry the communication by setting the URL query parameter `retries` to the number of retries you wish the node to execute. For example `retries=2` will instruct the first node to retry 2 times.
+
 ### Data and the Raft log
 Any writes to the SQLite database go through the Raft log, ensuring only changes committed by a quorum of rqlite nodes are actually applied to the SQLite database. Queries do not __necessarily__ go through the Raft log, however, since they do not change the state of the database, and therefore do not need to be captured in the log. Only if _Strong_ read consistency is requested does a query go through the Raft log.
 
