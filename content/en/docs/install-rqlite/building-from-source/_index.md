@@ -7,7 +7,7 @@ weight: 40
 rqlite can be compiled for a wide variety of operating systems and platforms.
 
 ## Building rqlite
-*Building rqlite requires Go 1.21 or later. [gvm](https://github.com/moovweb/gvm) is a great tool for installing and managing your versions of Go.*
+*Building rqlite requires Go 1.22 or later. [gvm](https://github.com/moovweb/gvm) is a great tool for installing and managing your versions of Go. You must also have a [C compiler](https://github.com/mattn/go-sqlite3?tab=readme-ov-file#compilation) installed*
 
 One goal of rqlite is to keep the build process as simple as possible, to aid development and debugging. Download, build, and run rqlite like so (tested on 64-bit Ubuntu 20.04, macOS, and Windows):
 
@@ -30,6 +30,9 @@ cd $GOPATH/src/github.com/rqlite/rqlite
 go install ./...
 $GOPATH/bin/rqlited ~/node.1
 ```
+
+### Compilation errors locating SQLite functions
+If, during compilation, you experience [errors](https://github.com/rqlite/rqlite/issues/1763) about undefined SQLite functions, [your C compilation step is probably not configured correctly](https://github.com/mattn/go-sqlite3?tab=readme-ov-file#compilation). Check that you have a C compiler installed and that the environment variable `CGO_ENABLED` must be set to 1. You can [explicitly set the C compiler](https://pkg.go.dev/cmd/cgo) using the CC environment variable.
 
 ### Linking behavior
 Note that the above commands build a version of `rqlited` that dynamically links _libc_. When officially released, `rqlited` for certain CPU architectures will statically link all code, including libc - but for other architectures `rqlited` will be dynamically linked (which will require your enviroment to have all required libraries). The SQLite source code is **always** part of rqlite however, and you never need any SQLite library (often named `libsqlite3`) on your host machine.
