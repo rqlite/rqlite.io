@@ -130,7 +130,8 @@ If you wish to disable compression of the backup add `no_compress: true` to the 
 rqlite supports loading a node directly from SQLite data. This can be useful if you wish to initialize your system from preexisting SQLite data, or to restore from an existing [node backup](/docs/guides/backup/).
 
 ### Booting with a SQLite Database
-_Booting_ is a specialized process that enables rapid initialization of a node from a SQLite database image. This method is designed for **high-efficiency data loading, particularly suited for disaster recovery or initializing a large database quickly** though you can use it with any size of database. Unlike the other restore processes described below, _Booting_  bypasses most of the [Raft consensus system](https://raft.github.io/), significantly reducing the load time. The only limiting factor is how fast your disks are, and loading multi-GB SQLite files is possible via _Booting_.
+_Booting_ is a specialized process that enables rapid initialization of a node from a SQLite database image. This method is designed for **high-efficiency data loading, particularly suited for disaster recovery or initializing a large database quickly** though you can use it with any size of database. The only limiting factor is how fast your disks are, and loading multi-GB SQLite files is possible via _Booting_.
+>Unlike the other restore processes described below, _Booting_  bypasses most of the [Raft consensus system](https://raft.github.io/), significantly reducing the load time.
 
 There is an important limitation however -- _Booting_  is designed **exclusively for single-node setups**. After a successful _boot_ however, the node is ready for normal operation and can be scaled to a multi-node cluster as needed. Just [join new nodes](/docs/clustering/) to the booted node.
 
@@ -225,7 +226,7 @@ curl -XPOST 'localhost:4001/db/execute?pretty' -H "Content-Type: application/jso
 
 ## Restoring from Cloud Storage
 rqlite supports restoring a node from a backup previously uploaded to Cloud-based storage. If enabled and **the node has no pre-existing data**, rqlite will download the SQLite data stored in the cloud, and initialize your system with it. Also note that if you bootstrap a new cluster and pass `-auto-restore` to each node, only the node that becomes the Leader will actually install the data. The other nodes will pick up the data through the normal Raft consensus mechanism. Both compressed and non-compressed backups are handled automatically by rqlite during the restore process.
->Under the covers _Automatic Restore_ uses the _Load_ approach described above, which means it can be memory-intensive if the database file is large i.e. 100MB in size or greater. Be sure to monitor your system when dealing with large data sets.
+>Under the covers _Automatic Restore_ uses the _Load_ approach described above, which means it can be memory-intensive if the database file is large i.e. 100MB in size or greater. Be sure to monitor your system when dealing with large data sets. If you find auto-restore consumes too much memory, you may need to use the _Boot_ process outlined above to restore your node.
 
 In most cases you will define the same `sub` object values for both backup and restore configuration files, since the means of accessing cloud storage is the same in both cases.
 
