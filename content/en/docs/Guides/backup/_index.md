@@ -124,7 +124,9 @@ For MinIO deployments that use [path-style requests](https://docs.aws.amazon.com
 ```
 
 ### Other configuration options
-If you wish to disable compression of the backup add `no_compress: true` to the top-level section of the configuration file. The configuration file also supports variable expansion -- this means any string starting with `$` will be replaced with that [value from Environment variables](https://pkg.go.dev/os#ExpandEnv) when it is loaded by rqlite.
+If you wish **to disable compression** of the backup add `no_compress: true` to the top-level section of the configuration file. Uploaded backups can also **automatically prepend a timestamp to the last element of specified path** of the auto-upload backup, which will result in a new backup file being uploaded each time. This can be useful for point-in-time recoveries. To enable timestamping add `timestamp: true` to the top-level section of the configuration file
+
+The configuration file also supports variable expansion -- this means any string starting with `$` will be replaced with that [value from Environment variables](https://pkg.go.dev/os#ExpandEnv) when it is loaded by rqlite.
 
 ## Restoring from SQLite
 rqlite supports loading a node directly from SQLite data. This can be useful if you wish to initialize your system from preexisting SQLite data, or to restore from an existing [node backup](/docs/guides/backup/).
