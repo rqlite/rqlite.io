@@ -145,7 +145,7 @@ The configuration file also supports variable expansion -- this means any string
 	}
 }
 ```
-This will result in a non-compressed backup named `backups/TIMESTAMP_db.sqlite3` being uploaded every 5 minutes. `TIMESTAMP` will be in the form `YYYYMMDDHHMMSS`.
+This will result in a non-compressed backup named `backups/TIMESTAMP_db.sqlite3` being uploaded every 5 minutes. `TIMESTAMP` will be in the form `YYYYMMDDHHMMSS`, UTC timezone.
 
 
 ## Restoring from SQLite
