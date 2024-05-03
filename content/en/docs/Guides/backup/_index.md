@@ -128,6 +128,26 @@ If you wish **to disable compression** of the backup add `no_compress: true` to 
 
 The configuration file also supports variable expansion -- this means any string starting with `$` will be replaced with that [value from Environment variables](https://pkg.go.dev/os#ExpandEnv) when it is loaded by rqlite.
 
+#### Example
+```json
+{
+	"version": 1,
+	"type": "s3",
+	"interval": "5m",
+        "timestamp": true,
+        "no_compress": true,
+	"sub": {
+		"access_key_id": "$ACCESS_KEY_ID",
+		"secret_access_key": "$SECRET_ACCESS_KEY_ID",
+		"region": "$BUCKET_REGION",
+		"bucket": "$BUCKET_NAME",
+		"path": "backups/db.sqlite3.gz"
+	}
+}
+```
+This will result in a non-compressed backup named `backups/TIMESTAMP_db.sqlite3` being uploaded every 5 minutes. `TIMESTAMP` will be in the form `YYYYMMDDHHMMSS`.
+
+
 ## Restoring from SQLite
 rqlite supports loading a node directly from SQLite data. This can be useful if you wish to initialize your system from preexisting SQLite data, or to restore from an existing [node backup](/docs/guides/backup/).
 
