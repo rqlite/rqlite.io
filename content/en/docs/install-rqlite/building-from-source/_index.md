@@ -37,9 +37,6 @@ $GOPATH/bin/rqlited ~/node.1
 ### Compilation errors locating SQLite functions
 If, during compilation, you experience [errors](https://github.com/rqlite/rqlite/issues/1763) about undefined SQLite functions, [your C compilation step is probably not configured correctly](https://github.com/mattn/go-sqlite3?tab=readme-ov-file#compilation). Check that you have a C compiler installed and that the environment variable `CGO_ENABLED` must be set to 1. You can [explicitly set the C compiler](https://pkg.go.dev/cmd/cgo) using the CC environment variable.
 
-### Linking behavior
-Note that the above commands build a version of `rqlited` that dynamically links _libc_. When officially released, `rqlited` for certain CPU architectures will statically link all code, including libc - but for other architectures `rqlited` will be dynamically linked (which will require your enviroment to have all required libraries). The SQLite source code is **always** part of rqlite however, and you never need any SQLite library (often named `libsqlite3`) on your host machine.
-
 ### Raspberry Pi
 The process outlined above will work for Linux, OSX, and Windows. For Raspberry Pi, check out [this GitHub issue](https://github.com/rqlite/rqlite/issues/340).
 
