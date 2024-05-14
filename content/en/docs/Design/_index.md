@@ -14,11 +14,11 @@ The diagram below shows a high-level view of a rqlite node, as it's currently im
 
 ## Design presentations
 There have also been a series of presentations to various groups -- both industry and academic.
-- [Presentation](https://www.slideshare.net/PhilipOToole/rqlite-replicating-sqlite-via-raft-consensu) given at the [GoSF](https://www.meetup.com/golangsf/) [April 2016](https://www.meetup.com/golangsf/events/230127735/) Meetup.
-- [Presentation](https://docs.google.com/presentation/d/1lSNrZJUbAGD-ZsfD8B6_VPLVjq5zb7SlJMzDblq2yzU/edit?usp=sharing) given to the University of Pittsburgh, April 2018.
-- [Presentation]( https://www.philipotoole.com/2021-rqlite-cmu-tech-talk) given to the [Carnegie Mellon Database Group](https://db.cs.cmu.edu/), [September 2021](https://db.cs.cmu.edu/events/vaccination-2021-rqlite-the-distributed-database-built-on-raft-and-sqlite-philip-otoole/). There is also a [video recording](https://www.youtube.com/watch?v=JLlIAWjvHxM) of the talk.
+- [_Build your own Distributed System using Go_](https://www.philipotoole.com/gophercon2023) given at [GopherCon 2023](https://www.gophercon.com/). While not specifically about rqlite, it explains the key principles behind building a system such as rqlite. You can also view [a recording of this talk on YouTube](https://www.youtube.com/watch?v=8XbxQ1Epi5w).
 - [Presentation](https://docs.google.com/presentation/d/1E0MpQbUA6JOP2GjA60CNN0ER8fia0TP6kdJ41U9Jdy4/edit#slide=id.p) given to Hacker Nights NYC, March 2022.
-- [_Build your own Distributed System using Go_](https://www.philipotoole.com/gophercon2023) given at [GopherCon](https://www.gophercon.com/) 2023. While not specifically about rqlite, it explains the key principles behind building a system such as rqlite. You can also view [a recording of this talk on YouTube](https://www.youtube.com/watch?v=8XbxQ1Epi5w).
+- [Presentation]( https://www.philipotoole.com/2021-rqlite-cmu-tech-talk) given to the [Carnegie Mellon Database Group](https://db.cs.cmu.edu/), [September 2021](https://db.cs.cmu.edu/events/vaccination-2021-rqlite-the-distributed-database-built-on-raft-and-sqlite-philip-otoole/). There is also a [video recording](https://www.youtube.com/watch?v=JLlIAWjvHxM) of the talk.
+- [Presentation](https://docs.google.com/presentation/d/1lSNrZJUbAGD-ZsfD8B6_VPLVjq5zb7SlJMzDblq2yzU/edit?usp=sharing) given to the University of Pittsburgh, April 2018.
+- [Presentation](https://www.slideshare.net/PhilipOToole/rqlite-replicating-sqlite-via-raft-consensu) given at the [GoSF](https://www.meetup.com/golangsf/) [April 2016](https://www.meetup.com/golangsf/events/230127735/) Meetup.
 
 ## Blog posts
 
