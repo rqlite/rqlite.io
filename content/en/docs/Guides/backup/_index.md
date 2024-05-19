@@ -131,18 +131,18 @@ The configuration file also supports variable expansion -- this means any string
 #### Example
 ```json
 {
-	"version": 1,
-	"type": "s3",
-	"interval": "5m",
-        "timestamp": true,
-        "no_compress": true,
-	"sub": {
-		"access_key_id": "$ACCESS_KEY_ID",
-		"secret_access_key": "$SECRET_ACCESS_KEY_ID",
-		"region": "$BUCKET_REGION",
-		"bucket": "$BUCKET_NAME",
-		"path": "backups/db.sqlite3"
-	}
+    "version": 1,
+    "type": "s3",
+    "interval": "5m",
+    "timestamp": true,
+    "no_compress": true,
+    "sub": {
+        "access_key_id": "$ACCESS_KEY_ID",
+        "secret_access_key": "$SECRET_ACCESS_KEY_ID",
+        "region": "$BUCKET_REGION",
+        "bucket": "$BUCKET_NAME",
+        "path": "backups/db.sqlite3"
+    }
 }
 ```
 This will result in a non-compressed backup named `backups/TIMESTAMP_db.sqlite3` being uploaded every 5 minutes. `TIMESTAMP` will be in the form `YYYYMMDDHHMMSS`, UTC timezone.
