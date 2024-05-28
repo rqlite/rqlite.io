@@ -10,6 +10,7 @@ There are client libraries available for a variety of programming languages, inc
 
 ### Go
 - https://github.com/rqlite/gorqlite
+- https://github.com/goki/rqlite (a [GORM](https://gorm.io/) driver)
 
 ### Typescript
 - https://github.com/rqlite/knex-rqlite
