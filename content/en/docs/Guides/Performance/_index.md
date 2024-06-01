@@ -72,3 +72,13 @@ mount -t tmpfs -o size=4096m tmpfs /mnt/ramdisk
 rqlited -on-disk-path /mnt/ramdisk/node1/db.sqlite /path_to_persistent_disk/data
 ```
 where `/path_to_persistent_disk/data` is a directory path on your persistent disk. Because the Raft log is the authoritative source of truth, storing the SQLite database on a memory-backed filesystem does not risk data loss. rqlite always completely rebuilds the SQLite database from scratch on restart.
+
+## Memory Usage
+Go's garbage collector (GC) usually manages memory effectively. However, there are cases where you may need to adjust the GC process to maintain reasonable memory usage. Large, repeated requests to rqlite may result in significantly increased memory usage spikes. Although the GC eventually reclaims this memory, it may take too long before a GC cycle starts, causing high memory usage -- and in the extreme an _Out-of-Memory_ error.
+>What qualifies as "large"? As an example if you assign 1GB of memory to `rqlited`, a request larger than 25MB would be considered large.
+
+To address this, you can reduce the value of `GOGC`, which controls the frequency of GC cycles. For example you could lower `GOGC` to 50 from its default of 100 which should result in twice as many GC cycles. However, this will result in increased CPU load, presenting a trade-off.
+
+You may also need to adjust the GOMEMLIMIT setting, raising or lowering it as needed. For detailed information, consult the Go GC Guide.
+
+This adjustment can help manage rqlite's memory usage more effectively, ensuring better performance and stability.
