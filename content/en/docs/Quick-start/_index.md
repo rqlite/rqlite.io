@@ -11,6 +11,8 @@ $ rqlited -node-id=1 data1
 Once launched rqlite will be listening on [http://localhost:4001](http://localhost:4001).
 
 ### Docker
+_Docker images are available for a [variety of platforms](https://hub.docker.com/r/rqlite/rqlite/tags)._
+
 `docker run -p 4001:4001 rqlite/rqlite`
 
 ### macOS
