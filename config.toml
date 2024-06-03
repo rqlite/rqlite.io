@@ -198,13 +198,17 @@ enable = false
     disable = false
 
 [[menu.main]]
+    name = "Office Hours"
+    weight = 30
+    url = "/office-hours"
+
+[[menu.main]]
     name = "Blog"
     weight = 50
     url = "https://www.philipotoole.com/tag/rqlite/"
 
-
 [[menu.main]]
     name = "GitHub"
-    weight = 50
+    weight = 60
     url = "https://github.com/rqlite"
     pre = "<i class='fa-brands fa-github'></i>"
