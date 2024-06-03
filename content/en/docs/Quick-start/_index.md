@@ -51,4 +51,4 @@ _This demonstration shows all 3 nodes running on the same host. In reality you p
 With just these few steps you've now got a fault-tolerant, distributed relational database. Running on each rqlite node will be a fully-replicated copy of the SQLite database. Any data you insert will be replicated across the cluster, in a durable and fault-tolerant manner. 
 
 ## Next steps
-Take a look at the [Developer Guide](https://rqlite.io/docs/api/), and check out the detailed guides for [clustering](https://rqlite.io/docs/clustering/) and [Kubernetes](https://rqlite.io/docs/guides/kubernetes/).
+Take a look at the [Developer Guide](https://rqlite.io/docs/api/), and check out the detailed guides for [clustering](https://rqlite.io/docs/clustering/) and [Kubernetes](https://rqlite.io/docs/guides/kubernetes/). And **consider joining** the [rqlite Slack channel](https://www.rqlite.io/join-slack) or **signing up** for [Office Hours](https://rqlite.io/office-hours) if you want to discuss rqlite.
