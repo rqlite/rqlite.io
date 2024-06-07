@@ -29,10 +29,10 @@ To avoid even the issues associated with _weak_ consistency, rqlite also offers 
 If a query request is sent to a Follower, and _strong_ consistency is specified, the Follower will transparently forward the request to the Leader. The Follower waits for the response from the Leader, and then returns that response to the client.
 
 ## None
-With _none_, the node receiving your read request simply queries its local SQLite database, and does not perform any Leadership check -- in fact, the node could be completely disconnected from the rest of the cluster, but the query will still be successful. This offers the fastest query response, but suffers from the potential issues outlined above, whereby there is a chance of _Stale Reads_ if the Leader changes during the query, or if the node has become disconneted from the cluster.
+With _none_, the node receiving your read request simply queries its local SQLite database, and does not perform any Leadership check -- in fact, the node could be completely disconnected from the rest of the cluster, but the query will still be successful. This offers the absolute fastest query response, but suffers from the potential issues outlined above, whereby there is a chance of _Stale Reads_ if the Leader changes during the query, or if the node has become disconnected from the cluster.
 
 ### Limiting read staleness
-You can tell the receiving node not to return results if the node has been disconnected from the cluster for longer than a specified duration. If a read request sets the query parameter `freshness` to a [Go duration string](https://golang.org/pkg/time/#Duration), the node serving the read will check that less time has passed since it was last in contact with the Leader, than that specified via freshness. If more time has passed the node will return an error. This approach can be useful if you want to maximize successful query operations, but are willing to tolerate occassional, short-lived networking issues between nodes.
+You can tell the node which receives the read rquest not to return results if the node has been disconnected from the cluster for longer than a specified duration. If a read request sets the query parameter `freshness` to a [Go duration string](https://golang.org/pkg/time/#Duration), the node serving the read will check that less time has passed since it was last in contact with the Leader, than that specified via freshness. If more time has passed the node will return an error. This approach can be useful if you want to maximize successful query operations, but are willing to tolerate occassional, short-lived networking issues between nodes.
 
 It's important to node that the `freshness` **does not guarantee** that the node is caught up with the Leader, only that it is contact with the Leader. But if a node is in contact with the Leader, it's usually caught up with all changes that have taken place on the cluster. To check if node is actually caught up with Leader, use `freshness_strict` in addition to the `freshness` query parameter.
 
@@ -46,7 +46,9 @@ As explained above `freshness` just checks that that the node has been in contac
  See the examples at the end of this page to learn how to control _freshness_.
 
 ## Which should I use?
-_Weak_ is almost certainly sufficient for your application, and is the default read consistency level. Unless your cluster Leader is continually changing while you're actually executing queries there will be never be any difference between _weak_ and _strong_ -- but using _strong_ will result in much slower queries, which is not what most people want.
+_Weak_ is usually the right choice for your application, and is the default read consistency level. Unless your cluster Leader is continually changing while you're actually executing queries there will be never be any difference between _weak_ and _strong_ -- but using _strong_ will result in much slower queries, and more load on your cluster, which is not what most people want.
+
+One exception is if you're querying read-only nodes. In that case you probably want to specify _None_, possibly setting the `freshness` control too. If you set a read consistency level other than `None` when querying a read-only node then that read-only node will simply forward the request to the Leader (which partially defeats the purpose of read-only nodes).
 
 ## How do I specify read consistency?
 To explicitly select consistency, set the query param `level` to the desired level. However, you should use _none_ with read-only nodes, unless you want those nodes to actually forward the query to the Leader.
