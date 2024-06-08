@@ -45,10 +45,16 @@ As explained above `freshness` just checks that that the node has been in contac
 
  See the examples at the end of this page to learn how to control _freshness_.
 
+## Auto
+_Auto_ is not an actual Read Consistency level. Instead if a client selects this level during a read request, the receiving node will automatically select the level which is (usually) most sensible for the node's type. In the case of a read-only node `None` is chosen as the level. In all other cases `Weak` is the chosen as the level.
+
+Using `auto` can simplify clients as clients do not need know ahead of time whether they will be talking to a read-only node or voting node. A client can just select `auto`.
+
 ## Which should I use?
 _Weak_ is usually the right choice for your application, and is the default read consistency level. Unless your cluster Leader is continually changing while you're actually executing queries there will be never be any difference between _weak_ and _strong_ -- but using _strong_ will result in much slower queries, and more load on your cluster, which is not what most people want.
 
 One exception is if you're querying read-only nodes. In that case you probably want to specify _None_, possibly setting the `freshness` control too. If you set a read consistency level other than `None` when querying a read-only node then that read-only node will simply forward the request to the Leader (which partially defeats the purpose of read-only nodes).
+>If you are running a cluster which has some read-only nodes, and you want to implement the Read Consistency policy describe above in an easy manner, check out `auto` Read Consistency.
 
 ## How do I specify read consistency?
 To explicitly select consistency, set the query param `level` to the desired level. However, you should use _none_ with read-only nodes, unless you want those nodes to actually forward the query to the Leader.
@@ -92,4 +98,11 @@ curl -G 'localhost:4001/db/query?level=none&freshness=1s&freshness_strict' --dat
 # relatively slow. If the node receiving the query is not the the Leader,
 # the request will be transparently forwarded to the Leader.
 curl -G 'localhost:4001/db/query?level=strong' --data-urlencode 'q=SELECT * FROM foo'
+
+# Query the node, enabling 'auto' Read Consistency mode. If the receiving
+# node is read-only i.e. non-voting then 'none' will be set as the Read
+# Consistency level, with a mininum freshess of 1 second. For voting nodes
+# then 'weak' be set the Read Consistency level, and the freshness value
+# is ignored.
+curl -G 'localhost:4001/db/query?level=auto&freshness=1s' --data-urlencode 'q=SELECT * FROM foo'
 ```
