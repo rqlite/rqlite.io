@@ -100,9 +100,9 @@ curl -G 'localhost:4001/db/query?level=none&freshness=1s&freshness_strict' --dat
 curl -G 'localhost:4001/db/query?level=strong' --data-urlencode 'q=SELECT * FROM foo'
 
 # Query the node, enabling 'auto' Read Consistency mode. If the receiving
-# node is read-only i.e. non-voting then 'none' will be set as the Read
+# node is read-only i.e. non-voting, then 'none' will be set as the Read
 # Consistency level, with a mininum freshess of 1 second. For voting nodes
-# then 'weak' be set the Read Consistency level, and the freshness value
+# then 'weak' is set as the Read Consistency level, and the freshness value
 # is ignored.
 curl -G 'localhost:4001/db/query?level=auto&freshness=1s' --data-urlencode 'q=SELECT * FROM foo'
 ```
