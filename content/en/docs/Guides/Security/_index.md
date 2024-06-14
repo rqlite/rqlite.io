@@ -74,7 +74,8 @@ rqlite, via the configuration file, also supports user-level permissions. Each u
 - _execute_: user may access the execute endpoint at `/db/execute`.
 - _query_: user may access the query endpoint at `/db/query`.
 - _load_: user may load an SQLite dump file into a node via the `/db/load` or `/boot` endpoints.
-- _backup_: user may retrieve a backup.
+- _backup_: user may retrieve a backup via the endpoint `/db/backup`.
+- _snapshot_: user may initiate a Raft Snapshot via the endpoint `/snapshot`.
 - _status_: user can retrieve node status and Go runtime information.
 - _ready_: user can retrieve node readiness via `/readyz`
 - _join_: user can join a cluster. In practice only a node joins a cluster, so it's the joining node that must supply the credentials.
