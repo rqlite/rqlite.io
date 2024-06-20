@@ -18,7 +18,7 @@ You can also access the rqlite API directly, via a HTTP `GET` request to the end
 ```bash
 curl -s -XGET localhost:4001/db/backup -o bak.sqlite3
 ```
->So that rqlite doesn't have to make an extra copy of the SQLite database during the backup process, the backup copy returned by rqlite is always in [WAL](https://www.sqlite.org/wal.html) mode. If you wish, you can always change the backup copy to [DELETE mode using the SQLite shell](https://www.sqlite.org/pragma.html#pragma_journal_mode).
+>The backup copy returned by rqlite is always in [WAL](https://www.sqlite.org/wal.html) mode. If you wish, you can always change the backup copy to [DELETE mode using the SQLite shell](https://www.sqlite.org/pragma.html#pragma_journal_mode).
 
 Note that if the node is not the Leader, the node will transparently forward the request to Leader, wait for the backup data from the Leader, and return it to the client. If, instead, you want a backup of SQLite database of the actual node that receives the request, add `noleader` to the URL as a query parameter. 
 
@@ -52,6 +52,9 @@ An automatically compressed copy of the database is available. To download a [GZ
 curl -s -XGET localhost:4001/db/backup?compress -o bak.sqlite3.gz
 ```
 You can combine `compress` with `vacuum` (`?compress&vacuum`) for the smallest possible download.
+
+### Always test your backups
+rqlite's _Backup_ system is extensively tested. However you should periodically check your backups, and ensure they are valid SQLite files. One way to do this is to use SQLite itself to run an [integrity check](https://www.sqlite.org/pragma.html#pragma_integrity_check) on your backups.
 
 ## Automatic Backups
 rqlite supports automatically, and periodically, backing up its data to S3-compatible Cloud-hosted storage. To save network traffic rqlite uploads a **compressed** copy of its SQLite database, and will not upload a backup if the SQLite database hasn't changed since the last upload took place. Only the Leader performs the upload.
