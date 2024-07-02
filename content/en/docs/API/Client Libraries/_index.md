@@ -34,9 +34,9 @@ There are client libraries available for a variety of programming languages, inc
 ### C#
 - https://github.com/rqlite/rqlite-dotnet
 - https://github.com/sec/rqlite-net
-- https://github.com/bfren/rqlite
+- https://github.com/bfren/rqlite 
 
-### Delphi Development
+### Delphi (Pascal)
 - https://github.com/OwlHatSoftware/rqliteclient4delphi
 
 ### Java
