@@ -8,6 +8,7 @@ rqlite can be compiled for a wide variety of operating systems and platforms.
 
 ## Release process
 A rqlite release is [generated automatically using GitHub Actions](https://github.com/rqlite/rqlite/blob/master/.github/workflows/build-release-binaries.yml) anytime a new GitHub release is created and tagged.
+>While SQLite functionality is compiled into rqlite (so you do not need SQLite to be installed on the host machine) [glibc](https://www.gnu.org/software/libc/) is dynamically linked. This shouldn't cause any issues in practise and maximises compatibility with whatever host machine you run rqlite on.
 
 ## Building rqlite
 *Building rqlite requires Go 1.22 or later. [gvm](https://github.com/moovweb/gvm) is a great tool for installing and managing your versions of Go. You must also have a [C compiler](https://github.com/mattn/go-sqlite3?tab=readme-ov-file#compilation) installed.*
