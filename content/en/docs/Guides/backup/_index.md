@@ -162,8 +162,8 @@ There is an important limitation however: _Booting_  is designed **exclusively f
 #### Example
 To boot a rqlite node listening on localhost, use the `/boot` endpoint, as shown by the example below. _Be sure to set the Content-type header as shown_.
 ```bash
-curl -XPOST 'http://localhost:4001/boot' -H "Content-Type: application/octet-stream" \
-     --data-binary @largedb.sqlite
+curl -XPOST 'http://localhost:4001/boot' -H "Transfer-Encoding: chunked" \
+     --upload-file largedb.sqlite
 ```
 You can also use the rqlite [shell](/docs/cli/):
 ```
