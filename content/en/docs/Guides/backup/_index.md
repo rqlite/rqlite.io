@@ -160,10 +160,10 @@ There is an important limitation however: _Booting_  is designed **exclusively f
 >Unlike the other restore processes described below, _Booting_  bypasses most of the [Raft consensus system](https://raft.github.io/), significantly reducing the load time.
 
 #### Example
-To boot a rqlite node listening on localhost, use the `/boot` endpoint, as shown by the example below. _Be sure to set the Content-type header as shown_.
+To boot a rqlite node listening on localhost, use the `/boot` endpoint, as shown by the example below.
 ```bash
-curl -XPOST 'http://localhost:4001/boot' -H "Content-Type: application/octet-stream" \
-     --data-binary @largedb.sqlite
+curl -XPOST 'http://localhost:4001/boot' -H "Transfer-Encoding: chunked" \
+     --upload-file largedb.sqlite
 ```
 You can also use the rqlite [shell](/docs/cli/):
 ```
