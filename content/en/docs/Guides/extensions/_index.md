@@ -25,7 +25,7 @@ To do this we must pass the path of the directory containing the extension using
 ```
 rqlited -extensions-dir ~/extensions data
 ```
-At launch time rqlite will attempt to load every extension it finds in the _Extensions Directory_. If any extension fails to load rqlite will exit.
+At launch time rqlite will attempt to load every file it finds in the _Extensions Directory_ as an extension -- so only put actual extensions in this directory. If any extension fails to load rqlite will exit.
 
 That's it! Your extension is now available for use. Below is an example of the _rot13_ extension being invoked at the rqlite shell:
 ```
@@ -41,4 +41,4 @@ Connected to http://127.0.0.1:4001 running version 8
 ```
 
 ## Extensions and clusters
-It's critical that the above configuration be supplied to **every** node in your rqlite cluster. This means that the directory containing the extensions must also be present on every machine running an rqlite node. It's not sufficient to load an extension into only a subset nodes of your cluster.
+It's critical that the above configuration be supplied to **every** node in your rqlite cluster. This means that the directory containing the extensions must also be present on every machine running an rqlite node. It's not sufficient to load an extension into only a subset nodes of your cluster. Doing so will result in undefined behaviour on your cluster.
