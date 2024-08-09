@@ -21,9 +21,9 @@ gcc -g -fPIC -shared rot13.c -o ~/extensions/rot13.so
 ```
 
 ### Instruct rqlite to load the extension at launch-time
-To do this we must pass the path of the directory containing the extension using the command-line flag `-extensions-dir`. 
+To do this we must pass the path of the directory containing the extension using the command-line flag `-extensions-path`. 
 ```
-rqlited -extensions-dir ~/extensions data
+rqlited -extensions-path ~/extensions data
 ```
 At launch time rqlite will attempt to load every file it finds in the _Extensions Directory_ as an extension -- so only put actual extensions in this directory. If any extension fails to load rqlite will exit.
 
