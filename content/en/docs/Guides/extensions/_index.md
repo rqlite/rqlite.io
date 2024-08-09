@@ -48,4 +48,4 @@ Connected to http://127.0.0.1:4001 running version 8
 ```
 
 ## Extensions and clusters
-It's critical that the above configuration be supplied to **every** node in your rqlite cluster. This means that the directory containing the extensions must also be present on every machine running an rqlite node. It's not sufficient to load an extension into only a subset nodes of your cluster. Doing so will result in undefined behaviour on your cluster.
+It's critical that the above configuration be supplied to **every** node in your rqlite cluster. This means that the extensions must also be present on every machine running an rqlite node. It's not sufficient to load extensions into only a subset nodes of your cluster. Doing so will result in undefined behaviour on your cluster.
