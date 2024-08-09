@@ -19,7 +19,7 @@ In this example download the source code and compile it using `gcc`. Once compil
 mkdir ~/extensions
 gcc -g -fPIC -shared rot13.c -o ~/extensions/rot13.so
 gcc -g -fPIC -shared carray.c -o ~/extensions/carray.so
-zip ~/extensions.zip ~/extensions/rot13.so ~/extensions/carray.so
+zip -I ~/extensions.zip ~/extensions/rot13.so ~/extensions/carray.so # -j strips the leading path elements.
 ```
 
 ### Instruct rqlite to load the extension at launch-time
