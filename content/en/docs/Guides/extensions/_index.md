@@ -13,28 +13,32 @@ You can load multiple extensions into rqlite at launch time.
 ## Example
 Let's work through an example of loading an extension into rqlite. We will use the example _rot13_ and _carray_ extensions, which are available on the [SQLite website](https://www.sqlite.org/src/file/ext/misc).
 
-### Compile the extension
+### Compile the extensions
 In this example download the source code and compile it using `gcc`. Once compiled we add the object files to a new directory dedicated to extensions. We will also create zipfile containing both extensions, to demonstrate the alternative approach.
 ```
 mkdir ~/extensions
+
+# Compile the extensions as per https://www.sqlite.org/loadext.html
 gcc -g -fPIC -shared rot13.c -o ~/extensions/rot13.so
 gcc -g -fPIC -shared carray.c -o ~/extensions/carray.so
-zip -j ~/extensions.zip ~/extensions/rot13.so ~/extensions/carray.so # -j strips the leading path elements.
+
+# Create a zip file containing both extensions, stripping leading path elements.
+zip -j ~/extensions.zip ~/extensions/rot13.so ~/extensions/carray.so #
 ```
 
-### Instruct rqlite to load the extension at launch-time
+### Loading the extensions
 To do this we must pass the path of the directory containing the extension using the command-line flag `-extensions-path`. 
 ```
 rqlited -extensions-path=~/extensions data
 ```
 At launch time rqlite will attempt to load every file it finds in the _Extensions Directory_ as an extension -- so only put actual extensions in this directory. If any extension fails to load rqlite will exit.
 
-**Alternatively** you could pass the zipfile to rqlite at launch time:
+**Alternatively** you could pass the path of the zipfile to rqlite at launch time:
 ```
 rqlited -extensions-path=~/extensions.zip data
 ```
 
-That's it! Your extension is now available for use. Below is an example of the _rot13_ extension being invoked at the rqlite shell:
+That's it! Your extensions are now available for use. Below is an example of the _rot13_ extension being invoked at the rqlite shell:
 ```
 Welcome to the rqlite CLI.
 Enter ".help" for usage hints.
