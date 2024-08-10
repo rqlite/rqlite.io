@@ -6,9 +6,11 @@ weight: 5
 ---
 rqlite supports loading [SQLite Run-Time Loadable Extensions](https://www.sqlite.org/loadext.html). You can load multiple extensions into rqlite, and take advantage of the wide range of functionality availble via extensions.
 
+_Check out [this blog post](https://www.philipotoole.com/rqlite-8-27-loadable-sqlite-extensions-support/) for more demos of loading extensions._
+
 ## Overview
 Loading an extension is a two-step process:
-- Compile the extension source code so it is available as a shared library or [DLL](https://en.wikipedia.org/wiki/Dynamic-link_library). Sometimes you can download an extension already in compiled form, suitable for your Operating System.
+- Compile the extension source code so it is available as a shared library or [DLL](https://en.wikipedia.org/wiki/Dynamic-link_library). Often you can download an extension already in compiled form, suitable for your Operating System.
 - Supply the compiled extension to rqlite at launch time via the `rqlited` command-line flag `-extensions-path`.
 
 You can pass any of the following to `-extensions-path`:
