@@ -20,8 +20,8 @@ You can pass any of the following to `-extensions-path`:
 
 >In the case of the archive formats, only flat archives are supported. This means the decompressed content should consist of files at the root level without any directories.
 
-## Example
-Let's work through an example of loading an extension into rqlite. We will use the example _rot13_ and _carray_ extensions, which are available on the [SQLite website](https://www.sqlite.org/src/file/ext/misc).
+## Tutorial
+Let's work through loading an extension into rqlite. We will use the example _rot13_ and _carray_ extensions, which are available on the [SQLite website](https://www.sqlite.org/src/file/ext/misc).
 
 ### Compile the extensions
 In this example download the source code and compile it using `gcc`. Once compiled we add the object files to a new directory dedicated to extensions. We will also create zipfile containing both extensions, to demonstrate an alternative approach.
