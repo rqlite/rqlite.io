@@ -1,31 +1,39 @@
 ---
 title: "SQLite Extensions"
 linkTitle: "SQLite Extensions"
-description: "How to load SQLite Extensions into rqlite"
+description: "Loading and Managing SQLite Extensions in rqlite"
 weight: 5
 ---
-rqlite supports loading [SQLite Run-Time Loadable Extensions](https://www.sqlite.org/loadext.html). You can load multiple extensions into rqlite, and take advantage of the wide range of functionality availble via extensions.
-
-_Check out [this blog post](https://www.philipotoole.com/rqlite-8-27-loadable-sqlite-extensions-support/) for more demos of loading extensions._
+rqlite supports loading [SQLite Run-Time Loadable Extensions](https://www.sqlite.org/loadext.html). You can load multiple extensions into rqlite, and take advantage of the wide range of functionality availble via extensions. Whether you need advanced data types, custom functions, or new search capabilities, extensions enable you to tailor rqlite to your specific needs.
 
 ## Overview
 Loading an extension is a two-step process:
 - Compile the extension source code so it is available as a shared library or [DLL](https://en.wikipedia.org/wiki/Dynamic-link_library). Often you can download an extension already in compiled form, suitable for your Operating System.
 - Supply the compiled extension to rqlite at launch time via the `rqlited` command-line flag `-extensions-path`.
 
-You can pass any of the following to `-extensions-path`:
-- the path to a directory containing all the extensions you want to load.
-- the path to a Zip archive of those same extensions.
-- the path to a Gzipped tarball of the extensions.
+You can pass the path of any of the following to `-extensions-path`:
+- a single extension file
+- a directory containing all the extensions you want to load.
+- a Zip archive of those same extensions.
+- a Gzipped tarball of the extensions.
 
 >In the case of the archive formats, only flat archives are supported. This means the decompressed content should consist of files at the root level without any directories.
 
+### Practical extensions
+_Check out [this blog post](https://www.philipotoole.com/rqlite-8-27-loadable-sqlite-extensions-support/) for more extension demos._
+
+There are lots of interesting extensions available, which can bring a broad range of functionality to rqlite. Below are some examples.
+- [SQLite's own extenions](https://sqlite.org/src/dir?ci=trunk&name=ext/misc) - SQLite’s official extensions include functionality like CSV import/export, memory usage insights, and more.
+- [sqlean: The ultimate set of SQLite extensions ](https://github.com/nalgeon/sqlean) - brings crypto, IP address manipulation, UUID support, and lots more to rqlite. Comes with a precompiled release build that be loaded directly into rqlite
+- [sqlite-vec](https://github.com/asg017/sqlite-vec) - add Vector Search capabilitie to rqlite. Also available as a precompiled release build.
+
 ## Tutorial
-Let's work through loading an extension into rqlite. We will use the example _rot13_ and _carray_ extensions, which are available on the [SQLite website](https://www.sqlite.org/src/file/ext/misc).
+This tutorial will guide you through the process of compiling and loading an SQLite extension into rqlite, using the rot13 and carray extensions as examples. Both are available on the [SQLite website](https://www.sqlite.org/src/file/ext/misc).
 
 ### Compile the extensions
-In this example download the source code and compile it using `gcc`. Once compiled we add the object files to a new directory dedicated to extensions. We will also create zipfile containing both extensions, to demonstrate an alternative approach.
+Download the source code and compile it using `gcc`. Once compiled we add the object files to a new directory dedicated to extensions. We will also create zipfile containing both extensions, to demonstrate an alternative approach.
 ```
+# Create a directory to store the compiled extensions
 mkdir ~/extensions
 
 # Compile the extensions as per https://www.sqlite.org/loadext.html
@@ -37,7 +45,7 @@ zip -j ~/extensions.zip ~/extensions/rot13.so ~/extensions/carray.so
 ```
 
 ### Loading the extensions
-To do this we can pass the path of the directory containing the extension using the command-line flag `-extensions-path`.
+Run the following command on each rqlite node to load the extensions during startup:
 ```
 rqlited -extensions-path=~/extensions data
 ```
@@ -66,7 +74,9 @@ Connected to http://127.0.0.1:4001 running version 8
 ```
 
 ## Extensions and clusters
-It's critical that the above configuration be supplied to **every** node in your rqlite cluster. This means that the extensions must also be present on every machine running an rqlite node. It's not sufficient to load extensions into only a subset nodes of your cluster. Doing so will result in undefined behaviour on your cluster.
+It's **required** that the above configuration be supplied to **every** node in your rqlite cluster. This means that the extensions must also be present on every machine running an rqlite node. It's not sufficient to load extensions into only a subset nodes of your cluster. Doing so will result in undefined behaviour on your cluster.
 
 ## Troubleshooting
-If you're having trouble getting rqlite to load an extension, the first thing to check is if SQLite will load the extension. Sometimes your compilation step may not be correct, and ensuring SQLite can load the extension first is a good check. If SQLite does load the extension, but rqlite does not, [open an issue on GitHub](https://github.com/rqlite/rqlite/issues).
+If you're having trouble getting rqlite to load an extension ensure the extension is compatible with your operating system and architecture. Once way to do this is to check if SQLite will load the extension. Sometimes your compilation step may not be correct, and ensuring SQLite can load the extension is a good first check.
+
+If SQLite does load the extension, verify that the file permissions allow rqlite to read the extension. You can also check rqlite’s logs for any specific error messages related to extension loading. You can also[open an issue on GitHub](https://github.com/rqlite/rqlite/issues).
