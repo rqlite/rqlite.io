@@ -5,6 +5,7 @@ description: "Loading and Managing SQLite Extensions in rqlite"
 weight: 5
 ---
 rqlite supports loading [SQLite Run-Time Loadable Extensions](https://www.sqlite.org/loadext.html). You can load multiple extensions into rqlite, and take advantage of the wide range of functionality availble via extensions. Whether you need advanced data types, custom functions, or new search capabilities, extensions enable you to tailor rqlite to your specific needs.
+>The [rqlite Docker image](https://hub.docker.com/r/rqlite/rqlite/) comes with some useful SQLite extensions built-in, but disabled by default. Check out the _Docker_ section on this page for more details.
 
 ## Overview
 Loading an extension is a two-step process:
@@ -71,6 +72,16 @@ Connected to http://127.0.0.1:4001 running version 8
 +--------------+
 | nop          |
 +--------------+
+```
+
+## Docker
+The [rqlite Docker image](https://hub.docker.com/r/rqlite/rqlite/) comes with some useful SQLite extensions built-in -- you just need to enable them. They are:
+- [Sqlean: The ultimate set of SQLite extensions](https://github.com/nalgeon/sqlean)
+- [sqlite-vec: A vector search SQLite extension](https://github.com/asg017/sqlite-vec)
+  
+To enable these extesions, set the environment variable `SQLITE_EXTENSIONS` so that it includes each extension you wish to enable. For example, to enable both Sqlean **and** sqlite-vec, launch your container as follows:
+```bash
+docker run -e SQLITE_EXTENSIONS='sqlean sqlite-vec' -p4001:4001 rqlite/rqlite
 ```
 
 ## Extensions and clusters
