@@ -40,12 +40,19 @@ The most important design articles, linked below, show how the database has evol
 
 You can find many other details on rqlite from the [rqlite blog](https://www.philipotoole.com/tag/rqlite/).
 
-## Other design details
+## Other Design Details
 ### Raft
 The Raft layer always creates a file -- it creates the _Raft log_. This log stores the set of committed SQLite commands, in the order which they were executed. This log is authoritative record of every change that has happened to the system. It may also contain some read-only queries as entries, depending on read-consistency choices. Since every node in an rqlite cluster applies the entries log in exactly the same way, this guarantees that the SQLite database is the same on every node.
+
+### Log Compaction and Truncation
+rqlite automatically performs log compaction, so that disk usage due to the log remains bounded. After a configurable number of changes rqlite snapshots the SQLite database, and truncates the Raft log. This is a technical feature of the Raft consensus system, and most users of rqlite need not be concerned with this.
 
 ### SQLite
 SQLite runs in [WAL mode](https://www.sqlite.org/wal.html) and with [`SYNCHRONOUS=off`](https://www.sqlite.org/pragma.html#pragma_synchronous). In normal operation this configuration risks database corruption in the event of crash, but does provide substantially better write performance. However, since the SQLite database is completely recreated everytime `rqlited` starts, using the information stored in the Raft log, corruption is a non-issue.
 
-## Log Compaction and Truncation
-rqlite automatically performs log compaction, so that disk usage due to the log remains bounded. After a configurable number of changes rqlite snapshots the SQLite database, and truncates the Raft log. This is a technical feature of the Raft consensus system, and most users of rqlite need not be concerned with this.
+### Autoclustering
+When using _Automatic Bootstrapping_, each node notifies all other nodes of its existence. The first node to have been contacted by enough other nodes (set by `-boostrap-expect`) bootstraps the cluster. Only one node can bootstrap a cluster, so any other node that attempts to do so later will fail, and instead become a _Follower_ in the new cluster.
+
+When using either Consul or etcd for automatic clustering rqlite uses the key-value store of those systems. Each node attempts to atomically set a special key (the node writes its HTTP and Raft network addresses as the value for the key). Only one node will succeed in doing this and will then declare itself Leader, and other nodes will then join with it. To prevent multiple nodes updating the Leader key at once, nodes uses a check-and-set operation, only updating the special key if its value has not changed since it was last read by the node. See [this blog post](https://www.philipotoole.com/rqlite-7-0-designing-node-discovery-and-automatic-clustering/) for more details on the design.
+
+For DNS-based discovery, the rqlite nodes resolve the hostname. Once the number of returned addresses is at least as great as the `-bootstrap-expect` the nodes will attempt a bootstrap. Bootstrapping proceeds as though the network addresses were passed at the command line via `-join`.
