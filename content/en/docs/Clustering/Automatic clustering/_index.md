@@ -159,10 +159,3 @@ The examples above demonstrates simple configurations, and most real deployments
 
 ### Running multiple different rqlite clusters
 If you wish a single Consul or etcd instance to support multiple rqlite clusters, then set the `-disco-key` command line argument to a different value for each cluster. To run multiple rqlite clusters with DNS, use a different domain name per cluster.
-
-## Design
-When using _Automatic Bootstrapping_, each node notifies all other nodes of its existence. The first node to have been contacted by enough other nodes (set by `-boostrap-expect`) bootstraps the cluster. Only one node can bootstrap a cluster, so any other node that attempts to do so later will fail, and instead become a _Follower_ in the new cluster.
-
-When using either Consul or etcd for automatic clustering rqlite uses the key-value store of those systems. Each node attempts to atomically set a special key (the node writes its HTTP and Raft network addresses as the value for the key). Only one node will succeed in doing this and will then declare itself Leader, and other nodes will then join with it. To prevent multiple nodes updating the Leader key at once, nodes uses a check-and-set operation, only updating the special key if its value has not changed since it was last read by the node. See [this blog post](https://www.philipotoole.com/rqlite-7-0-designing-node-discovery-and-automatic-clustering/) for more details on the design.
-
-For DNS-based discovery, the rqlite nodes resolve the hostname. Once the number of returned addresses is at least as great as the `-bootstrap-expect` the nodes will attempt a bootstrap. Bootstrapping proceeds as though the network addresses were passed at the command line via `-join`.
