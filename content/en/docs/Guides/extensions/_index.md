@@ -85,7 +85,7 @@ rot13.so
 ```
 
 ## Extensions and clusters
-It's **required** that the identical exention configuration be supplied to **every** node in your rqlite cluster. It's not sufficient to load extensions into only a subset nodes of your cluster. Doing so will result in undefined behaviour on your cluster.
+If you are running a multi-node rqlite cluster, it's **required** that the identical extension configuration be supplied to **every** node in that cluster. It's not sufficient to load extensions into only a subset of nodes. Doing so will result in undefined behaviour.
 
 ## Troubleshooting
 If you're having trouble getting rqlite to load an extension ensure the extension is compatible with your operating system and architecture. Once way to do this is to check if SQLite will load the extension. Sometimes your compilation step may not be correct, and ensuring SQLite can load the extension is a good first check.
