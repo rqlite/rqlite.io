@@ -5,6 +5,7 @@ description: "Loading and Managing SQLite Extensions in rqlite"
 weight: 5
 ---
 rqlite supports loading [SQLite Run-Time Loadable Extensions](https://www.sqlite.org/loadext.html). You can load multiple extensions into rqlite, and take advantage of the wide range of functionality availble via extensions. Whether you need advanced data types, custom functions, or new search capabilities, extensions enable you to tailor rqlite to your specific needs.
+>The [rqlite Docker image](https://hub.docker.com/r/rqlite/rqlite/) comes with some useful SQLite extensions built-in. Check out the _Docker_ section on this page for more details.
 
 ## Overview
 Loading an extension is a two-step process:
@@ -73,8 +74,22 @@ Connected to http://127.0.0.1:4001 running version 8
 +--------------+
 ```
 
+## Docker
+The [rqlite Docker image](https://hub.docker.com/r/rqlite/rqlite/) comes with some useful SQLite extensions built-in -- you just need to enable them. Available extensions are shown in the table below.
+
+| Extension | Purpose | Flag |
+|-----------------|-----------------|-----------------|
+| [Sqlean: The ultimate set of SQLite extensions](https://github.com/nalgeon/sqlean) | Set of useful functions | `sqlean` |
+| [sqlite-vec: A vector search SQLite extension](https://github.com/asg017/sqlite-vec) | Vector search engine | `sqlite-vec` |
+| [SQLite ICU](https://sqlite.org/src/dir/ext/icu) | Integration of the _International Components<br>for Unicode_ library with SQLite | `icu` |
+  
+To enable an extesion, set the environment variable `SQLITE_EXTENSIONS` so that it includes the _Flag_ for the extension you wish to enable. For example, to enable both Sqlean and ICU extensions, launch your container as follows:
+```bash
+docker run -e SQLITE_EXTENSIONS='sqlean icu' -p4001:4001 rqlite/rqlite
+```
+
 ## Extensions and clusters
-It's **required** that the above configuration be supplied to **every** node in your rqlite cluster. This means that the extensions must also be present on every machine running an rqlite node. It's not sufficient to load extensions into only a subset nodes of your cluster. Doing so will result in undefined behaviour on your cluster.
+It's **required** that the identical exention configuration be supplied to **every** node in your rqlite cluster. It's not sufficient to load extensions into only a subset nodes of your cluster. Doing so will result in undefined behaviour on your cluster.
 
 ## Troubleshooting
 If you're having trouble getting rqlite to load an extension ensure the extension is compatible with your operating system and architecture. Once way to do this is to check if SQLite will load the extension. Sometimes your compilation step may not be correct, and ensuring SQLite can load the extension is a good first check.

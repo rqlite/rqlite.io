@@ -17,7 +17,7 @@ Check out the [rqlite Docker page](https://hub.docker.com/r/rqlite/rqlite/) for 
 ```brew install rqlite```
 
 ### Windows
-The latest top-of-tree build [is available for download](https://ci.appveyor.com/api/projects/otoolep/rqlite/artifacts/rqlite-latest-win64.zip?branch=master) from AppVeyor.
+You can download the Windows release on the [GitHub releases page](https://github.com/rqlite/rqlite/releases). Alternatively the latest top-of-tree build [is also available for download](https://ci.appveyor.com/api/projects/otoolep/rqlite/artifacts/rqlite-latest-win64.zip?branch=master) from AppVeyor.
 
 > Note that the build processes for both Homebrew and Windows are not completely controlled by the rqlite organization. You use those binaries at your own risk.
 
