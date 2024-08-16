@@ -83,7 +83,7 @@ The [rqlite Docker image](https://hub.docker.com/r/rqlite/rqlite/) comes with so
 | [sqlite-vec: A vector search SQLite extension](https://github.com/asg017/sqlite-vec) | Vector search engine | `sqlite-vec` |
 | [SQLite ICU](https://sqlite.org/src/dir/ext/icu) | Integration of the _International Components<br>for Unicode_ library with SQLite | `icu` |
   
-To enable an extesion, set the environment variable `SQLITE_EXTENSIONS` so that it includes the key for extension you wish to enable. For example, to enable both Sqlean and ICU extensions, launch your container as follows:
+To enable an extesion, set the environment variable `SQLITE_EXTENSIONS` so that it includes the key for the extension you wish to enable. For example, to enable both Sqlean and ICU extensions, launch your container as follows:
 ```bash
 docker run -e SQLITE_EXTENSIONS='sqlean icu' -p4001:4001 rqlite/rqlite
 ```
