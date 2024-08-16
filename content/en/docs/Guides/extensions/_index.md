@@ -73,6 +73,9 @@ Below is an example of the _rot13_ extension being invoked at the rqlite shell:
 Welcome to the rqlite CLI.
 Enter ".help" for usage hints.
 Connected to http://127.0.0.1:4001 running version 8
+127.0.0.1:4001> .extensions
+carray.so
+rot13.so
 127.0.0.1:4001> SELECT rot13("abc")
 +--------------+
 | rot13("abc") |
