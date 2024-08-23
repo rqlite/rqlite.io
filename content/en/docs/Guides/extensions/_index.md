@@ -11,7 +11,7 @@ Loading an extension is a two-step process:
 - Compile the extension source code so it is available as a shared library or [DLL](https://en.wikipedia.org/wiki/Dynamic-link_library). Often you can download an extension already in compiled form, suitable for your Operating System.
 - Supply the compiled extension to rqlite at launch time via the `rqlited` command-line flag `-extensions-path`.
 
-You can pass the path of any of the following to `-extensions-path`:
+`-extensions-path` supports a comma-delimited set of paths. Each path may point to one of the following:
 - a single extension file
 - a directory containing all the extensions you want to load.
 - a Zip archive of those same extensions.
@@ -22,15 +22,16 @@ You can pass the path of any of the following to `-extensions-path`:
 ## Docker
 The [rqlite Docker image](https://hub.docker.com/r/rqlite/rqlite/) comes preloaded with some useful SQLite extensions -- you just need to enable them. Currently available extensions are shown in the table below.
 
-| Extension | Purpose | Flag |
+| Extension | Purpose | Key |
 |-----------------|-----------------|-----------------|
 | [Sqlean: The ultimate set of SQLite extensions](https://github.com/nalgeon/sqlean) | Set of useful functions | `sqlean` |
 | [sqlite-vec: A vector search SQLite extension](https://github.com/asg017/sqlite-vec) | Vector search engine | `sqlite-vec` |
 | [SQLite ICU](https://sqlite.org/src/dir/ext/icu) | Integration of the _International Components<br>for Unicode_ library with SQLite | `icu` |
+| [SQLite Misc](https://sqlite.org/src/dir/ext/misc) | A subset of the SQLite miscellaneous extensions | `misc` |
   
-To enable an extesion, set the environment variable `SQLITE_EXTENSIONS` so that it includes the _Flag_ for the extension you wish to enable. For example, to enable both Sqlean and ICU extensions, launch your container as follows:
+To enable an extension, set the environment variable `SQLITE_EXTENSIONS` so that it includes the _Key_ for the extension you wish to enable. For example, to enable both Sqlean and ICU extensions, launch your container as follows:
 ```bash
-docker run -e SQLITE_EXTENSIONS='sqlean icu' -p4001:4001 rqlite/rqlite
+docker run -e SQLITE_EXTENSIONS='sqlean,icu' -p4001:4001 rqlite/rqlite
 ```
 
 ## Tutorial
@@ -63,7 +64,11 @@ Another option is to pass the path of the zipfile to rqlite at launch time:
 ```
 rqlited -extensions-path=~/extensions.zip data
 ```
-A Gzipped tarball would also work.
+
+Finally, you could also just pass each compiled extension as is:
+```bash
+rqlited -extensions-path=~/extensions/rot13.so,~/extensions/carray.so data
+```
 
 That's it! Your extensions are now available for use by rqlite.
 
