@@ -67,7 +67,7 @@ rqlited -extensions-path=~/extensions.zip data
 
 Finally, you could also just pass each compiled extension as is:
 ```bash
-rqlited -extensions-path=~/extensions/rot13.so,~/extensions/carray.so
+rqlited -extensions-path=~/extensions/rot13.so,~/extensions/carray.so data
 ```
 
 That's it! Your extensions are now available for use by rqlite.
