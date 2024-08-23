@@ -64,7 +64,11 @@ Another option is to pass the path of the zipfile to rqlite at launch time:
 ```
 rqlited -extensions-path=~/extensions.zip data
 ```
-A Gzipped tarball would also work.
+
+Finally, you could also just pass each compiled extension as is:
+```bash
+rqlited -extensions-path=~/extensions/rot13.so,~/extensions/carray.so
+```
 
 That's it! Your extensions are now available for use by rqlite.
 
