@@ -22,14 +22,14 @@ Loading an extension is a two-step process:
 ## Docker
 The [rqlite Docker image](https://hub.docker.com/r/rqlite/rqlite/) comes preloaded with some useful SQLite extensions -- you just need to enable them. Currently available extensions are shown in the table below.
 
-| Extension | Purpose | Flag |
+| Extension | Purpose | Key |
 |-----------------|-----------------|-----------------|
 | [Sqlean: The ultimate set of SQLite extensions](https://github.com/nalgeon/sqlean) | Set of useful functions | `sqlean` |
 | [sqlite-vec: A vector search SQLite extension](https://github.com/asg017/sqlite-vec) | Vector search engine | `sqlite-vec` |
 | [SQLite ICU](https://sqlite.org/src/dir/ext/icu) | Integration of the _International Components<br>for Unicode_ library with SQLite | `icu` |
 | [SQLite Misc](https://sqlite.org/src/dir/ext/misc) | A subset of the SQLite miscellaneous extensions | `misc` |
   
-To enable an extesion, set the environment variable `SQLITE_EXTENSIONS` so that it includes the _Flag_ for the extension you wish to enable. For example, to enable both Sqlean and ICU extensions, launch your container as follows:
+To enable an extension, set the environment variable `SQLITE_EXTENSIONS` so that it includes the _Key_ for the extension you wish to enable. For example, to enable both Sqlean and ICU extensions, launch your container as follows:
 ```bash
 docker run -e SQLITE_EXTENSIONS='sqlean,icu' -p4001:4001 rqlite/rqlite
 ```
