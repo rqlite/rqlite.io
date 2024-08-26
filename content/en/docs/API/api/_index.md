@@ -7,13 +7,15 @@ weight: 5
 date: 2017-01-05
 ---
 Each rqlite node exposes an HTTP API allowing data to be inserted into, and read back from, the database. Specifically there are three endpoints to know:
-- `/db/execute` which accepts write requests (`INSERT`, `UPDATE`, `DELETE`)
-- `/db/query` which accepts read requests (`SELECT`)
+- `/db/execute` which only accepts write requests (`INSERT`, `UPDATE`, `DELETE`)
+- `/db/query` which only accepts read requests (`SELECT`)
 - `/db/request` which accepts both read and write requests. This endpoint is known as the [_Unified Endpoint_](/docs/api/api/#unified-endpoint).
 
 You can send your read and writes requests to any node in your cluster. 
 
-**Which endpoint should you use?** If you know ahead of time whether you are doing reads or writes, it's probably best to choose the endpoint dedicated to that type of request (either `/db/execute` or `/db/query`), as you will know precisely what to expect when rqlite responds. This encourages the most robust interaction with rqlite. In contrast the structure of the response from `/db/request` will depend on whether you send read or write requests, and may require you (or your code) to inspect the response more closely before parsing it. But `/db/request` can be more convenient in some cases, as you don't need to worry about choosing a particular endpoint ahead of time -- just send all your requests to `/db/request`.
+**Which endpoint should you use?** If you know ahead of time whether you are doing reads or writes, it's probably best to choose the endpoint dedicated to that type of request (either `/db/execute` or `/db/query`), as you will know precisely what to expect when rqlite responds. This encourages the most robust interaction with rqlite.
+
+In contrast the format of the response from `/db/request` will depend on whether you send read or write requests, and may require you (or your code) to inspect the response more closely before parsing it. But `/db/request` can be more convenient in some cases, as you don't need to worry about choosing a particular endpoint ahead of time -- just send all your requests to `/db/request`.
 
 The best way to understand the API is to work through the simple examples below. There are also [client libraries available](/docs/api/client-libraries/).
 
