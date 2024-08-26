@@ -8,9 +8,9 @@ The quickest way to get running is to download a pre-built release binary, avail
 
 Once installed, you can start a single rqlite node like so:
 ```bash
-$ rqlited -node-id=1 data1
+$ rqlited -node-id=1 data1/
 ```
-Once launched rqlite will be listening on [http://localhost:4001](http://localhost:4001).
+`data1` is the path to a diretory rqlite will use for storage (you can use any path you like). Once launched rqlite will be listening on [http://localhost:4001](http://localhost:4001).
 
 ### Docker
 _Docker images are available for a [variety of platforms](https://hub.docker.com/r/rqlite/rqlite/tags)._
@@ -45,8 +45,8 @@ $ rqlite
 ## Forming a cluster
 You don't need to deploy cluster to use rqlite well, but running multiple nodes means you'll have a fault-tolerant system. Start two more nodes, allowing the cluster to tolerate failure of a single node, like so:
 ```bash
-$ rqlited -node-id 2 -http-addr localhost:4003 -raft-addr localhost:4004 -join localhost:4002 data2
-$ rqlited -node-id 3 -http-addr localhost:4005 -raft-addr localhost:4006 -join localhost:4002 data3
+$ rqlited -node-id 2 -http-addr localhost:4003 -raft-addr localhost:4004 -join localhost:4002 data2/
+$ rqlited -node-id 3 -http-addr localhost:4005 -raft-addr localhost:4006 -join localhost:4002 data3/
 ```
 _This demonstration shows all 3 nodes running on the same host. In reality you probably wouldn't do this, and then you wouldn't need to select different -http-addr and -raft-addr ports for each rqlite node. Consult the [Clustering Guide](/docs/clustering/) for more details._
 
