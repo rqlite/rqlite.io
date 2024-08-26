@@ -15,7 +15,7 @@ $ rqlited -node-id=1 data/
 ### Docker
 _Docker images are available for a [variety of platforms](https://hub.docker.com/r/rqlite/rqlite/tags)._
 
-`docker run -p 4001-4002:4001-4002 rqlite/rqlite`
+`docker run -p 4001:4001 rqlite/rqlite`
 
 ### macOS
 `brew install rqlite`
