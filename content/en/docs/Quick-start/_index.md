@@ -15,7 +15,7 @@ Once launched rqlite will be listening on [http://localhost:4001](http://localho
 ### Docker
 _Docker images are available for a [variety of platforms](https://hub.docker.com/r/rqlite/rqlite/tags)._
 
-`docker run -p 4001:4001 rqlite/rqlite`
+`docker run -p 4001-4002:4001-4002 rqlite/rqlite`
 
 ### macOS
 `brew install rqlite`
