@@ -10,7 +10,7 @@ Once installed, you can start a single rqlite node like so:
 ```bash
 $ rqlited -node-id=1 data/
 ```
-`data/` is the path to a directory rqlite will use for storage (you can use any path you like). Once launched rqlite will be listening on [http://localhost:4001](http://localhost:4001).
+`data/` is the path to a directory rqlite will use for storage. Once launched rqlite will be listening on [http://localhost:4001](http://localhost:4001).
 
 ### Docker
 _Docker images are available for a [variety of platforms](https://hub.docker.com/r/rqlite/rqlite/tags)._
