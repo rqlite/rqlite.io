@@ -43,7 +43,7 @@ $ rqlite
 ```
 
 ## Forming a cluster
-While not strictly necessary to run rqlite, running multiple nodes means you'll have a fault-tolerant cluster. Start two more nodes, allowing the cluster to tolerate failure of a single node, like so:
+You don't need to deploy cluster to use rqlite well, but running multiple nodes means you'll have a fault-tolerant system. Start two more nodes, allowing the cluster to tolerate failure of a single node, like so:
 ```bash
 $ rqlited -node-id 2 -http-addr localhost:4003 -raft-addr localhost:4004 -join localhost:4002 data2
 $ rqlited -node-id 3 -http-addr localhost:4005 -raft-addr localhost:4006 -join localhost:4002 data3
