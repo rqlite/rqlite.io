@@ -8,7 +8,7 @@ The quickest way to get running is to download a pre-built release binary, avail
 
 Once installed, you can start a single rqlite node like so:
 ```bash
-$ rqlited -node-id=1 data1/
+$ rqlited -node-id=1 data/
 ```
 `data1` is the path to a diretory rqlite will use for storage (you can use any path you like). Once launched rqlite will be listening on [http://localhost:4001](http://localhost:4001).
 
