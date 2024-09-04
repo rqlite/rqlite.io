@@ -95,4 +95,4 @@ If you are running a multi-node rqlite cluster, it's **required** that the ident
 ## Troubleshooting
 If you're having trouble getting rqlite to load an extension ensure the extension is compatible with your operating system and architecture. Once way to do this is to check if SQLite will load the extension. Sometimes your compilation step may not be correct, and ensuring SQLite can load the extension is a good first check.
 
-If SQLite does load the extension, verify that the file permissions allow rqlite to read the extension. You can also check rqlite’s logs for any specific error messages related to extension loading. You can also[open an issue on GitHub](https://github.com/rqlite/rqlite/issues).
+If SQLite does load the extension, verify that the file permissions allow rqlite to read the extension. You can also check rqlite’s logs for any specific error messages related to extension loading. You can also [open an issue on GitHub](https://github.com/rqlite/rqlite/issues).
