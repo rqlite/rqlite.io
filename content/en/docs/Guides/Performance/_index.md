@@ -37,6 +37,17 @@ rqlited -auto-vacuum-int=24h # rqlite will run an automatic VACUUM every day
 
 >Be sure to study the SQLite VACUUM documentation, as VACUUM may alter the databsase in a way you do not want. Performing a VACUUM may temporarily double the disk usage of rqlite, so make sure you have enough free disk space or VACUUM may fail. Writes are also **blocked** while a VACUUM is taking place.
 
+### PRAGMA optimize
+rqlite is also compatible with [`PRAGMA optimize`](https://www.sqlite.org/pragma.html#pragma_optimize). Issuing this command instructs SQLite to analyze its tables, gathering statistics which can improve query performance.
+```bash
+curl -XPOST 'localhost:4001/db/execute' -H "Content-Type: application/json" -d '["PRAGMA optimize"]'
+```
+The SQLite documents recommend periodically optimizing the database. Therefore rqlite, by default, performs an optimize once a day. You can change the optimization interval, or disable optimization entirely, via the `-auto-optimze-int` command line flag. For example:
+```bash
+rqlited -auto-optimze-int=6h # rqlite will run 'PRAGMA optimize' every six hours
+rqlited -auto-optimze-int=0h # Disable automatic optimization
+```
+
 ### Batching
 The more SQLite statements you can include in a single request to a rqlite node, the better the system will perform. 
 
