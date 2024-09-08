@@ -151,7 +151,7 @@ The configuration file also supports variable expansion -- this means any string
 This will result in a non-compressed backup named `backups/TIMESTAMP_db.sqlite3` being uploaded every 5 minutes. `TIMESTAMP` will be in the form `YYYYMMDDHHMMSS`, UTC timezone.
 
 ## Restoring from SQLite
-rqlite supports loading a node directly from SQLite data. This can be useful if you wish to initialize your system from preexisting SQLite data, or to restore from an existing [node backup](/docs/guides/backup/).
+rqlite can load a node directly from a SQLite database file. This is useful for initializing a system with existing SQLite data or restoring from a [node backup](/docs/guides/backup/). There are two different ways to initialize rqlite with pre-existing SQLite data: **Booting** and **Loading**. Each has its own advantages.
 
 ### Booting with a SQLite Database
 _Booting_ is a specialized process that enables rapid initialization of a node from a SQLite database image. This method is designed for **high-efficiency data loading, particularly suited for disaster recovery or initializing a large database quickly** though you can use it with any size of database. The only limiting factor is how fast your disks are, and loading multi-GB SQLite files is possible via _Booting_.
