@@ -157,7 +157,6 @@ rqlite supports loading a node directly from SQLite data. This can be useful if 
 _Booting_ is a specialized process that enables rapid initialization of a node from a SQLite database image. This method is designed for **high-efficiency data loading, particularly suited for disaster recovery or initializing a large database quickly** though you can use it with any size of database. The only limiting factor is how fast your disks are, and loading multi-GB SQLite files is possible via _Booting_.
 
 There is an important limitation however: _Booting_  is designed **exclusively for single-node setups**. After a successful _boot_ however, the node is ready for normal operation and can be scaled to a multi-node cluster as needed. Just [join new nodes](/docs/clustering/) to the booted node.
->Unlike the other restore processes described below, _Booting_  bypasses most of the [Raft consensus system](https://raft.github.io/), significantly reducing the load time.
 
 #### Example
 To boot a rqlite node listening on localhost use the `/boot` endpoint, as shown by the example below.
