@@ -90,7 +90,7 @@ It supports [a form of transactions](/docs/api/api/#transactions). You can wrap 
 No. See the guide on [Direct Access Guide](/docs/guides/direct-access/) for more details.
 
 ## Can I read the SQLite file directly?
-Yes, but it has not been deeply tested. See the guide on [Direct Access Guide](/docs/guides/direct-access/) for more details.
+Yes, but it has not been extensively tested. See the guide on [Direct Access Guide](/docs/guides/direct-access/) for more details.
 
 ## Can I use rqlite to replicate my SQLite database to a second node?
 Not in a simple sense, no. rqlite is not a SQLite database replication tool. While each node does have a full copy of the SQLite database, rqlite is not simply about replicating that database.
