@@ -1,32 +1,28 @@
 ---
 title: "SQLite Direct Access"
-linkTitle: "sqlite direct access"
+linkTitle: "SQLite Direct Access"
 description: "Directly access the SQLite database"
 weight: 5
 ---
 
-# Safely Accessing the SQLite Database Under rqlite
-
-rqlite ensures your data remains consistent and highly available by managing the SQLite database under the hood. Direct access to this SQLite database, either for reading or modifying data, can pose risks if not done correctly. This guide outlines best practices for safely interacting with the underlying SQLite files while maintaining the integrity of your rqlite cluster.
+rqlite ensures your data remains consistent and highly available by managing the SQLite database under the hood. Direct access to this SQLite database can result in data loss if not done correctly. This guide outlines best practices for safely interacting with the underlying SQLite database.
 
 ## Can I Modify the SQLite Database Directly?
 
-No, you must never modify the SQLite database directly. All interactions with the database should occur through the rqlite HTTP API. If you alter the SQLite file directly, including changing its journaling mode or checkpointing a Write-Ahead Log (WAL), the behavior of rqlite becomes undefined. This may result in data loss or a complete cluster failure.
-Can I Read the SQLite Database Directly?
+No, you must never modify the SQLite database directly. All interactions with the database should occur through the rqlite HTTP API. If you alter the SQLite file directly, including changing its journaling mode or checkpointing a Write-Ahead Log (WAL), the behavior of rqlite becomes undefined. In other words you'll probably break rqlite, and may lose data.
 
-You may read the SQLite file directly, but extreme caution is required. While some users do this in production environments, it is critical to follow these guidelines to prevent unintended consequences.
+## Can I read the SQLite database?
+Yes, you may read the SQLite file directly, but it is critical to follow certain guidelines when doing so.
 
-    Read-Only Access: Ensure that any direct access to the SQLite database is strictly read-only. Any write access, even unintended, can disrupt rqlite’s operation. Your reading client must explicitly open the database in read-only mode.
+- Operating System Protection: You should use operating system-level mechanisms to enforce read-only access to the directory containing the SQLite files. Configure the file permissions so that any user or process reading the SQLite database (apart from the rqlite system) cannot modify the SQLite files, even accidentally.
 
-    Operating System Protection: It's critical that you use operating system-level mechanisms to enforce read-only access. Configure the file permissions so that any user or process reading the SQLite database cannot modify the file, even accidentally. This additional layer of protection reduces the risk of a misconfigured client causing issues.
+- Read-Only Access: Any client reading the SQLite database should open the database connection in [read-only mode](https://www.sqlite.org/c3ref/open.html).
 
-    Beware of Automatic Checkpoints: Some SQLite clients may checkpoint the WAL when closing their connection, even if they only perform read operations. This can alter the state of the database and will break rqlite. To avoid this, ensure that your reading client does not engage in any operations that could modify the database, such as automatic checkpointing.
+> Why are these guidelines important? A SQLite client, regardless of whether it wrote any data to the database, may checkpoint the WAL when closing its connection, if it is the only connection to the database when it closes. Checkpointing the WAL will alter the state of the database and will break rqlite.
 
-## The Risk of Long-Running Reads
+## The impact of Long-Running Reads
 
-Long-running read transactions can interfere with rqlite's ability to Snapshot the database. rqlite periodically Snapshots the SQLite database to optimize disk space usage and performance, but this process requires exclusive access to the database. If a long-running read holds a lock on the database, Snapshotting will be delayed, which may eventually lead to excessive disk usage or degraded performance.
-
-    Snapshotting typically only takes a few milliseconds. However, if a Snapshot is repeatedly delayed due to read locks, it can affect cluster performance and stability.
+Long-running read transactions can interfere with rqlite's ability to _snapshot_ the database. rqlite periodically snapshots the SQLite database, but this process requires exclusive access to the database. If a long-running read holds a lock on the database, snapshotting will be delayed, which may eventually lead to excessive disk usage or degraded performance. Snapshotting typically only takes a few milliseconds, so rarely has any impact on database performance in practise.
 
 ## Best Practices for Safe Direct Access
 
@@ -35,6 +31,5 @@ To summarize, if you decide to access the SQLite database directly, adhere to th
     Use Read-Only Connections: Always ensure that your access to the SQLite database is read-only.
     Set Strict File Permissions: Configure the SQLite files' permissions to prevent any write access at the operating system level.
     Avoid Long-Running Reads: Minimize the duration of read transactions to avoid conflicts with rqlite's Snapshot process.
-    Prevent Client Checkpoints: Ensure your direct access client does not modify the database by checkpointing the WAL or any other means.
 
 Following these guidelines will help maintain the stability of your rqlite cluster while allowing safe read access to the SQLite database for those cases where it is required.
