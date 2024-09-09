@@ -67,7 +67,7 @@ Sure. Many people do so, as they like accessing a SQLite database over HTTP. Of 
 It's important to understand, however, that "single-node" means a single-node *cluster* -- in other words, a cluster with a configured size of one node. A 3-node cluster, in which two nodes fail, is not a single-node cluster. In that case you've still got a 3-node cluster, but one which is offline due to lack of quorum.
 
 ## How can I change my multi-node cluster to a single-node system?
-You can't simply shut down all the nodes except one, and expect the single node to work normally, due to Raft quorum requirements -- but you do have options. One thing you can do is to [backup your cluster](https://rqlite.io/docs/guides/backup/), and then [boot a new single node](https://rqlite.io/docs/guides/backup/#booting-with-a-sqlite-database) using the backup. This is probably the simplest way to do it, and will be very fast. Alternatively you can explicitly force the configuration of your cluster to be single node, by following the [_Dealing with Failure_](https://rqlite.io/docs/clustering/general-guidelines/#recovering-a-cluster-that-has-permanently-lost-quorum) guide, and using a configuration file that only contains a single node.
+You can't simply shut down all the nodes except one, and expect the single node to work normally, due to Raft quorum requirements -- but you do have options. One thing you can do is to [backup your cluster](/docs/guides/backup/), and then [boot a new single node](docs/guides/backup/#booting-with-a-sqlite-database) using the backup. This is probably the simplest way to do it, and will be very fast. Alternatively you can explicitly force the configuration of your cluster to be single node, by following the [_Dealing with Failure_](/docs/clustering/general-guidelines/#recovering-a-cluster-that-has-permanently-lost-quorum) guide, and using a configuration file that only contains a single node.
 
 ## What is the maximum size of a cluster?
 There is no explicit maximum cluster size. However the [practical cluster size limit is probably about 11 _voting nodes_](/docs/clustering/). You can go bigger by adding [read-only nodes](/docs/clustering/read-only-nodes/).
@@ -87,12 +87,10 @@ Then they must do it by sending write requests to the leader node. But if they c
 It supports [a form of transactions](/docs/api/api/#transactions). You can wrap a bulk update in a transaction such that all the statements in the bulk request will succeed, or none of them will. However the behaviour or rqlite is undefined if you send explicit `BEGIN`, `COMMIT`, or `ROLLBACK` statements. This is not because they won't work -- they will -- but if your node (or cluster) fails while a transaction is in progress, the system may be left in a hard-to-use state. So until rqlite can offer strict guarantees about its behaviour if it fails during a transaction, using `BEGIN`, `COMMIT`, and `ROLLBACK` is officially unsupported. Unfortunately this does mean that rqlite may not be suitable for some applications.
 
 ## Can I modify the SQLite file directly?
-No. See the guide on [Direct Access] for more details.
+No. See the guide on [Direct Access Guide](/docs/guides/direct-access/) for more details.
 
 ## Can I read the SQLite file directly?
-Yes, but it has not been deeply tested. See the guide on [Direct Access] for more details.
-
-> Long-running reads can eventually interfere with the correct operation of rqlite. That's because rqlite periodically needs to _Snapshot_ the SQLite database, and this requires exclusive access to the database. Snapshotting usually takes only a few milliseconds to run, and if a Snapshot can't run, rqlite will retry later. Eventually, however, lack-of-Snapshotting may cause excessive disk usage and slower queries.
+Yes, but it has not been deeply tested. See the guide on [Direct Access Guide](/docs/guides/direct-access/) for more details.
 
 ## Can I use rqlite to replicate my SQLite database to a second node?
 Not in a simple sense, no. rqlite is not a SQLite database replication tool. While each node does have a full copy of the SQLite database, rqlite is not simply about replicating that database.

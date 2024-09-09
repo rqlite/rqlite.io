@@ -1,6 +1,6 @@
 ---
-title: "SQLite Direct Access"
-linkTitle: "SQLite Direct Access"
+title: "Direct Database Access"
+linkTitle: "Direct Database Access"
 description: "Directly accessing the SQLite database"
 weight: 5
 ---
