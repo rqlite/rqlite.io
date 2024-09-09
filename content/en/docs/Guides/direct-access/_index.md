@@ -4,11 +4,10 @@ linkTitle: "Directly accessing SQLite"
 description: "Directly accessing the SQLite database"
 weight: 5
 ---
-
-rqlite ensures your data remains consistent and highly available by managing the SQLite database under the hood. Direct access to this SQLite database can result in data loss if not done correctly. However if you do wish to directly interact with the SQLite database under an rqlite node this guide outlines best practices for doing so.
+rqlite maintains data consistency and high availability by managing the SQLite database under the hood, and most applications interact with rqlite through its [HTTP API](/docs/api/api/). However, there may be cases where you wish to access the underlying SQLite database directly. As improper direct access can lead to data loss, this guide details the best practices to follow to avoid any risk of data loss.
 
 ## Can I modify the SQLite database directly?
-**No, you must never modify the SQLite database directly**. All modifications of the database should occur through the rqlite [HTTP API](/docs/api/api/). If you alter the SQLite file directly, including changing its journaling mode or checkpointing the Write-Ahead Log (WAL), the behavior of rqlite becomes undefined. In other words you'll probably break rqlite, and may lose data.
+**No, you must never modify the SQLite database directly**. All modifications of the database should occur through the rqlite [HTTP API](/docs/api/api/). If you alter the SQLite file directly, including changing its journaling mode or checkpointing the [Write-Ahead Log (WAL)](https://www.sqlite.org/draft/wal.html), the behavior of rqlite becomes undefined. In other words you'll probably break rqlite, and may lose data.
 
 ## Can I read the SQLite database?
 Yes, you may read the SQLite file directly, but it is critical to follow certain guidelines when doing so:
