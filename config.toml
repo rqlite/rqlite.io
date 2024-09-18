@@ -200,7 +200,7 @@ enable = false
 [[menu.main]]
     name = "Blog"
     weight = 50
-    url = "https://www.philipotoole.com/tag/rqlite/"
+    url = "/blog"
 
 [[menu.main]]
     name = "GitHub"
