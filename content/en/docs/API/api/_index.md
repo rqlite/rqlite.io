@@ -216,7 +216,7 @@ curl -G 'localhost:4001/db/query?pretty' --data-urlencode 'q=SELECT * FROM foo'
     ]
 }
 ```
-Note that BLOB data is returned as [base64-encoded](https://en.wikipedia.org/wiki/Base64) strings. While this works well for many applications, it makes it difficult to know if the returned string represents an actual string that was inserted in the row, or an actual BLOB data. To instead have BLOB data returned as an array of byte values, add `blob_array` to your URL:
+Note that BLOB data is returned as [base64-encoded](https://en.wikipedia.org/wiki/Base64) strings. While this works well for many applications, it makes it difficult to know if the returned string represents an actual string that was inserted in the row, or an actual BLOB data[^1]. To instead have BLOB data returned as an array of byte values, add `blob_array` to your URL:
 ```bash
 curl -G 'localhost:4001/db/query?pretty&blob_array' --data-urlencode 'q=SELECT * FROM foo'
 {
@@ -453,3 +453,5 @@ $ curl -v -G 'localhost:4003/db/query?pretty&timings&redirect' --data-urlencode 
 
 * Connection #0 to host localhost left intact
 ```
+
+[^1]: Use the keyword [`STRICT`](https://www.sqlite.org/stricttables.html) when creating tables to avoid this ambiguity.
