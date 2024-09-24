@@ -171,18 +171,28 @@ Working with [BLOB](https://www.sqlite.org/datatype3.html) data may require spec
 
 **Writing BLOBs**
 
-The simplest way to insert BLOB data is to use the `X''` syntax. These are string literals containing hexadecimal data and preceded by a single "x" or "X" character, for xxample: `x'53514C697465'`.
+A simple way to insert BLOB data is to use the `X''` syntax. These are string literals containing hexadecimal data and preceded by a single "x" or "X" character, for example: `x'53514C697465'`.
 ```bash
 curl -XPOST 'localhost:4001/db/execute?pretty&timings' -H "Content-Type: application/json" -d '[
-    "CREATE TABLE foo (data BLOB)"
+    "CREATE TABLE foo (data BLOB) STRICT"
 ]'
 curl -XPOST 'localhost:4001/db/execute?pretty&timings' -H "Content-Type: application/json" -d '[
     "INSERT INTO foo(data) VALUES(x'\''53514C697465'\'')"
 ]'
 ```
 In the example above it is up to you to encode your data before passing it to rqlite. In Go you can do this using [EncodeToString](https://pkg.go.dev/encoding/hex#EncodeToString).
->Values using the `X''` syntax are interpreted as literal strings if used as parameterized values. Therefore if you wish to insert BLOB data you must use "raw" SQL statement form shown above.
 
+You can also insert BLOB data as a **parameterized value**. Both the "X" form and byte arrays are supported as values.
+```bash
+curl -XPOST 'localhost:4001/db/execute?pretty&timings' -H "Content-Type: application/json" -d '[
+    ["INSERT INTO foo (data) VALUES (?)", "x'\''68656C6C6F20776F726C64'\''"]
+]'
+```
+```bash
+curl -XPOST 'localhost:4001/db/execute?pretty&timings' -H "Content-Type: application/json" -d '[
+    ["INSERT INTO foo(data) VALUES(?)", [83,81,76,105,116,101]]
+]'
+```
 **Reading BLOBs**
 
 Reading BLOB data back can be done using a regular query request.
