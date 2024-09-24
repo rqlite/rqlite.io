@@ -181,6 +181,7 @@ curl -XPOST 'localhost:4001/db/execute?pretty&timings' -H "Content-Type: applica
 ]'
 ```
 In the example above it is up to you to encode your data before passing it to rqlite. In Go you can do this using [EncodeToString](https://pkg.go.dev/encoding/hex#EncodeToString).
+>Values using the `X''` syntax are interpreted as literal strings if used as parameterized values. Therefore if you wish to insert BLOB data you must use "raw" SQL statement form shown above.
 
 **Reading BLOBs**
 
