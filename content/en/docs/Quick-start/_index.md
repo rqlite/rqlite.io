@@ -53,23 +53,19 @@ _This demonstration shows all 3 nodes running on the same host. In reality you p
 Let's head back to the rqlite shell, and check out the cluster.
 ```
 127.0.0.1:4001> .nodes
-localhost:4002:
-  time: 1.82e-7
-  time_s: 355ns
-  id: localhost:4002
+1:
   api_addr: http://localhost:4001
   addr: localhost:4002
   voter: true
   reachable: true
   leader: true
+  id: 1
 2:
   api_addr: http://localhost:4003
   addr: localhost:4004
   voter: true
   reachable: true
   leader: false
-  time: 2.8e-7
-  time_s: 457ns
   id: 2
 3:
   api_addr: http://localhost:4005
@@ -77,8 +73,6 @@ localhost:4002:
   voter: true
   reachable: true
   leader: false
-  time: 6.3e-8
-  time_s: 148ns
   id: 3
 ```
 
