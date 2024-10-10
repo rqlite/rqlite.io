@@ -128,5 +128,5 @@ curl -G 'localhost:4001/db/query?level=strong' --data-urlencode 'q=SELECT * FROM
 curl -G 'localhost:4001/db/query?level=auto&freshness=1s' --data-urlencode 'q=SELECT * FROM foo'
 ```
 
-[^1]: _Completed_ is defined as a write that has been applied to the SQLite database. A write that is committed to the Raft log, but not yet applied, is not considered _completed_.
+[^1]: A _completed_ write request is defined as one that has been applied to the SQLite database. A write request that is committed to the Raft log, but not yet applied to the SQLite database, is not considered _completed_.
 
