@@ -14,7 +14,7 @@ Even though serving queries does not require Raft consensus (because the databas
  * The node that received your request , while still part of the cluster, has fallen behind the Leader in terms of updates to its underlying database.
  * The node is no longer part of the cluster, and has stopped receiving Raft log updates.
 
-This is why rqlite offers selectable read consistency levels of _weak_ (the default), _linearizable, _strong_, and _none_. Each is explained below, and examples of each are shown at the end of this page.
+This is why rqlite offers selectable read consistency levels of _weak_ (the default), _linearizable_, _strong_, and _none_. Each is explained below, and examples of each are shown at the end of this page.
 
 ## Weak
 >_Weak_ consistency is used if you don't specify any level, or if an unrecognized level is specified -- and it's probably the right choice for your application.
