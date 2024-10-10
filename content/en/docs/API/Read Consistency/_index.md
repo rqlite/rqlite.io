@@ -31,7 +31,7 @@ How does the node guarantee linearizable reads? It does this as follows: when th
 Linearizable reads do involve the Leader contacting at least a quorum of nodes, and will therefore increase query response times. But since the Raft log is not actually involved, read performance is only dependant on the network performance between the nodes.
 
 ## Strong
->_Strong_ consistency has little use in production systems, as the read are very costly and do not offer much, if any, benefit over _Linearizable_ reads. _Strong_ reads can be useful in certain testing scenarios however.
+>_Strong_ consistency has little use in production systems, as the reads are costly and do not offer much, if any, benefit over _Linearizable_ reads. _Strong_ reads can be useful in certain testing scenarios however.
 
 rqlite also offers a consistency level known as _strong_. In this mode, the node receiving the request ensures that all committed entries in the Raft log have also been applied to the SQLite database at the time the query is executed. _Strong_ reads accomplish this by sending the query through the actual Raft log. This will, of course, involve the Leader contacting at least a quorum of nodes, disk IO, and will therefore increase query response times. _Strong_ reads are linearizable.
 
@@ -65,7 +65,7 @@ _Weak_ is usually the right choice for your application, and is the default read
 One exception to the rule above is if you're querying read-only nodes. In that case you probably want to specify _None_, possibly setting the `freshness` controls too. If you set a read consistency level other than `None` when querying a read-only node then that read-only node will simply forward the request to the Leader (which partially defeats the purpose of read-only nodes).
 >If you are running a cluster which has some read-only nodes, and you want to implement the Read Consistency policy describe above in an easy manner, check out `auto` Read Consistency.
 
-_Strong_ is likely unsuitable for production systems, is very slow, and puts measurable load on the cluster. However, it can be quite useful in certain testing scenarios, as it removes any uncertainty regarding the difference between _committed_ writes and _applied_ writes.
+_Strong_ is likely unsuitable for production systems, is slow, and puts measurable load on the cluster. However, it can be quite useful in certain testing scenarios, as it removes any uncertainty regarding the difference between _committed_ writes and _applied_ writes.
 
 ## How do I specify read consistency?
 To explicitly select consistency, set the query param `level` to the desired level. However, you should use _none_ with read-only nodes, unless you want those nodes to actually forward the query to the Leader.
