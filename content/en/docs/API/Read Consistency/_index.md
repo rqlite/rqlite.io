@@ -60,10 +60,12 @@ _Auto_ is not an actual Read Consistency level. Instead if a client selects this
 Using `auto` can simplify clients as clients do not need know ahead of time whether they will be talking to a read-only node or voting node. A client can just select `auto`.
 
 ## Which should I use?
-_Weak_ is usually the right choice for your application, and is the default read consistency level. Unless your cluster Leader is continually changing while you're actually executing queries there will be never be any difference between _weak_ and _strong_ -- but using _strong_ will result in much slower queries, and more load on your cluster, which is not what most people want.
+_Weak_ is usually the right choice for your application, and is the default read consistency level. Unless your cluster Leader is continually changing while you're actually executing queries there will be never be any difference between _weak_ and _linearizable_ -- but using _linearizable_ will result in slower queries, which is not what most people want. However _linearizable_ has its uses, and you may need it depending on your application requirements.
 
-One exception is if you're querying read-only nodes. In that case you probably want to specify _None_, possibly setting the `freshness` control too. If you set a read consistency level other than `None` when querying a read-only node then that read-only node will simply forward the request to the Leader (which partially defeats the purpose of read-only nodes).
+One exception to the rule above is if you're querying read-only nodes. In that case you probably want to specify _None_, possibly setting the `freshness` controls too. If you set a read consistency level other than `None` when querying a read-only node then that read-only node will simply forward the request to the Leader (which partially defeats the purpose of read-only nodes).
 >If you are running a cluster which has some read-only nodes, and you want to implement the Read Consistency policy describe above in an easy manner, check out `auto` Read Consistency.
+
+_Strong_ is likely unsuitable for production systems, is very slow, and puts measurable load on the cluster. However, it can be quite useful in certain testing scenarios, as it removes any uncertainty regarding the difference between _committed_ writes and _applied_ writes.
 
 ## How do I specify read consistency?
 To explicitly select consistency, set the query param `level` to the desired level. However, you should use _none_ with read-only nodes, unless you want those nodes to actually forward the query to the Leader.
