@@ -21,6 +21,8 @@ This is why rqlite offers selectable read consistency levels of _weak_ (the defa
 
 _Weak_ instructs the node receiving the read request to check that it is the Leader, and if it is the Leader, the node simply reads its local SQLite database. If the node determines it is not the Leader, the node will transparently forward the request to the Leader, which will in turn perform a _Weak_ read of its database. In that case the node waits for the response from the Leader, and then returns that response to the client.
 
+_Weak_ reads are usually very fast, but have some potential shortcomings, which are described below.
+
 A node checks if it's the Leader by checking state local to the node, so this check is very fast. However there is a small window of time (less than a second by default) during which a node may think it's the Leader, but has actually been deposed, a new Leader elected, and other writes have taken place on the cluster. If this happens the node may not be quite up-to-date with the rest of cluster, and stale data may be returned. Technically this means that _weak_ reads are not [_Linearizable_](https://aphyr.com/posts/313-strong-consistency-models).
 
 ## Linearizable
@@ -35,7 +37,7 @@ Linearizable reads do involve the Leader contacting at least a quorum of nodes, 
 ## Strong
 >_Strong_ consistency has little use in production systems, as the reads are costly and do not offer much, if any, benefit over _Linearizable_ reads. _Strong_ reads can be useful in certain testing scenarios however.
 
-rqlite also offers a consistency level known as _strong_. In this mode, the node receiving the request ensures that all committed entries in the Raft log have also been applied to the SQLite database at the time the query is executed. _Strong_ reads accomplish this by sending the query through the actual Raft log. This will, of course, involve the Leader contacting at least a quorum of nodes, disk IO, and will therefore increase query response times. _Strong_ reads are linearizable.
+rqlite also offers a consistency level known as _strong_. In this mode, the node receiving the request ensures that all committed entries in the Raft log have also been applied to the SQLite database at the time the query is executed. _Strong_ reads accomplish this by sending the query through the actual Raft log. This will, of course, involve the Leader contacting at least a quorum of nodes, some disk IO, and will therefore increase query response times. _Strong_ reads are linearizable.
 
 If a query request is sent to a Follower, and _strong_ consistency is specified, the Follower will transparently forward the request to the Leader. The Follower waits for the response from the Leader, and then returns that response to the client.
 
