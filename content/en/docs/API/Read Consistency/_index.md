@@ -14,7 +14,7 @@ Even though serving queries does not require Raft consensus (because the databas
  * The node that received your request , while still part of the cluster, has fallen behind the Leader in terms of updates to its underlying database.
  * The node is no longer part of the cluster, and has stopped receiving Raft log updates.
 
-This is why rqlite offers selectable read consistency levels of _weak_ (the default), _strong_, and _none_. Each is explained below, and examples of each are shown at the end of this page.
+This is why rqlite offers selectable read consistency levels of _weak_ (the default), _linearizable, _strong_, and _none_. Each is explained below, and examples of each are shown at the end of this page.
 
 ## Weak
 >_Weak_ consistency is used if you don't specify any level, or if an unrecognized level is specified -- and it's probably the right choice for your application.
@@ -87,6 +87,12 @@ curl -G 'localhost:4001/db/query' --data-urlencode 'q=SELECT * FROM foo'
 # otherwise it wil forward the request to the Leader. This is the default if
 # no read consistency is specified.
 curl -G 'localhost:4001/db/query?level=weak' --data-urlencode 'q=SELECT * FROM foo'
+
+# The read request will be served by the node if it believes it is the Leader,
+# and if it remained the Leader throughout the processing of the read. If the
+# node receiving the query is not the the Leader, the request will be transparently
+# forwarded to the Leader.
+curl -G 'localhost:4001/db/query?level=linearizable' --data-urlencode 'q=SELECT * FROM foo'
 
 # Query the node, telling it simply to read the SQLite database directly.
 # No guarantees on how old the data is. In fact, the node may not even be
