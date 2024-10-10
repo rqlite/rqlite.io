@@ -24,7 +24,9 @@ _Weak_ instructs the node receiving the read request to check that it is the Lea
 A node checks if it's the Leader by checking state local to the node, so this check is very fast. However there is a small window of time (less than a second by default) during which a node may think it's the Leader, but has actually been deposed, a new Leader elected, and other writes have taken place on the cluster. If this happens the node may not be quite up-to-date with the rest of cluster, and stale data may be returned. Technically this means that _weak_ reads are not [_Linearizable_](https://aphyr.com/posts/313-strong-consistency-models).
 
 ## Linearizable
-To avoid even the issues associated with _weak_ consistency, rqlite also offers _linearizable_. In this mode, the node receiving the request ensures it is Leader throughout the processing of the read request. This way the node ensures that when it performs the read it is reading the latest state of the database, and that no writes have taken place via a newer Leader. _Linearizable_ reads are reasonably fast, though measurably slower than _weak_. This type of read is, as the name suggests, linearizable, because these types of reads will reflect any and all writes that have **completed** before the read starts.
+To avoid even the issues associated with _weak_ consistency, rqlite also offers _linearizable_. In this mode, the node receiving the request ensures it is Leader throughout the processing of the read request. This way the node ensures that when it performs the read it is reading the latest state of the database, and that no writes have taken place via a newer Leader.
+
+_Linearizable_ reads are reasonably fast, though measurably slower than _weak_. This type of read is, as the name suggests, linearizable because these types of reads will reflect any and all writes that have **completed**[^1] before the read starts.
 
 How does the node guarantee linearizable reads? It does this as follows: when the node receives the read request it records the Raft _Term_, and then performs check of **local** state to see if it is the Leader. If it is the Leader the node then executes the query. However, before responding to the client, the node heartbeats with the Followers, and waits until it receives a quorum of responses. Finally it checks the Raft Term again. If the heartbeat process was successful, and the Raft Term has not changed, the node can be sure it remained Leader throughout the processing of the Read request, and that no write took place elsewhere on the cluster that it is unaware of.
 
@@ -117,3 +119,6 @@ curl -G 'localhost:4001/db/query?level=strong' --data-urlencode 'q=SELECT * FROM
 # Read Consistency level, and the freshness value is ignored.
 curl -G 'localhost:4001/db/query?level=auto&freshness=1s' --data-urlencode 'q=SELECT * FROM foo'
 ```
+
+[^1]: _Completed_ is defined as a write that has been applied to the SQLite database. A write that is committed to the Raft log, but not yet applied, is not considered _completed_.
+
