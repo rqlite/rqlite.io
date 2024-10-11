@@ -7,7 +7,7 @@ weight: 60
 ## What exactly does rqlite do?
 rqlite is about replicating a set of data, which has been written to it using SQL. The data is replicated for fault tolerance because your data is so important that you want multiple copies distributed in different places, you want be able to query your data even if some machines fail, or both. These different places could be different machines on a rack, or different machines, each in different buildings, or even different machines, [each on different continents](https://www.philipotoole.com/rqlite-v3-0-1-globally-replicating-sqlite/).
 
-On top of that, rqlite provides strong guarantees about what state any copy of that data is in, with respect to a special node called the _leader_. That is where Raft comes in. It prevents divergent copies of the data, and ensures there is an "authoritative" copy of that data at all times.
+On top of that, rqlite provides strong guarantees about what state any copy of that data is in, with respect to a special node called the _Leader_. That is where [Raft Consensus Protocol](https://raft.github.io/) comes in. By using Raft, rqlite prevents divergent copies of the data, and ensures there is an one authoritative, consistent copy of that data at all times.
 
 ## Why would I use this, versus some other distributed database?
 _[Complexity is your enemy](https://x.com/richardbranson/status/242582296157384704)._
