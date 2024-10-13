@@ -88,9 +88,9 @@ curl -G 'localhost:4001/db/query' --data-urlencode 'q=SELECT * FROM foo'
 # no read consistency is specified.
 curl -G 'localhost:4001/db/query?level=weak' --data-urlencode 'q=SELECT * FROM foo'
 
-# The read request will be served by the node if it believes it is the Leader,
-# and if it remained the Leader throughout the processing of the read. If the
-# node receiving the query is not the the Leader, the request will be transparently
+# The read request will be served by the node if it is the Leader, and if it
+# remained the Leader throughout the processing of the read. If the node
+# receiving the query is not the the Leader, the request will be transparently
 # forwarded to the Leader.
 curl -G 'localhost:4001/db/query?level=linearizable' --data-urlencode 'q=SELECT * FROM foo'
 
