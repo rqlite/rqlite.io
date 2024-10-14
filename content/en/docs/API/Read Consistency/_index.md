@@ -69,7 +69,7 @@ _Weak_ is usually the right choice for your application, and is the default read
 One exception to the rule above is if you're querying read-only nodes. In that case you probably want to specify _None_, possibly setting the `freshness` controls too. If you set a read consistency level other than `None` when querying a read-only node then that read-only node will simply forward the request to the Leader (which partially defeats the purpose of read-only nodes).
 >If you are running a cluster which has some read-only nodes, and you want to implement the Read Consistency policy describe above in an easy manner, check out `auto` Read Consistency.
 
-_Strong_ is likely unsuitable for production systems, is slow, and puts measurable load on the cluster. However, it can be quite useful in certain testing scenarios, as it removes any uncertainty regarding the difference between _committed_ writes and _applied_ writes. When you use _strong_ all committed writes are also applied at the time the read request is executed.
+_Strong_ is likely unsuitable for production systems, is slow, and puts measurable load on the cluster. However, it can be quite useful in certain testing scenarios, as it removes any uncertainty regarding the difference between _committed_ changes and _applied_ changes. Specifically when you use _Strong_ all currently committed entries in the Raft log have also been applied to the SQLite database at the time the read request is executed. 
 
 ## How do I specify read consistency?
 To explicitly select consistency, set the query param `level` to the desired level. However, you should use _none_ with read-only nodes, unless you want those nodes to actually forward the query to the Leader.
