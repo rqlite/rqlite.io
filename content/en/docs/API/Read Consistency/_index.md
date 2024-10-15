@@ -27,12 +27,12 @@ A node checks if it's the Leader by checking state local to the node, so this ch
 
 ## Linearizable
 > Linearizable reads implement the process described in section 6.4 of the [Raft dissertation](https://raw.githubusercontent.com/ongardie/dissertation/refs/heads/master/online.pdf) titled _Processing read-only queries more efficiently_.
-> 
-To avoid even the issues associated with _weak_ consistency, rqlite also offers _linearizable_. In this mode, the node receiving the request ensures it is Leader throughout the processing of the read request. This way the node ensures that when it performs the read it is reading the latest state of the database, and that no writes have taken place via a newer Leader.
 
-_Linearizable_ reads are reasonably fast, though measurably slower than _weak_. This type of read is, as the name suggests, linearizable because these types of reads will reflect any and all writes that have **completed**[^1] before the read starts.
+To avoid the issues associated with _weak_ consistency, rqlite also offers _linearizable_.
 
-How does the node guarantee linearizable reads? It does this as follows: when the node receives the read request it records the Raft _Commit Index_, and as well as checking **local** state to see if it is the Leader. Next the node heartbeats with the Followers, and waits until it receives a quorum of responses. Finally -- and this is critical -- the Leader waits until at least the write request contained the recorded commit index is applied to the SQLite database. Once this happens it then performs the read.
+ This type of read is, as the name suggests, linearizable because these types of reads reflect a state of the system sometime after the read was initiated; each read will at least return the results of the latest committed write[^1]. _Linearizable_ reads are reasonably fast, though measurably slower than _weak_.
+
+How does the node guarantee linearizable reads? It does this as follows: when the node receives the read request it records the Raft _Commit Index_, and as well as checking **local** state to see if it is the Leader. Next the node heartbeats with the Followers, and waits until it receives a quorum of responses. Finally -- and this is critical -- the Leader waits until at least the write request contained int the previously recorded commit index is applied to the SQLite database. Once this happens it then performs the read.
 
 Linearizable reads means the Leader contacts at least a quorum of nodes, and will therefore increase query response times. But since the Raft log is not actually involved, read performance is only dependant on the network performance between the nodes.
 
@@ -137,5 +137,5 @@ curl -G 'localhost:4001/db/query?level=strong' --data-urlencode 'q=SELECT * FROM
 curl -G 'localhost:4001/db/query?level=auto&freshness=1s' --data-urlencode 'q=SELECT * FROM foo'
 ```
 
-[^1]: A _completed_ write request is defined as one that has been applied to the SQLite database. A write request that is committed to the Raft log, but not yet applied to the SQLite database, is not considered _completed_.
+[^1]: This is how the Raft dissertation defines _Linearizability_.
 
