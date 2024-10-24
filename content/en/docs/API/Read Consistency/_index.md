@@ -26,7 +26,7 @@ _Weak_ reads are usually very fast, but have some potential shortcomings, which 
 A node checks if it's the Leader by checking state local to the node, so this check is very fast. However there is a small window of time (less than a second by default) during which a node may think it's the Leader, but has actually been deposed, a new Leader elected, and other writes have taken place on the cluster. If this happens the node may not be quite up-to-date with the rest of cluster, and stale data may be returned. Technically this means that _weak_ reads are not [_Linearizable_](https://aphyr.com/posts/313-strong-consistency-models).
 
 ## Linearizable
-> Linearizable reads implement the process described in section 6.4 of the [Raft dissertation](https://raw.githubusercontent.com/ongardie/dissertation/refs/heads/master/online.pdf) titled _Processing read-only queries more efficiently_. This read consistency modeled should be considered experimental for now until it's been fully evaluated for correctness.
+> Linearizable reads implement the process described in section 6.4 of the [Raft dissertation](https://raw.githubusercontent.com/ongardie/dissertation/refs/heads/master/online.pdf) titled _Processing read-only queries more efficiently_.
 
 To avoid the issues associated with _weak_ consistency, rqlite also offers _linearizable_.
 
