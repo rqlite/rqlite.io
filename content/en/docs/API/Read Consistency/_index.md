@@ -32,7 +32,7 @@ To avoid the issues associated with _weak_ consistency, rqlite also offers _line
 
  This type of read is, as the name suggests, linearizable because these types of reads reflect a state of the system sometime after the read was initiated; each read will at least return the results of the latest committed write[^1]. _Linearizable_ reads are reasonably fast, though measurably slower than _weak_.
 
-How does the node guarantee linearizable reads? It does this as follows: when the node receives the read request it records the Raft _Commit Index_, and as well as checking **local** state to see if it is the Leader. Next the node heartbeats with the Followers, and waits until it receives a quorum of responses. Finally -- and this is critical -- the Leader waits until at least the write request contained int the previously recorded commit index is applied to the SQLite database. Once this happens it then performs the read.
+How does the node guarantee linearizable reads? It does this as follows: when the node receives the read request it records the Raft _Commit Index_, and as well as checking **local** state to see if it is the Leader. Next the node heartbeats with the Followers, and waits until it receives a quorum of responses. Finally -- and this is critical -- the Leader waits until at least the write request contained in the previously recorded commit index is applied to the SQLite database. Once this happens it then performs the read.
 
 Linearizable reads means the Leader contacts at least a quorum of nodes, and will therefore increase query response times. But since the Raft log is not actually involved, read performance is only dependant on the network performance between the nodes.
 
