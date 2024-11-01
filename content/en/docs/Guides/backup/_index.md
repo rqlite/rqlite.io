@@ -98,7 +98,7 @@ Wasabi supports virtual-host-style URL formats (as with native S3), but does req
 	"sub": {
 		"access_key_id": "$ACCESS_KEY_ID",
 		"secret_access_key": "$SECRET_ACCESS_KEY_ID",
-		"endpoint": "s3.eu-central-1.wasabisys.com",
+		"endpoint": "https://s3.eu-central-1.wasabisys.com",
 		"region": "eu-central-1",
 		"bucket": "rqlite-kq7z9xg",
 		"path": "backups/db.sqlite3.gz"
