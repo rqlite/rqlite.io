@@ -117,7 +117,7 @@ For MinIO deployments that use [path-style requests](https://docs.aws.amazon.com
 	"sub": {
 		"access_key_id": "$ACCESS_KEY_ID",
 		"secret_access_key": "$SECRET_ACCESS_KEY_ID",
-		"endpoint": "s3.minio.example.com",
+		"endpoint": "https://s3.minio.example.com",
 		"region": "us-east-1",
 		"bucket": "rqlite-kq7z9xg",
 		"path": "backups/db.sqlite3.gz",
