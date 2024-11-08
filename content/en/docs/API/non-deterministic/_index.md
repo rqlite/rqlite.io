@@ -51,11 +51,30 @@ curl -G 'localhost:4001/db/query?level=strong' --data-urlencode 'q=SELECT * FROM
 ```
 
 ### Date and time functions
-rqlite does not yet rewrite [SQLite date and time functions](https://www.sqlite.org/lang_datefunc.html) that are non-deterministic in nature, but will in an upcoming release. A example of a non-deterministic time function is
+rqlite rewrites [SQLite date and time functions](https://www.sqlite.org/lang_datefunc.html) so they are non-deterministic in nature, if the statements containing these functions are to be replicated to other nodes. An example of a non-deterministic time function is
 
-`INSERT INTO datetime_text (d1, d2) VALUES(datetime('now'),datetime('now', 'localtime'))`
+`INSERT INTO datetime_text (d1) VALUES(datetime('now'))`
 
-Using such functions will result in undefined behavior. Date and time functions that use absolute values will work without issue.
+rqlite replaces any occurences of `now` with an absolute timestamp, using the timestamp of the clock on the node that receives the request. In this way the SQLite statement is deterministic before it is replicated via the Raft log.
+
+#### Examples
+```bash
+# Will be rewritten
+curl -XPOST 'localhost:4001/db/execute' -H "Content-Type: application/json" -d '[
+    "INSERT INTO datetime_text (d1) VALUES(unixepoch('now'))"
+]'
+
+# Not rewritten, as it's explicity disabled at request-time
+curl -XPOST 'localhost:4001/db/execute?norwtime' -H "Content-Type: application/json" -d '[
+    "INSERT INTO datetime_text (d1) VALUES(unixepoch('now'))"
+]'
+
+# Not rewritten, as it's a deterministic statement already
+curl -XPOST 'localhost:4001/db/execute?norwtime' -H "Content-Type: application/json" -d '[
+    "INSERT INTO datetime_text (d1) VALUES(date('2020-01-01'))"
+]'
+```
+
 
 #### CURRENT_TIME*
 Using `CURRENT_TIMESTAMP`, `CURRENT_TIME`, and `CURRENT_DATE` can also be problematic, depending on your use case.
