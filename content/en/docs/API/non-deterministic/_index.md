@@ -51,11 +51,12 @@ curl -G 'localhost:4001/db/query?level=strong' --data-urlencode 'q=SELECT * FROM
 ```
 
 ### Date and time functions
-If needed rqlite rewrites [SQLite date and time functions](https://www.sqlite.org/lang_datefunc.html) so they are deterministic in nature. An example of a non-deterministic time function is:
+An example of a non-deterministic time function in SQLite is:
 
 `INSERT INTO datetime_text (d1) VALUES(datetime('now'))`
 
-To remove the non-deterministic element, rqlite replaces any occurences of `now` with the current time before the statement is written to the Raft log.
+This is non-deterministic because `now` is evaluated at the the moment of SQLite execution, and its value will change with each run. To ensure determinism, rqlite rewrites any statement containing [SQLite date and time functions](https://www.sqlite.org/lang_datefunc.html) before it is added to the Raft log. Specifically, it replaces occurrences of `now` with the current time at the moment the node receives the request containing the statement. This guarantees that the version stored in the Raft log remains constant.
+>Like RANDOM, only write requests, and queries with _Strong_ read consistency, are rewritten.
 
 #### Examples
 ```bash
