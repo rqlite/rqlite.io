@@ -21,8 +21,7 @@ An rqlite node addresses this issue by _rewriting_ received SQL statements that 
 ## What does rqlite rewrite?
 
 ### `RANDOM()`
-
-Any SQL statement containing `RANDOM()` is rewritten following these rules:
+Any SQL statement containing [`RANDOM()`](https://www.sqlite.org/lang_corefunc.html#random) is rewritten following these rules:
 - The statement is part of a write-request i.e. the request is sent to the `/db/execute` HTTP API.
 - The statement is part of a read-request i.e. the request is sent to the `/db/query` HTTP API **and** the read-request is made with _strong_ read consistency.
 - If `RANDOM()` is used as an `ORDER BY` qualifier it is not rewritten.
@@ -31,11 +30,17 @@ Any SQL statement containing `RANDOM()` is rewritten following these rules:
 
 `RANDOM()` is replaced with a random integer between -9223372036854775808 and +9223372036854775807 by the rqlite node that first receives the SQL statement.
 
+### `RANDOMBLOB(N)`
+Any statement containing [`RANDOMBLOB(N)`](https://www.sqlite.org/lang_corefunc.html#randomblob) is rewritten using the same rules as `RANDOM()` except that it is replaced by a literal blob value containing N random bytes.
+
 #### Examples
 ```bash
 # Will be rewritten
 curl -XPOST 'localhost:4001/db/execute' -H "Content-Type: application/json" -d '[
     "INSERT INTO foo(id, age) VALUES(1234, RANDOM())"
+]'
+curl -XPOST 'localhost:4001/db/execute' -H "Content-Type: application/json" -d '[
+    "INSERT INTO bar(uuid) VALUES(hex(RANDOMBLOB(N)))"
 ]'
 
 # RANDOM() rewriting explicitly disabled at request-time
