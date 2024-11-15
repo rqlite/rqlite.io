@@ -12,10 +12,6 @@ There are client libraries available for a variety of programming languages, inc
 - https://github.com/rqlite/gorqlite
 - https://github.com/goki/rqlite (a [GORM](https://gorm.io/) driver)
 
-### Typescript
-- https://github.com/rqlite/knex-rqlite
-- https://github.com/Tjstretchalot/tsrqdb
-
 ### Python
 - https://github.com/rqlite/pyrqlite
 - https://github.com/rqlite/sqlalchemy-rqlite
@@ -27,6 +23,10 @@ There are client libraries available for a variety of programming languages, inc
 - https://github.com/HaHa421/sqlx-rqlite
 - https://github.com/tomvoet/rqlite-rs
 
+### Typescript
+- https://github.com/rqlite/knex-rqlite
+- https://github.com/Tjstretchalot/tsrqdb
+
 ### Javascript
 - https://github.com/rqlite/rqlite-js
 - https://gitlab.com/jdesodt/seneca-rqlite-store
@@ -34,7 +34,10 @@ There are client libraries available for a variety of programming languages, inc
 ### C#
 - https://github.com/rqlite/rqlite-dotnet
 - https://github.com/sec/rqlite-net
-- https://github.com/bfren/rqlite 
+- https://github.com/bfren/rqlite
+
+### PHP
+- https://github.com/karlomikus/rqlite-php
 
 ### Delphi (Pascal)
 - https://github.com/OwlHatSoftware/rqliteclient4delphi
