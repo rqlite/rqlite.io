@@ -27,7 +27,7 @@ The [rqlite Docker image](https://hub.docker.com/r/rqlite/rqlite/) comes preload
 | [Sqlean: The ultimate set of SQLite extensions](https://github.com/nalgeon/sqlean) | Set of useful functions | `sqlean` |
 | [sqlite-vec: A vector search SQLite extension](https://github.com/asg017/sqlite-vec) | Vector search engine | `sqlite-vec` |
 | [SQLite ICU](https://sqlite.org/src/dir/ext/icu) | Integration of the _International Components<br>for Unicode_ library with SQLite | `icu` |
-| [SQLite Misc](https://sqlite.org/src/dir/ext/misc) | A subset of the SQLite miscellaneous extensions | `misc` |
+| [SQLite Misc](https://sqlite.org/src/dir/ext/misc) | A [subset](https://github.com/rqlite/rqlite-sqlite-ext/tree/master/misc) of the SQLite miscellaneous extensions | `misc` |
   
 To enable an extension, set the environment variable `SQLITE_EXTENSIONS` so that it includes the _Key_ for the extension you wish to enable. For example, to enable both Sqlean and ICU extensions, launch your container as follows:
 ```bash
@@ -95,4 +95,4 @@ If you are running a multi-node rqlite cluster, it's **required** that the ident
 ## Troubleshooting
 If you're having trouble getting rqlite to load an extension ensure the extension is compatible with your operating system and architecture. Once way to do this is to check if SQLite will load the extension. Sometimes your compilation step may not be correct, and ensuring SQLite can load the extension is a good first check.
 
-If SQLite does load the extension, verify that the file permissions allow rqlite to read the extension. You can also check rqlite’s logs for any specific error messages related to extension loading. You can also [open an issue on GitHub](https://github.com/rqlite/rqlite/issues).
+If SQLite does load the extension, verify that the file permissions allow rqlite to read the extension. You can also check rqlite’s logs for any specific error messages related to extension loading. If all else fails [open an issue on GitHub](https://github.com/rqlite/rqlite/issues).
