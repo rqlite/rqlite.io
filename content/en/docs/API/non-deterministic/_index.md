@@ -70,13 +70,13 @@ curl -XPOST 'localhost:4001/db/execute' -H "Content-Type: application/json" -d '
     "INSERT INTO datetime_text (d1) VALUES(unixepoch('now'))"
 ]'
 
-# Not rewritten, as it's explicity disabled at request-time
+# Not rewritten, as rewriting is explicity disabled at request-time
 curl -XPOST 'localhost:4001/db/execute?norwtime' -H "Content-Type: application/json" -d '[
     "INSERT INTO datetime_text (d1) VALUES(unixepoch('now'))"
 ]'
 
-# Not rewritten, as it's a deterministic statement already
-curl -XPOST 'localhost:4001/db/execute?norwtime' -H "Content-Type: application/json" -d '[
+# Not rewritten, as it's a deterministic statement
+curl -XPOST 'localhost:4001/db/execute' -H "Content-Type: application/json" -d '[
     "INSERT INTO datetime_text (d1) VALUES(date('2020-01-01'))"
 ]'
 ```
