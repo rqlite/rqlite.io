@@ -1,7 +1,7 @@
 ---
 title: "Configuring rqlite"
 linkTitle: "Configuring rqlite"
-description: "Guide on configuring rqlite"
+description: "How to configure rqlite"
 weight: 5
 ---
 A description and usage guide for each `rqlited` flag.
