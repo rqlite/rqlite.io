@@ -20,8 +20,8 @@ th {
 	background-color: #f2f2f2;
 	text-align: left;
 }
-.col-cli { width: 20%; }
-.col-default { width: 15%; }
+.col-cli { width: 25%; }
+.col-default { width: 1o%; }
 .col-purpose { width: 30%; }
 .col-usage { width: 35%; }
 </style>
