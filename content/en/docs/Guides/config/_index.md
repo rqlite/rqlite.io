@@ -1,6 +1,6 @@
 ---
-title: "Configurating rqlite"
-linkTitle: "Configurating rqlite"
+title: "Configuring rqlite"
+linkTitle: "Configuring rqlite"
 description: "Guide on configuring rqlite"
 weight: 5
 ---
