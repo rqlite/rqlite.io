@@ -317,7 +317,7 @@ th {
 	</tr>
 	<tr>
 		<td><code>--write-queue-timeout</code></td>
-		<td>Time after which internally queued _Queued Writes_ will be sent on if the batch size isn&#39;t reached..</td>
+		<td>Time after which internally queued _Queued Writes_ will be sent on if the batch size isn&#39;t reached.</td>
 	</tr>
 	<tr>
 		<td><code>--write-queue-tx</code></td>
@@ -325,15 +325,15 @@ th {
 	</tr>
 	<tr>
 		<td><code>--cpu-profile</code></td>
-		<td>Write CPU profie information to a file at this path..</td>
+		<td>Write CPU profie information to a file at this path.</td>
 	</tr>
 	<tr>
 		<td><code>--mem-profile</code></td>
-		<td>Write memory profie information to a file at this path..</td>
+		<td>Write memory profie information to a file at this path.</td>
 	</tr>
 	<tr>
 		<td><code>--trace-profile</code></td>
-		<td>Write trace profie information to a file at this path..</td>
+		<td>Write trace profie information to a file at this path.</td>
 	</tr>
 </table>
 
