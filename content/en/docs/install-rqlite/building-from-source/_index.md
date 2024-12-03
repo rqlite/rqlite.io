@@ -38,12 +38,12 @@ $GOPATH/bin/rqlited ~/node.1
 ### Compilation errors locating SQLite functions
 If, during compilation, you experience [errors](https://github.com/rqlite/rqlite/issues/1763) about undefined SQLite functions, [your C compilation step is probably not configured correctly](https://github.com/mattn/go-sqlite3?tab=readme-ov-file#compilation). Check that you have a C compiler installed and that the environment variable `CGO_ENABLED` must be set to 1. You can [explicitly set the C compiler](https://pkg.go.dev/cmd/cgo) using the CC environment variable.
 
-### Protobuf code generation
-_This step is not necessary unless you are making changes to protobuf definitions._
+### Code generation
+_This step is not necessary unless you are making changes to Protobuf or flags definitions._
 
-Ensure you have the required tools installed, and that `GOPATH` is set.
 ```bash
 go install google.golang.org/protobuf/cmd/protoc-gen-go
+go install tools/genflags/genflags.go
 export GOBIN=$GOPATH/bin
 export PATH=$PATH:$GOBIN
 go generate ./...
