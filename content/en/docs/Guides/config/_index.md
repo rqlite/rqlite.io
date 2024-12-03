@@ -40,7 +40,7 @@ th {
 	<tr>
 		<td><code>--http-addr</code></td>
 		<td>HTTP server bind address. To enable HTTPS, set X.509 certificate and key.
-		    <br><br>This is the interface rqlited will listen on for API requests. 0.0.0.0 is an acceptable address and will mean that rqlited will listen on all interfaces.
+		    <br><br>This is the interface rqlite will listen on for API requests. 0.0.0.0 is an acceptable address and will mean that rqlited will listen on all interfaces.
 </td>
 	</tr>
 	<tr>
@@ -52,7 +52,7 @@ th {
 	<tr>
 		<td><code>--http-allow-origin</code></td>
 		<td>Value to set for Access-Control-Allow-Origin HTTP header.
-		    <br><br>You usually need to set this if if you&#39;re using a browser-based application to interfact with rqlite. You should set it to the the website that is serving the browser-based application e.g. `--http-allow-origin=&#34;https://example.com&#34;`.
+		    <br><br>You usually need to set this if if you&#39;re using a browser-based application to interfact with rqlite. You should set it to the the website that is serving the browser-based application e.g. --http-allow-origin=&#34;https://example.com&#34;.
 </td>
 	</tr>
 	<tr>
@@ -100,7 +100,7 @@ th {
 	<tr>
 		<td><code>--node-cert</code></td>
 		<td>Path to the X509 certificate for inter-node communications.
-		    <br><br>Setting this path enables TLS-encrypted inter-node communications. Specifically this is the certificate presented by this node when another node connects to it. If not set the node does not enable TLS.&#34;
+		    <br><br>Setting this path enables TLS-encrypted inter-node communications. Specifically this is the certificate presented by this node when another node connects to it. If not set the node does not enable TLS.
 </td>
 	</tr>
 	<tr>
@@ -136,13 +136,13 @@ th {
 	<tr>
 		<td><code>--raft-addr</code></td>
 		<td>Bind network address for the Raft server in the form address:port.
-		    <br><br>This is the interace `rqlited` will listen on for connections from other node, as part of managing Raft consensus. 0.0.0.0 is an acceptable address and will mean that `rqlited` will listen on all interfaces.
+		    <br><br>This is the interace rqlite will listen on for connections from other node, as part of managing Raft consensus. 0.0.0.0 is an acceptable address and will mean that `rqlited` will listen on all interfaces.
 </td>
 	</tr>
 	<tr>
 		<td><code>--raft-adv-addr</code></td>
 		<td>Advertised Raft server address. If not set, same as Raft server bind address.
-		    <br><br>This is the Raft address an `rqlited` node will advertise to other nodes, as part of managing Raft consensus. This will need to be set if your node binds to all network addresses via 0.0.0.0, or if it binds to a private network address behind a firewall.
+		    <br><br>This is the Raft address an rqlite node will advertise to other nodes, as part of managing Raft consensus. This will need to be set if your node binds to all network addresses via 0.0.0.0, or if it binds to a private network address behind a firewall.
 </td>
 	</tr>
 	<tr>
@@ -206,19 +206,19 @@ th {
 	<tr>
 		<td><code>--auto-vacuum-int</code></td>
 		<td>Automatic VACUUM interval. Use 0s to disable. If not set, automatic VACUUM is not enabled.
-		    <br><br>If set to a non-zero interval rqlite will execute &#39;VACUUM&#39; on the specified interval. This can help reduce SQLite disk usage, but writes are blocked while a VACUUM takes place. See the &lt;a href=&#34;https://www.sqlite.org/lang_vacuum.html&#34;&gt;SQLite documentation&lt;/a&gt; for more information.
+		    <br><br>If set to a non-zero interval rqlite will execute VACUUM on the specified interval. This can help reduce SQLite disk usage, but writes are blocked while a VACUUM takes place. See the SQLite documentation for more information.
 </td>
 	</tr>
 	<tr>
 		<td><code>--auto-optimize-int</code></td>
 		<td>Automatic optimization interval. Use 0h to disable.
-		    <br><br>If set to a non-zero interval rqlite will execute &#39;PRAGMA OPTIMIZE&#39; on the specified interval. This can help SQLite query performance. See the &lt;a href=&#34;https://www.sqlite.org/pragma.html#pragma_optimize&#34;&gt;SQLite documentation&lt;/a&gt; for more information.
+		    <br><br>If set to a non-zero interval rqlite will execute PRAGMA OPTIMIZE on the specified interval. This can help SQLite query performance. See the SQLite documentation for more information.
 </td>
 	</tr>
 	<tr>
 		<td><code>--raft-log-level</code></td>
 		<td>Minimum logging level for the Raft subsystem.
-		    <br><br>Acceptble log levels are `ERROR`, `WARN`, `INFO` and `DEBUG`.
+		    <br><br>Acceptable log levels are ERROR, WARN, INFO and DEBUG.
 </td>
 	</tr>
 	<tr>
@@ -306,22 +306,22 @@ th {
 	<tr>
 		<td><code>--write-queue-capacity</code></td>
 		<td>Default capacity of execute queues.
-		    <br><br>The larger this value the more _Queued Write_ requests can be queued up internally by the node. This queue is asynchronously drained, as requests are transmitted through the Raft log. Any time the queue is full _Queued Write_ requests are blocked.
+		    <br><br>The larger this value the more Queued Write requests can be queued up internally by the node. This queue is asynchronously drained, as requests are transmitted through the Raft log. Any time the queue is full Queued Writes requests are blocked.
 </td>
 	</tr>
 	<tr>
 		<td><code>--write-queue-batch-size</code></td>
 		<td>Default batch size for execute queues.
-		    <br><br>The larger the batch size the more _Queued Write_ statements will be batched from the internal queue and stored in a single Raft log entry. However, larger batches will consume more memory, and may increase latency.
+		    <br><br>The larger the batch size the more Queued Write statements will be batched from the internal queue and stored in a single Raft log entry. However, larger batches will consume more memory, and may increase latency.
 </td>
 	</tr>
 	<tr>
 		<td><code>--write-queue-timeout</code></td>
-		<td>Time after which internally queued _Queued Writes_ will be sent on if the batch size isn&#39;t reached.</td>
+		<td>Time after which internally queued Queued Writes will be sent on if the batch size isn&#39;t reached.</td>
 	</tr>
 	<tr>
 		<td><code>--write-queue-tx</code></td>
-		<td>Use a transaction when executing a _Queued Write_ batch.</td>
+		<td>Use a transaction when executing a Queued Write batch.</td>
 	</tr>
 	<tr>
 		<td><code>--cpu-profile</code></td>
