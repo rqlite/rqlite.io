@@ -40,13 +40,13 @@ th {
 	<tr>
 		<td><code>--http-addr</code></td>
 		<td>HTTP server bind address. To enable HTTPS, set X.509 certificate and key.
-		    <br><br>This is the interface rqlite will listen on for API requests. 0.0.0.0 is an acceptable address and will mean that rqlited will listen on all interfaces.
+		    <br><br>This is the interface rqlite will listen on for API requests. 0.0.0.0 is an acceptable address and will mean that rqlite will listen on all interfaces.
 </td>
 	</tr>
 	<tr>
 		<td><code>--http-adv-addr</code></td>
 		<td>Advertised HTTP server network address If not set, same as HTTP server bind address.
-		    <br><br>This is the HTTP API address an rqlited node will advertise to other nodes (and clients) as needed. This will need to be set if your rqlited node binds to all network addresses via 0.0.0.0, or if it binds to a private network address behind a firewall.
+		    <br><br>This is the HTTP API address an rqlite node will advertise to other nodes (and clients) as needed. This will need to be set if your rqlite node binds to all network addresses via 0.0.0.0, or if it binds to a private network address behind a firewall.
 </td>
 	</tr>
 	<tr>
@@ -136,7 +136,7 @@ th {
 	<tr>
 		<td><code>--raft-addr</code></td>
 		<td>Bind network address for the Raft server in the form address:port.
-		    <br><br>This is the interace rqlite will listen on for connections from other node, as part of managing Raft consensus. 0.0.0.0 is an acceptable address and will mean that `rqlited` will listen on all interfaces.
+		    <br><br>This is the interace rqlite will listen on for connections from other node, as part of managing Raft consensus. 0.0.0.0 is an acceptable address and will mean that `rqlite` will listen on all interfaces.
 </td>
 	</tr>
 	<tr>
@@ -162,7 +162,7 @@ th {
 	<tr>
 		<td><code>--join-as</code></td>
 		<td>User to perform join attempts as. If not set, joins anonymously.
-		    <br><br>If joining a cluster requires credentials you can a tell a node to read those credentials from a credential file, for the specified user. By using this flag you can avoid setting credentials in the command line you pass to rqlited, which can expose those credentials if someone has access to the process table.
+		    <br><br>If joining a cluster requires credentials you can a tell a node to read those credentials from a credential file, for the specified user. By using this flag you can avoid setting credentials in the command line you pass to rqlite, which can expose those credentials if someone has access to the process table.
 </td>
 	</tr>
 	<tr>
@@ -281,7 +281,7 @@ th {
 	</tr>
 	<tr>
 		<td><code>--raft-shutdown-stepdown</code></td>
-		<td>Relinquish leadership on shutdown..
+		<td>Relinquish leadership on shutdown.
 		    <br><br>If a node is being shutdown, and it&#39;s the Leader, this helps minimize the time the cluster is without a Leader. The leader will stop accepting client requests, make sure a target node is up to date and starts the transfer with a _TimeoutNow_ message. This message has the same effect as if the election timeout on the target server fires.
 </td>
 	</tr>
