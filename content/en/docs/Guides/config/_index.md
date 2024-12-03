@@ -4,6 +4,7 @@ linkTitle: "Configuring rqlite"
 description: "How to configure rqlite"
 weight: 5
 ---
+This page explains each command-line flag for rqlite, and provides some usage guidelines.
 
 <!DOCTYPE html>
 <html>
