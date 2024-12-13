@@ -27,6 +27,12 @@ curl -XPOST 'localhost:4001/db/execute?pretty&timings' -H "Content-Type: applica
     "CREATE TABLE foo (id INTEGER NOT NULL PRIMARY KEY, name TEXT, age INTEGER)"
 ]'
 ```
+You can also perform a POST with the SQL command placed directly in the body:
+```bash
+curl -XPOST 'localhost:4001/db/execute?pretty' -H "Content-Type: text/plain" -d \
+    'CREATE TABLE foo (id INTEGER NOT NULL PRIMARY KEY, name TEXT, age INTEGER)'
+```
+>The `plain/text` format can be convenient for quick prototyping via `curl`, but it is strongly recommended you use the JSON request format for production code.
 
 To insert an entry into the database, execute a second SQL command:
 
@@ -90,7 +96,7 @@ The **default** response is of the form:
 }
 ```
 
-You can also query via a HTTP POST request, with both JSON and Plain Text supported in the body:
+You can also query via a HTTP POST request, with both JSON and Plain Text supported as the request body:
 ```bash
 curl -XPOST 'localhost:4001/db/query?pretty&timings' -H "Content-Type: application/json" -d '[
     "SELECT * FROM foo"
@@ -100,7 +106,7 @@ curl -XPOST 'localhost:4001/db/query?pretty&timings' -H "Content-Type: applicati
 curl -XPOST 'localhost:4001/db/query?pretty&timings' -H "Content-Type: text/plain" -d 'SELECT * FROM foo'
 ```
 In both cases the response will be in the same form as when the query is made via HTTP GET.
->The plain/text format can be convenient for quick prototyping via `curl`, but it is strongly recommended you use the JSON format for production code.
+>The `plain/text` format can be convenient for quick prototyping via `curl`, but it is strongly recommended you use the JSON request format for production code.
 
 ### Associative response form
 You can also request an _associative_ form of response, by adding `associative` as a query parameter:
