@@ -43,7 +43,7 @@ _This step is not necessary unless you are making changes to Protobuf or flags d
 
 ```bash
 go install google.golang.org/protobuf/cmd/protoc-gen-go
-go install tools/genflags/genflags.go
+go install github.com/rqlite/flagforge/cmd/flagforge@latest
 export GOBIN=$GOPATH/bin
 export PATH=$PATH:$GOBIN
 go generate ./...
