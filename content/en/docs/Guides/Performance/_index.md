@@ -47,7 +47,7 @@ rqlited -auto-optimze-int=0h # Disable automatic optimization
 ```
 
 ### Batching
-The more SQLite statements you can include in a single request to a rqlite node, the greater writer performance will be.
+The more SQLite statements you can include in a single write request to a rqlite node, the greater write performance will be.
 
 By using the [bulk API](/docs/api/bulk-api/), transactions, or both, write throughput will increase significantly, often by 2 orders of magnitude. This speed-up is due to the way Raft and SQLite work. So for high throughput, execute as many operations as possible within a single request, transaction, or both.
 
