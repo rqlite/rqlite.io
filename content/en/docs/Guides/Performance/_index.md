@@ -7,7 +7,7 @@ weight: 30
 rqlite replicates SQLite to ensure fault tolerance and high availability for your data. While this distributed architecture introduces overhead compared to a standalone SQLite database, rqlite still delivers performance that meets the needs of many applications. Additionally, its performance can be further optimized, making it a versatile choice for a broad range of use cases.
 
 ## Performance Factors
-rqlite performance -- defined as the number of database updates performed in a given period of time -- is primarily determined by two factors:
+rqlite performance -- usually defined as the number of database updates performed in a given period of time -- is primarily determined by two factors:
 - Disk performance
 - Network latency
 
@@ -20,8 +20,7 @@ Disk performance is the single biggest determinant of rqlite performance _on a l
 When running a rqlite cluster, network latency is also a factor -- and will become the performance bottleneck once latency gets high enough. This is because the Raft must contact every other node **twice** before a change is committed to the Raft log (though it does contact those nodes in parallel). Obviously the faster your network, the shorter the time to contact the nodes.
 
 ## Improving Performance
-
-There are a few ways to improve performance, but not all will be suitable for a given application.
+There are a few ways to improve both read and write performance, but not all will be suitable for a given application.
 
 ### VACUUM
 rqlite is compatible with [SQLite VACUUM](https://www.sqlite.org/lang_vacuum.html). Issuing a VACUUM command will defragment the database, shrinking it to the smallest possible size, which may improve query performance.
@@ -48,15 +47,15 @@ rqlited -auto-optimze-int=0h # Disable automatic optimization
 ```
 
 ### Batching
-The more SQLite statements you can include in a single request to a rqlite node, the better the system will perform. 
+The more SQLite statements you can include in a single request to a rqlite node, the greater writer performance will be.
 
-By using the [bulk API](/docs/api/bulk-api/), transactions, or both, throughput will increase significantly, often by 2 orders of magnitude. This speed-up is due to the way Raft and SQLite work. So for high throughput, execute as many operations as possible within a single request, transaction, or both.
+By using the [bulk API](/docs/api/bulk-api/), transactions, or both, write throughput will increase significantly, often by 2 orders of magnitude. This speed-up is due to the way Raft and SQLite work. So for high throughput, execute as many operations as possible within a single request, transaction, or both.
 
 ### Queued Writes
-If you can tolerate a very small risk of some data loss in the event that a node crashes, you could consider using [Queued Writes](/docs/api/queued-writes/). Using Queued Writes can easily give you orders of magnitude improvement in performance, without changing any client code.
+If you can tolerate a very small risk of some data loss in the event that a node crashes, you could consider using [Queued Writes](/docs/api/queued-writes/). Using Queued Writes can easily give you orders of magnitude improvement in write performance, without changing any client code.
 
 ### Use more powerful hardware
-Obviously running rqlite on better disks, better networks, or both, will improve performance.
+Obviously running rqlite on better disks, better networks, or both, will improve performance generally.
 
 ### Use a memory-backed filesystem
 It is possible to run rqlite entirely on-top of a memory-backed file system. This means that **both** the Raft log and SQLite database would be stored in memory only. For example, on Linux you can create a memory-based filesystem like so:
