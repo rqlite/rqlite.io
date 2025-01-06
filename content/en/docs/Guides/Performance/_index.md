@@ -12,7 +12,7 @@ rqlite performance -- defined as the number of database updates performed in a g
 - Disk performance
 - Network latency
 
-Depending on your machine (particularly its IO performance) and network, individual INSERT performance could be anything from 10 operations per second to more than 200 operations per second.
+Depending on your machine (particularly its disk IO performance) and network, write throughput could be anything from 10 requests per second to hundreds of request per second.
 
 ### Disk
 Disk performance is the single biggest determinant of rqlite performance _on a low-latency network_. This is because every change to the system must go through the Raft subsystem, and the Raft subsystem calls `fsync()` after every write to its log. Raft does this to ensure that the change is safely persisted in permanent storage before writing those changes to the SQLite database. 
