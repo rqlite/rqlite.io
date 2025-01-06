@@ -159,7 +159,7 @@ _Booting_ is a specialized process that enables rapid initialization of a node f
 There is an important limitation however: _Booting_  is designed **exclusively for single-node setups**. After a successful _boot_ however, the node is ready for normal operation and can be scaled to a multi-node cluster as needed. Just [join new nodes](/docs/clustering/) to the booted node.
 
 #### Example
-To boot a rqlite node listening on localhost use the `/boot` endpoint, as shown by the example below.
+To boot a standalone rqlite node listening on localhost use the `/boot` endpoint, as shown by the example below.
 ```bash
 curl -XPOST 'http://localhost:4001/boot' -H "Transfer-Encoding: chunked" \
      --upload-file largedb.sqlite
@@ -177,6 +177,7 @@ Node booted successfully
 | 1  | fiona |
 +----+-------+
 ```
+Once booted you may convert this standalone node to a cluster if needed.
 
 ### Loading a node
 rqlite supports _loading_ a node from two sources. _Loading_ can take longer than _Booting_ but you can send a _Load_ request to a cluster. This can make it more convenient.
