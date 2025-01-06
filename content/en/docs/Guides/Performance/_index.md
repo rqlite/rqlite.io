@@ -35,7 +35,7 @@ You can even schedule `VACUUM` to take place periodically and automatically, via
 rqlited -auto-vacuum-int=24h # rqlite will run an automatic VACUUM every day
 ```
 
->Be sure to study the SQLite VACUUM documentation, as VACUUM may alter the databsase in a way you do not want. Performing a VACUUM may temporarily double the disk usage of rqlite, so make sure you have enough free disk space or VACUUM may fail. Writes are also **blocked** while a VACUUM is taking place.
+>Be sure to study the SQLite VACUUM documentation, as VACUUM may alter the database in a way you do not want. Performing a VACUUM may temporarily double the disk usage of rqlite, so make sure you have enough free disk space or VACUUM may fail. Writes are also **blocked** while a VACUUM is taking place.
 
 ### Optimize
 rqlite is also compatible with [`PRAGMA optimize`](https://www.sqlite.org/pragma.html#pragma_optimize). Issuing this command instructs SQLite to analyze its tables, gathering statistics which can improve query performance.
@@ -54,7 +54,7 @@ The more SQLite statements you can include in a single request to a rqlite node,
 By using the [bulk API](/docs/api/bulk-api/), transactions, or both, throughput will increase significantly, often by 2 orders of magnitude. This speed-up is due to the way Raft and SQLite work. So for high throughput, execute as many operations as possible within a single request, transaction, or both.
 
 ### Queued Writes
-If you can tolerate a very small risk of some data loss in the event that a node crashes, you could consider using [Queued Writes](/docs/api/queued-writes/). Using Queued Writes can easily give you orders of magnitude improvement in performance, without any need to change client code.
+If you can tolerate a very small risk of some data loss in the event that a node crashes, you could consider using [Queued Writes](/docs/api/queued-writes/). Using Queued Writes can easily give you orders of magnitude improvement in performance, without changing any client code.
 
 ### Use more powerful hardware
 Obviously running rqlite on better disks, better networks, or both, will improve performance.
