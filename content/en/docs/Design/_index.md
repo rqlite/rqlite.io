@@ -37,6 +37,8 @@ The most important design articles, linked below, show how the database has evol
 - [How rqlite exposed a bug in SQLite](https://www.philipotoole.com/how-i-found-a-bug-in-sqlite/) (2022)
 - [9 years of open-source database development](https://www.philipotoole.com/9-years-of-open-source-database-development-the-design-docs/) (2023)
 - [Adding large data set support](https://www.philipotoole.com/rqlite-8-0-large-dataset-support-and-core-feature-upgrades/) (2023)
+- [Faster reads, Same Guarantees: Linearizable Consistency in rqlite](https://philipotoole.com/faster-reads-same-guarantees-linearizable-consistency-in-rqlite-8-32/) (2024)
+- [How rqlite is tested](https://philipotoole.com/how-is-rqlite-tested/) (2025)
 
 You can find many other details on rqlite from the [rqlite blog](https://www.philipotoole.com/tag/rqlite/).
 
