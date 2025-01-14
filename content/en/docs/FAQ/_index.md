@@ -36,7 +36,7 @@ The first thing to understand is that you can send your write-request to any nod
 Under the covers however, only the Leader can make changes to the database. If a client sends a write-request to a node and that node is not the Leader, the node will transparently forward the request to the Leader, wait for a response, and then return the response to the client. If the node receiving the write cannot contact the Leader, the write will fail and return an error to the client.
 
 ## Can I send a read request to any node in the cluster?
-Yes. If a read request must be serviced by the Leader, however, rqlite will transparently forward the request to the Leader, wait for the Leader to handle it, and return the results to the client. If the node receiving the write cannot contact the Leader, the write will fail and return an error to the client.
+Yes. If a read request must be serviced by the Leader, however, rqlite will transparently forward the request to the Leader, wait for the Leader to handle it, and return the results to the client. If the node receiving the read cannot contact the Leader, the read will fail and return an error to the client.
 
 Some reads, depending on the requested [_read consistency_](/docs/api/read-consistency/), do not need to serviced by the Leader, and in that case the node can service the read regardless of whether it contact the Leader or not.
 
