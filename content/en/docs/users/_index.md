@@ -7,4 +7,4 @@ date: 2025-01-15
 ---
 
 - Replicated
-- Text Groove
+- Text Groove: store email addresses, generated uuids, domain lookups, short live oauth access tokens, things like that which we need in all our app locations.
