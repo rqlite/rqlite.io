@@ -43,27 +43,7 @@ To configure HTTPS, you set the following command-line options when launching rq
       Enable mutual TLS for HTTPS. Mutual TLS is disabled by default.
 ```
 
-## Node-to-node encryption
-rqlite supports encryption of all inter-node traffic. TLS is again used, and mutual TLS is also supported so you can restrict nodes to only accept inter-node connections from other nodes that present a valid certificate. To use TLS each node must be supplied with the relevant SSL certificate and corresponding private key, in X.509 format. Note that every node in a cluster must operate with inter-node encryption enabled, or none at all.
-```bash
-  -node-ca-cert string
-      Path to X.509 CA certificate for node-to-node encryption.
-      If not set, then the host systems CA certificate(s) will be used
-      when verifying server certificates. This certificate is required
-      for verifying client certificates.
-  -node-cert string
-      Path to X.509 certificate for node-to-node communication
-  -node-key string
-      Path to X.509 private key for node-to-node communicate
-  -node-no-verify
-      Skip verification of any node-node certificates in each direction.
-      Mostly used for testing.
-  -node-verify-client
-      Enable mutual TLS for node-to-node communication.
-      Mutual TLS is disabled by default.
-```
-
-## Configuring Usernames and Passwords
+### Configuring Usernames and Passwords
 The HTTP API supports [Basic Auth](https://tools.ietf.org/html/rfc2617). Each rqlite node can be passed a JSON-formatted configuration file, which configures valid usernames and associated passwords for **that** node. In otherwords if you want every node in a cluster to accept identical credentials for a given user, you must ensure the configuration file for every node contains the same information for that user. But the configuration does not **need** to be identical under every node.
 
 >The 7.x series supported bcrypted password hashes, as well as plaintext passwords. The use of bcrypted hashes was flawed in the 7.x series, and support has been removed for bcrypted hashes in the 8.x series. If you are running the 7.x series you should replace any use of bcrypted hashes with the actual passwords (and secure the Credentials configuration).
@@ -107,6 +87,26 @@ An example configuration file is shown below.
 This configuration file sets authentication for three usernames, _bob_, _mary_, and `*`. It sets a password for the first two.
 
 This configuration also sets permissions for all users. _bob_ has permission to perform all operations, but _mary_ can query the cluster, as well as backup and join the cluster. `*` is a special username, which indicates that all users -- even anonymous users (requests without any BasicAuth information) -- have permission to check the cluster status and readiness. All users can also join as a read-only node. This can be useful if you wish to leave certain operations open to all accesses.
+
+## Node-to-node encryption
+rqlite supports encryption of all inter-node traffic. TLS is again used, and mutual TLS is also supported so you can restrict nodes to only accept inter-node connections from other nodes that present a valid certificate. To use TLS each node must be supplied with the relevant SSL certificate and corresponding private key, in X.509 format. Note that every node in a cluster must operate with inter-node encryption enabled, or none at all.
+```bash
+  -node-ca-cert string
+      Path to X.509 CA certificate for node-to-node encryption.
+      If not set, then the host systems CA certificate(s) will be used
+      when verifying server certificates. This certificate is required
+      for verifying client certificates.
+  -node-cert string
+      Path to X.509 certificate for node-to-node communication
+  -node-key string
+      Path to X.509 private key for node-to-node communicate
+  -node-no-verify
+      Skip verification of any node-node certificates in each direction.
+      Mostly used for testing.
+  -node-verify-client
+      Enable mutual TLS for node-to-node communication.
+      Mutual TLS is disabled by default.
+```
 
 ## Secure cluster example
 Starting a node with HTTPS enabled, node-to-node encryption, mutual TLS disabled, and with the above configuration file. It is assumed the HTTPS X.509 certificate and key are at the paths `server.crt` and `key.pem` respectively, and the node-to-node certificate and key are at `node.crt` and `node-key.pem`
