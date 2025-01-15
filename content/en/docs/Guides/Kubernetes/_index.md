@@ -7,7 +7,7 @@ weight: 10
 The following directions assume you have a Kubernetes cluster already available. Visit [kubernetes.io](https://kubernetes.io/) to learn how to deploy Kubernetes.
 
 ## Using Helm
-[Helm](https://helm.sh/) is a tool which helps you manage applications on Kubernetes. There are fully-featured [Helm Charts available for rqlite on GitHub](https://github.com/rqlite/helm-charts).
+[Helm](https://helm.sh/) is a tool which helps you manage applications on Kubernetes. There are fully-featured [Helm Charts available for rqlite on GitHub](https://github.com/rqlite/helm-charts) and [Artifact Hub](https://artifacthub.io/packages/helm/rqlite/rqlite).
 
 ## Manual
 You can also deploy your rqlite cluster on Kubernetes step-by-step, running rqlite as a Kubernetes [StatefulSet](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/). Full source for the configuration described below is available in the [rqlite Kubernetes Configuration repo](https://github.com/rqlite/kubernetes-configuration).
