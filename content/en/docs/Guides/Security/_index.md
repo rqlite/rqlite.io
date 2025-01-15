@@ -23,8 +23,8 @@ If the IP addresses (or subnets) of rqlite clients is also known, it may also be
 
 AWS EC2 [Security Groups](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-network-security.html), for example, support all this functionality. So if running rqlite in the AWS EC2 cloud you can implement this level of security at the network level.
 
-## HTTPS API
-rqlite supports secure access via HTTPS, using [_Transport Layer Security (TLS)_](https://www.cloudflare.com/learning/ssl/what-is-an-ssl-certificate/). Using TLS ensures that all communication between clients and a cluster is encrypted. The HTTPS API also supports [Mutual TLS](https://www.cloudflare.com/learning/access-management/what-is-mutual-tls/). If mutual TLS is enabled only clients that present a trusted certificate can access rqlite.
+## Securing HTTP Access
+rqlite supports secure access via HTTPS, using [_Transport Layer Security (TLS)_](https://www.cloudflare.com/learning/ssl/what-is-an-ssl-certificate/). Using TLS ensures that all communication between clients and a cluster is encrypted. The HTTPS API also supports [Mutual TLS](https://www.cloudflare.com/learning/access-management/what-is-mutual-tls/). If mutual TLS is enabled only clients that present a trusted certificate can access rqlite via the HTTP API.
 
 To configure HTTPS, you set the following command-line options when launching rqlite:
 ```
@@ -44,9 +44,7 @@ To configure HTTPS, you set the following command-line options when launching rq
 ```
 
 ### Configuring Usernames and Passwords
-The HTTP API supports [Basic Auth](https://tools.ietf.org/html/rfc2617). Each rqlite node can be passed a JSON-formatted configuration file, which configures valid usernames and associated passwords for **that** node. In otherwords if you want every node in a cluster to accept identical credentials for a given user, you must ensure the configuration file for every node contains the same information for that user. But the configuration does not **need** to be identical under every node.
-
->The 7.x series supported bcrypted password hashes, as well as plaintext passwords. The use of bcrypted hashes was flawed in the 7.x series, and support has been removed for bcrypted hashes in the 8.x series. If you are running the 7.x series you should replace any use of bcrypted hashes with the actual passwords (and secure the Credentials configuration).
+The HTTP API supports [Basic Auth](https://tools.ietf.org/html/rfc2617). Each rqlite node can be passed a JSON-formatted configuration file, which configures valid usernames and associated passwords for **that** node. In other words if you want every node in a cluster to accept identical credentials for a given user, you must ensure the configuration file for every node contains the same information for that user. But the configuration does not **need** to be identical under every node.
 
 ### User-level permissions
 rqlite, via the configuration file, also supports user-level permissions. Each user can be granted one or more of the following permissions:
