@@ -24,7 +24,8 @@ If the IP addresses (or subnets) of rqlite clients is also known, it may also be
 AWS EC2 [Security Groups](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-network-security.html), for example, support all this functionality. So if running rqlite in the AWS EC2 cloud you can implement this level of security at the network level.
 
 ## Securing HTTP Access
-rqlite supports secure access via HTTPS, using [_Transport Layer Security (TLS)_](https://www.cloudflare.com/learning/ssl/what-is-an-ssl-certificate/). Using TLS ensures that all communication between clients and a cluster is encrypted. The HTTPS API also supports [Mutual TLS](https://www.cloudflare.com/learning/access-management/what-is-mutual-tls/). If mutual TLS is enabled only clients that present a trusted certificate can access rqlite via the HTTP API.
+### HTTPS and Mutual TLS
+rqlite supports secure access via HTTPS, using [_Transport Layer Security (TLS)_](https://www.cloudflare.com/learning/ssl/what-is-an-ssl-certificate/). Using TLS ensures that all communication between clients and a cluster is encrypted. The HTTPS API also supports [Mutual TLS](https://www.cloudflare.com/learning/access-management/what-is-mutual-tls/). If Mutual TLS is enabled only clients that present a trusted certificate can access rqlite via the HTTP API.
 
 To configure HTTPS, you set the following command-line options when launching rqlite:
 ```
@@ -62,7 +63,7 @@ rqlite, via the configuration file, also supports user-level permissions. Each u
 
 Note that for a user to be able to access the [Unified Endpoint](/docs/api/api/#unified-endpoint), they must have **both** _execute_ and _query_ permissions.
 
-### Example configuration file
+### Example permissions file
 An example configuration file is shown below.
 ```json
 [
