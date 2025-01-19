@@ -56,7 +56,7 @@ th {
 	<tr>
 		<td><code>-http-allow-origin</code></td>
 		<td>Value to set for Access-Control-Allow-Origin HTTP header.
-		    <br><br>You usually need to set this if if you&#39;re using a browser-based application to interfact with rqlite. You should set it to the the website that is serving the browser-based application e.g. http-allow-origin=&#34;https://example.com&#34;.
+		    <br><br>You usually need to set this if if you&#39;re using a browser-based application to interact with rqlite. You should set it to the the website that is serving the browser-based application e.g. http-allow-origin=&#34;https://example.com&#34;.
 </td>
 	</tr>
 	<tr>
@@ -74,7 +74,7 @@ th {
 	<tr>
 		<td><code>-http-ca-cert</code></td>
 		<td>Path to X.509 CA certificate for HTTPS.
-		    <br><br>If this value is set rqlite will use this CA certificate to validate any other X509 certficate presented to it, if the node needs to contact another node&#39;s HTTP API. It also uses this CA to verify any X509 certificates presented to it by clients connecting to its HTTPS API.
+		    <br><br>If this value is set rqlite will use this CA certificate to validate any other X509 certificate presented to it, if the node needs to contact another node&#39;s HTTP API. It also uses this CA to verify any X509 certificates presented to it by clients connecting to its HTTPS API.
 </td>
 	</tr>
 	<tr>
@@ -140,7 +140,7 @@ th {
 	<tr>
 		<td><code>-raft-addr</code></td>
 		<td>Raft communication bind address.
-		    <br><br>This is the interace rqlite will listen on for connections from other node, as part of managing Raft consensus. 0.0.0.0 is an acceptable address and will mean that `rqlite` will listen on all interfaces.
+		    <br><br>This is the interface rqlite will listen on for connections from other node, as part of managing Raft consensus. 0.0.0.0 is an acceptable address and will mean that `rqlite` will listen on all interfaces.
 </td>
 	</tr>
 	<tr>
@@ -152,7 +152,7 @@ th {
 	<tr>
 		<td><code>-join</code></td>
 		<td>Comma-delimited list of nodes, in host:port form, through which a cluster can be joined.
-		    <br><br>The node will try each join addresss, one after the other, until one succeeds or the join-attempt limit is reached.
+		    <br><br>The node will try each join address, one after the other, until one succeeds or the join-attempt limit is reached.
 </td>
 	</tr>
 	<tr>
@@ -248,7 +248,7 @@ th {
 	<tr>
 		<td><code>-raft-snap-int</code></td>
 		<td>Snapshot threshold check interval.
-		    <br><br>This controls how often the Raft subsystem will check if snapshotting is required, either due to the number of oustanding log entries, or due to WAL size.
+		    <br><br>This controls how often the Raft subsystem will check if snapshotting is required, either due to the number of outstanding log entries, or due to WAL size.
 </td>
 	</tr>
 	<tr>
@@ -346,4 +346,4 @@ th {
 </table>
 
 </body>
-</html>
+</html
