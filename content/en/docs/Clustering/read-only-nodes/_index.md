@@ -9,7 +9,7 @@ rqlite supports adding _read-only_ nodes. You can use this feature to add read s
 What this means is that a read-only node doesn't participate in the Raft consensus system i.e. it doesn't contribute towards quorum, nor does it cast a vote during the leader election process. Just like voting nodes, however, read-only nodes still subscribe to the stream of committed log entries broadcast by the Leader, and update the SQLite database using the log entries they receive from the Leader.
 
 ## Querying a read-only node
-Any read request to a read-only node must specify [read-consistency](/docs/api/read-consistency/) level `none` or `auto`. If any other consistency level is specified (or no level is explicitly specified) the read-only node will redirect the request to the Leader, which defeats the purpose of running a read-only node. 
+A read request to a read-only node must use a [read-consistency level](/docs/api/read-consistency/) of `none or auto`. If any other level is specified — or if no level is set explicitly — the request will be redirected to the Leader, negating the benefits of using a read-only node.
 
 To ensure a read-only node hasn't become completely disconnected from the cluster, you will probably want to set the [`freshness` query parameter](/docs/api/read-consistency/#limiting-read-staleness).
 
