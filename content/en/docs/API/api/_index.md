@@ -32,7 +32,7 @@ You can also perform a POST with the SQL command placed directly in the body:
 curl -XPOST 'localhost:4001/db/execute?pretty' -H "Content-Type: text/plain" -d \
     'CREATE TABLE foo (id INTEGER NOT NULL PRIMARY KEY, name TEXT, age INTEGER)'
 ```
->The `plain/text` format can be convenient for quick prototyping via `curl`, but it is strongly recommended you use the JSON request format for production code.
+>The `plain/text` format can be convenient for quick prototyping via `curl`, but it is recommended you use the JSON request format for production code, as a more structured approach minimizes the chance of error.
 
 To insert an entry into the database, execute a second SQL command:
 
@@ -106,7 +106,7 @@ curl -XPOST 'localhost:4001/db/query?pretty&timings' -H "Content-Type: applicati
 curl -XPOST 'localhost:4001/db/query?pretty&timings' -H "Content-Type: text/plain" -d 'SELECT * FROM foo'
 ```
 In both cases the response will be in the same form as when the query is made via HTTP GET.
->The `plain/text` format can be convenient for quick prototyping via `curl`, but it is strongly recommended you use the JSON request format for production code.
+>The `plain/text` format can be convenient for quick prototyping via `curl`, but it is recommended you use the JSON request format for production code.
 
 ### Associative response form
 You can also request an _associative_ form of response, by adding `associative` as a query parameter:
