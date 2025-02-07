@@ -23,6 +23,6 @@ You can download the Windows release on the [GitHub releases page](https://githu
 
 An rqlite release includes two key binaries:
 - `rqlited`: the actual rqlite server.
-- `rqlite`: a command-line tool, for interacting with rqlite.
+- `rqlite`: a command-line tool for interacting with rqlite.
 
 Depending on the packaging process, a simple benchmarking tool, `rqbench`, may also be included.
