@@ -1,6 +1,6 @@
 ---
 title: Contribution Guidelines
-weight:80
+weight: 80
 description: How to contribute to rqlite
 ---
 
