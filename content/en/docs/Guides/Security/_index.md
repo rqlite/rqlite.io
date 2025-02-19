@@ -9,9 +9,6 @@ rqlite can be secured in various way, and with different levels of control.
 ## SQLite security
 SQLite has some [documentation on security](https://www.sqlite.org/security.html), which is worth reviewing. Much of it can be applied to rqlite, though implementing some of the practices would need you to [recompile rqlite](/docs/install-rqlite/building-from-source/).
 
-### Query security
-All SQL statements sent to the [`/db/query` endpoint](/docs/api/api/) are executed using a read-only SQLite connection. This ensures that no request sent that to that endpoint can modify the underlying database, regardless of the content of the request. Depending on your use case, limiting access to this endpoint only can enhance security.
-
 ## File system security
 You should control access to the data directory that each rqlite node uses. There is no reason for any user to directly access this directory. File-level security is also very important if you decide to use _TLS Certificates and Keys_ with rqlite (see later).
 
@@ -27,6 +24,9 @@ If the IP addresses (or subnets) of rqlite clients is also known, it may also be
 AWS EC2 [Security Groups](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-network-security.html), for example, support all this functionality. So if running rqlite in the AWS EC2 cloud you can implement this level of security at the network level.
 
 ## Securing HTTP Access
+### Query security
+All SQL statements sent to the [`/db/query` endpoint](/docs/api/api/) are executed using a read-only SQLite connection. This ensures that no request sent that to that endpoint can modify the underlying database, regardless of the content of the request. Depending on your use case, limiting access to this endpoint only can enhance security.
+
 ### HTTPS and Mutual TLS
 rqlite supports secure access via HTTPS, using [_Transport Layer Security (TLS)_](https://www.cloudflare.com/learning/ssl/what-is-an-ssl-certificate/). Using TLS ensures that all communication between clients and a cluster is encrypted. The HTTPS API also supports [Mutual TLS](https://www.cloudflare.com/learning/access-management/what-is-mutual-tls/). If Mutual TLS is enabled only clients that present a trusted certificate can access rqlite via the HTTP API.
 
