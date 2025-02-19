@@ -10,7 +10,7 @@ rqlite can be secured in various way, and with different levels of control.
 SQLite has some [documentation on security](https://www.sqlite.org/security.html), which is worth reviewing. Much of it can be applied to rqlite, though implementing some of the practices would need you to [recompile rqlite](/docs/install-rqlite/building-from-source/).
 
 ### Query security
-All SQL statements sent to the [`/db/query` endpoint](/docs/api/api/) are executed using a read-only SQLite connection. This ensures that no request sent that to that endpoint can modify the underlying database, regardless of its content. Depending on your use case, limiting access to this endpoint only can enhance security.
+All SQL statements sent to the [`/db/query` endpoint](/docs/api/api/) are executed using a read-only SQLite connection. This ensures that no request sent that to that endpoint can modify the underlying database, regardless of the content of the request. Depending on your use case, limiting access to this endpoint only can enhance security.
 
 ## File system security
 You should control access to the data directory that each rqlite node uses. There is no reason for any user to directly access this directory. File-level security is also very important if you decide to use _TLS Certificates and Keys_ with rqlite (see later).
