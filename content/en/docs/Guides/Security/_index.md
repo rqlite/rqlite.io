@@ -87,7 +87,7 @@ This configuration file sets authentication for three usernames, _bob_, _mary_, 
 
 This configuration also sets permissions for all users. _bob_ has permission to perform all operations, but _mary_ can query the cluster, as well as backup and join the cluster. `*` is a special username, which indicates that all users -- even anonymous users (requests without any BasicAuth information) -- have permission to check the cluster status and readiness. All users can also join as a read-only node. This can be useful if you wish to leave certain operations open to all accesses.
 
-## Node-to-node encryption
+## Encrypting node-to-node communication
 rqlite supports encryption of all inter-node traffic. TLS is again used, and mutual TLS is also supported so you can restrict nodes to only accept inter-node connections from other nodes that present a valid certificate. To use TLS each node must be supplied with the relevant SSL certificate and corresponding private key, in X.509 format. Note that every node in a cluster must operate with inter-node encryption enabled, or none at all.
 ```bash
   -node-ca-cert string
