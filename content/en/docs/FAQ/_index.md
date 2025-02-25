@@ -17,7 +17,7 @@ _[Complexity is your enemy](https://x.com/richardbranson/status/2425822961573847
 That said, it's always possible it's _too_ simple for your needs.
 
 ## How do I access the database?
-The primary way to access the database is via the [HTTP API](/docs/api/api/). You can access it directly, or use a [client library](https://github.com/rqlite). For more casual use you can use the [command line tool](/docs/cli/). `rqlited` also offers [CORS](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) support via command-line flags you can set at launch time.
+The primary way to access the database is via the [HTTP API](/docs/api/api/). You can access it directly, or use a [client library](/docs/api/client-libraries/). For more casual use you can use the [command line tool](/docs/cli/). `rqlited` also offers [CORS](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) support via command-line flags you can set at launch time.
 
 It is also technically possible to [read the SQLite file directly](/docs/guides/direct-access).
 
