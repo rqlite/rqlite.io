@@ -151,12 +151,12 @@ The configuration file also supports variable expansion -- this means any string
 This will result in a non-compressed backup named `backups/TIMESTAMP_db.sqlite3` being uploaded every 5 minutes. `TIMESTAMP` will be in the form `YYYYMMDDHHMMSS`, UTC timezone.
 
 ## Restoring from SQLite
-rqlite supports initializing a node directly from a SQLite data. This is useful for loading a system with existing SQLite data or restoring from a [node backup](/docs/guides/backup/). There are two different ways to initialize rqlite with pre-existing SQLite data: **Booting** and **Loading**. Each has its own advantages.
+rqlite supports initializing a node directly from SQLite data. This is useful for loading a system with existing SQLite data or restoring from a [node backup](/docs/guides/backup/). There are two different ways to initialize rqlite: **Booting** and **Loading**. Each has its own advantages.
 
 ### Booting with a SQLite Database
 _Booting_ is a specialized process that enables rapid initialization of a node from a SQLite database image. This method is designed for **high-efficiency data loading, particularly suited for disaster recovery or initializing a large database quickly** though you can use it with any size of database. The only limiting factor is how fast your disks are, and loading multi-GB SQLite files is possible via _Booting_.
 
-There is an important limitation however: _Booting_  is designed **exclusively for single-node setups**. After a successful _boot_ however, the node is ready for normal operation and can be scaled to a multi-node cluster as needed. Just [join new nodes](/docs/clustering/) to the booted node.
+There is an important limitation however: _Booting_  is designed **exclusively for single-node setups**. After a successful _boot_ however, the node is ready for normal operation and can be scaled to a multi-node cluster as needed. Just [join new nodes](/docs/clustering/) to the booted node (or increase the [replica count](/docs/guides/kubernetes/) if using Kubernetes).
 
 #### Example
 To boot a standalone rqlite node listening on localhost use the `/boot` endpoint, as shown by the example below.
