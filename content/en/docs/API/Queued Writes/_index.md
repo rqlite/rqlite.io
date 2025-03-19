@@ -36,6 +36,8 @@ rqlite will merge the requests, once a batch-size of them has been queued on the
 
 Each response includes a monotonically-increasing `sequence_number`, which allows you to track when this request is actually persisted to the Raft log. The `/status` [diagnostics](/docs/guides/monitoring-rqlite) endpoint includes the sequence number of the latest request successfully written to Raft.
 
+>Sequence numbers are local to the node that received the _Queued Write_ request. Each node generates its own series of sequence numbers, and is not aware of other nodes' sequence numbers.
+
 ### Waiting for a queue to flush
 You can explicitly tell the request to wait until the queue has persisted all pending requests. To do this, add the parameter `wait` to the request like so:
 ```bash
