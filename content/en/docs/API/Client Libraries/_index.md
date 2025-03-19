@@ -9,7 +9,7 @@ date: 2017-01-05
 There are client libraries available for a variety of programming languages, including Python, Go, and Javascript, on the [rqlite GitHub page](https://github.com/rqlite). Many of these libraries are contributions from the community so be sure to do your own evaluation.
 
 ### Go
-- https://github.com/rqlite/rqlite-go-http - "thin" client, which provide access to rqlite's HTTP interface with minimal abstraction.
+- https://github.com/rqlite/rqlite-go-http - "thin" client, which provides access to rqlite's HTTP interface with minimal abstraction.
 - https://github.com/rqlite/gorqlite
 - https://github.com/goki/rqlite (a [GORM](https://gorm.io/) driver)
 
