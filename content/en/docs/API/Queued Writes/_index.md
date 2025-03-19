@@ -6,10 +6,9 @@ description: "Queued Writes allow you to trade durability for performance"
 weight: 10
 date: 2017-01-05
 ---
-
-## Usage
 Normally rqlite waits until a write request has been safely committed to a majority of SQLite databases before returning a response to the client. _Queued Writes_ is an option that allows write requests to complete much more quickly, but there are some trade offs (which are described later).
 
+## Usage
 Queued Writes are enabled via a special API flag, which will instruct rqlite to queue up write-requests and execute them asynchronously. This allows clients to send multiple distinct requests to a rqlite node, and have rqlite automatically do the batching and bulk insert for the client, without the client doing any extra work. The net result is as if the client wrote a single Bulk request containing all the queued statements. For the same reason that using the [Bulk API](/docs/api/bulk-api/) results in much higher write performance, **using the _Queued Writes_ API will also result in much higher write performance**.
 
 This functionality is best illustrated by an example, showing two requests being queued.
