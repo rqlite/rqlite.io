@@ -21,7 +21,7 @@ Yes, you may read the SQLite file directly, but it is critical to follow certain
 ## The impact of Long-Running Reads
 Long-running read transactions can interfere with rqlite's ability to _snapshot_ the database. rqlite periodically snapshots the SQLite database as part of the Raft subsystem, but this process requires exclusive access to the database. If a long-running read holds a lock on the database, snapshotting will be delayed, which may eventually lead to excessive disk usage or degraded performance.
 
-Snapshotting typically only takes a few milliseconds, so this is unlikely to be an issue in practise.
+However snapshotting typically only takes a few milliseconds, so long-running reads and snapshotting are unlikely to overlap in practise.
 
 [^1]: Specifically the files that must be protected are the main SQLite database file, the WAL file (`-wal`), and any shared-memory file (`-shm`).
 [^2]: You can enable read-only mode via the [SQLite C API](https://www.sqlite.org/c3ref/open.html), or by setting the query parameter `mode=ro` if using a [filename URI](https://www.sqlite.org/uri.html).
