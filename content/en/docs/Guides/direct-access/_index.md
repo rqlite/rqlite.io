@@ -10,7 +10,7 @@ rqlite maintains data consistency and high availability by managing the SQLite d
 **No, you must never modify the SQLite database directly**. All modifications of the database should occur through the rqlite [HTTP API](/docs/api/api/). If you alter the SQLite file directly, including changing its journaling mode or checkpointing the [Write-Ahead Log (WAL)](https://www.sqlite.org/draft/wal.html), the behavior of rqlite becomes undefined. In other words you'll probably break rqlite, and may lose data.
 
 ## Can I read the SQLite database?
-Yes, you may read the SQLite file directly, but it is critical to follow certain guidelines when doing so:
+Yes, you may read the SQLite file directly, but **it is critical to follow certain guidelines when doing so**:
 
 - Operating System Protection: You should use operating system-level mechanisms to enforce read-only access to the directory containing the SQLite files[^1]. Configure the file permissions so that any user or process reading the SQLite database (apart from the rqlite system) cannot modify the SQLite files, even accidentally.
 
