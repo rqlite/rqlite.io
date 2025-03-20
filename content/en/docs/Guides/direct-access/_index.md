@@ -25,9 +25,9 @@ Yes, you may read the SQLite file directly, but **it is critical to follow certa
 > Why are these guidelines important? A SQLite client, even if it wrote no data to the database, may checkpoint the WAL when closing its connection. Checkpointing the WAL will alter the state of the database and will break rqlite. It's also important to note that while direct reads in production are a known use case, it has not been extensively tested.
 
 ## The impact of Long-Running Reads
-Long-running read transactions can interfere with rqlite's ability to _snapshot_ the database. rqlite periodically snapshots the SQLite database as part of the Raft subsystem, but this process requires exclusive access to the database. If a long-running read holds a lock on the database, snapshotting will be delayed, which may eventually lead to excessive disk usage or degraded performance.
+rqlite periodically snapshots the SQLite database as part of the Raft subsystem, a process that requires exclusive access to the database. Consequently, a long-running read transaction that holds a database lock could interfere with snapshotting. If rqlite cannot complete a snapshot, it will retry later. However, if snapshotting is persistently blocked, it may lead to excessive disk usage or degraded query performance. Monitoring and log inspection are the best ways to detect this issue.
 
-Snapshotting, however, typically only takes a few milliseconds, so long-running reads and snapshotting are unlikely to overlap in practise.
+That said, snapshotting typically completes within a few milliseconds, making conflicts with long-running reads unlikely in practice.
 
 [^1]: Specifically the files that must be protected are the main SQLite database file, the WAL file (`-wal`), and any shared-memory file (`-shm`).
 [^2]: You can enable read-only mode via the [SQLite C API](https://www.sqlite.org/c3ref/open.html), or by setting the query parameter `mode=ro` if using a [filename URI](https://www.sqlite.org/uri.html).
