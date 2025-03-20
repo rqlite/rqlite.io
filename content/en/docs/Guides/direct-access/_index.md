@@ -6,7 +6,7 @@ weight: 7
 --- 
 
 <div style="border-left: 4px solid red; padding: 10px; background-color: #ffe6e6;">
-<strong>⚠️ Warning:</strong> Failure to follow these directions precisely risks data loss.
+<strong>⚠️ Warning:</strong> If you do not follow these instructions carefully, you may lose data.
 </div>
 <br>
 
