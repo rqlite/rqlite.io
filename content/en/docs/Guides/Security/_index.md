@@ -12,7 +12,8 @@ SQLite has some [documentation on security](https://www.sqlite.org/security.html
 ## File system security
 You should control access to the data directory that each rqlite node uses. There is no reason for any user to directly access this directory. File-level security is also very important if you decide to use _TLS Certificates and Keys_ with rqlite (see later).
 
-You are also responsible for securing access to the SQLite database file if you change its path via `rqlited` command-line flags. Unless your application requires it, there is no reason for any client to directly access the SQLite file, and writing to the SQLite file may cause rqlite to fail.
+You are also responsible for securing access to the SQLite database file if you change its path via `rqlited` command-line flags. Unless your application requires it, there is no reason for any client to directly access the SQLite file, and writing to the SQLite file will cause rqlite to fail.
+> If you plan to have systems other than rqlite access the SQLite database file then you should carefully review the [_Direct Access_ guide](/docs/guides/direct-access/).
 
 ## Network security
 Each rqlite node listens on 2 TCP ports -- one for the HTTP API, and the other for inter-node (Raft consensus) communications. Only the HTTP API port need be reachable from outside the cluster.
