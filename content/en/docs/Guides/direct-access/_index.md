@@ -3,8 +3,14 @@ title: "Directly accessing SQLite"
 linkTitle: "Directly accessing SQLite"
 description: "Directly accessing the SQLite database"
 weight: 7
----
-rqlite maintains data consistency and high availability by managing the SQLite database under the hood, and most applications should interact with rqlite exclusively through its [HTTP API](/docs/api/api/). However, there may be cases where you wish to access the underlying SQLite database directly. As improper direct access can lead to data loss, this guide details the best practices to follow to avoid any risk of such loss.
+--- 
+
+<div style="border-left: 4px solid red; padding: 10px; background-color: #ffe6e6;">
+<strong>⚠️ Warning:</strong> If you do not follow these instructions carefully, you may lose data.
+</div>
+<br>
+
+rqlite maintains data consistency and high availability by managing the SQLite database under the hood, and most applications should interact with rqlite exclusively through its [HTTP API](/docs/api/api/). However, there may be cases where you need to access the underlying SQLite database directly. As improper direct access can lead to data loss, this guide details the processes you must follow to avoid such risks.
 
 ## Can I modify the SQLite database directly?
 **No, you must never modify the SQLite database directly**. All modifications of the database should occur through the rqlite [HTTP API](/docs/api/api/). If you alter the SQLite file directly, including changing its journaling mode or checkpointing the [Write-Ahead Log (WAL)](https://www.sqlite.org/draft/wal.html), the behavior of rqlite becomes undefined. In other words you'll probably break rqlite, and may lose data.
@@ -12,7 +18,7 @@ rqlite maintains data consistency and high availability by managing the SQLite d
 ## Can I read the SQLite database?
 Yes, you may read the SQLite file directly, but **it is critical to follow certain guidelines when doing so**:
 
-- Operating System Protection: You should use operating system-level mechanisms to enforce read-only access to the directory containing the SQLite files[^1]. Configure the file permissions so that any user or process reading the SQLite database (apart from the rqlite system) cannot modify the SQLite files, even accidentally.
+- Operating System Protection: You must use operating system-level mechanisms to enforce read-only access to the directory containing the SQLite files[^1]. Configure the file permissions so that any user or process reading the SQLite database (apart from the rqlite software itself) cannot modify the SQLite files, even accidentally.
 
 - Read-Only Access: Any client reading the SQLite database should open the database connection in [read-only mode](https://www.sqlite.org/c3ref/open.html).[^2]
 
