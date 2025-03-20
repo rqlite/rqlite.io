@@ -6,8 +6,9 @@ weight: 7
 --- 
 
 <div style="border-left: 4px solid red; padding: 10px; background-color: #ffe6e6;">
-<strong>⚠️ Warning:</strong> This action cannot be undone.
+<strong>⚠️ Warning:</strong> Failure to follow this directions precisely risks data loss.
 </div>
+<br>
 
 rqlite maintains data consistency and high availability by managing the SQLite database under the hood, and most applications should interact with rqlite exclusively through its [HTTP API](/docs/api/api/). However, there may be cases where you wish to access the underlying SQLite database directly. As improper direct access can lead to data loss, this guide details the best practices to follow to avoid any risk of such loss.
 
