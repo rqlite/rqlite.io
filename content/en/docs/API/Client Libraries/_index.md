@@ -44,7 +44,7 @@ There are client libraries available for a variety of programming languages, inc
 - https://github.com/OwlHatSoftware/rqliteclient4delphi
 
 ### Java
-- https://github.com/rqlite/rqlite-java
+- [https://github.com/rqlite/rqlite-java-http](https://github.com/rqlite/rqlite-java-http) - "thin" client, which provides access to rqlite's HTTP interface with minimal abstraction.
 
 ## Help wanted!
 The client libraries offer various levels of functionality, depending on your programming language of choice. If you're looking for a way to contribute to rqlite, contributing to the client library source code for your favourite language is a great way to help. 
