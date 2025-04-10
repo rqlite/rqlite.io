@@ -100,7 +100,7 @@ rqlite supports encryption of all inter-node traffic using TLS. Mutual TLS is al
       Path to X.509 CA certificate for node-to-node encryption.
       If not set, then the host systems CA certificate(s) will be used
       when verifying server certificates. This certificate is also required
-      for verifying client certificates.
+      for verifying client certificates, if mutual TLS is enabled
   -node-cert string
       Path to X.509 certificate for node-to-node communication
   -node-key string
