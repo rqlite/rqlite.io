@@ -31,6 +31,8 @@ rqlite executes all SQL statements sent to the [`/db/query` endpoint](/docs/api/
 ### HTTPS and Mutual TLS
 rqlite supports secure access via HTTPS, using [_Transport Layer Security (TLS)_](https://www.cloudflare.com/learning/ssl/what-is-an-ssl-certificate/). Using TLS ensures that all communication between clients and a cluster is encrypted. The HTTPS API also supports [Mutual TLS](https://www.cloudflare.com/learning/access-management/what-is-mutual-tls/). If Mutual TLS is enabled only clients that present a trusted certificate can access rqlite via the HTTP API.
 
+>rqlite continuously monitors the server certificate and key files, automatically reloading them when changes are detected. This allows you to rotate these files without restarting the node. However, changes to the CA certificate are not detected automatically; you must restart the node to apply a new CA certificate.
+
 To configure HTTPS, you set the following command-line options when launching rqlite:
 ```
   -http-ca-cert string
@@ -112,6 +114,7 @@ rqlite supports encryption of all inter-node traffic using TLS. Mutual TLS is al
       Enable mutual TLS for node-to-node communication.
       Mutual TLS is disabled by default.
 ```
+>rqlite continuously monitors the node-to-node certificate and key files, automatically reloading them when changes are detected. This allows you to rotate these files without restarting the node. However, changes to the CA certificate are not detected automatically; you must restart the node to apply a new CA certificate.
 
 ## Secure cluster example
 Starting a node with HTTPS enabled, node-to-node encryption, mutual TLS disabled, and with the above configuration file. It is assumed the HTTPS X.509 certificate and key are at the paths `server.crt` and `key.pem` respectively, and the node-to-node certificate and key are at `node.crt` and `node-key.pem`
