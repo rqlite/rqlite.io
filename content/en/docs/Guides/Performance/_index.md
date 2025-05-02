@@ -30,7 +30,7 @@ curl -XPOST 'localhost:4001/db/execute' -H "Content-Type: application/json" -d '
 
 You can even schedule `VACUUM` to take place periodically and automatically, via the `-auto-vacuum-int` command line flag. For example:
 ```bash
-rqlited -auto-vacuum-int=24h # rqlite will run an automatic VACUUM every day
+rqlited -auto-vacuum-int=24h # rqlite will automatically run a VACUUM every day
 ```
 
 >Be sure to study the SQLite VACUUM documentation, as VACUUM may alter the database in a way you do not want. Performing a VACUUM may temporarily double the disk usage of rqlite, so make sure you have enough free disk space or VACUUM may fail. Writes are also **blocked** while a VACUUM is taking place.
