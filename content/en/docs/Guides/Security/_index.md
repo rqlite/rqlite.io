@@ -43,9 +43,6 @@ To configure HTTPS, you set the following command-line options when launching rq
       Path to HTTPS X.509 certificate
   -http-key string
       Path to corresponding HTTPS X.509 private key
-  -http-no-verify
-      Skip verification of HTTPS certificates when joining a cluster.
-      Mostly used for testing.
   -http-verify-client
       Enable mutual TLS for HTTPS. Mutual TLS is disabled by default.
 ```
