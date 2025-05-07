@@ -73,6 +73,7 @@ rqlited -extensions-path=~/extensions/rot13.so,~/extensions/carray.so data
 ```
 
 That's it! Your extensions are now available for use by rqlite.
+>If you are using Docker you will need to make the compiled code available to your Docker container and pass the path to the Docker container at startup. Check out the [rqlite Docker page](https://hub.docker.com/r/rqlite/rqlite) for more information on launch rqlite Docker containers.
 
 #### Checking your work
 Below is an example of the _rot13_ extension being invoked at the rqlite shell:
