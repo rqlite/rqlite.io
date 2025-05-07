@@ -6,21 +6,10 @@ weight: 5
 ---
 rqlite supports loading [SQLite Run-Time Loadable Extensions](https://www.sqlite.org/loadext.html). You can load multiple extensions into rqlite, and take advantage of the wide range of functionality availble via extensions. Whether you need advanced data types, custom functions, or new search capabilities, extensions enable you to tailor rqlite to your specific needs.
 
-## Overview
-Loading an extension is a two-step process:
-- Compile the extension source code so it is available as a shared library or [DLL](https://en.wikipedia.org/wiki/Dynamic-link_library). Often you can download an extension already in compiled form, suitable for your Operating System.
-- Supply the compiled extension to rqlite at launch time via the `rqlited` command-line flag `-extensions-path`.
-
-`-extensions-path` supports a comma-delimited set of paths. Each path may point to one of the following:
-- a single extension file
-- a directory containing all the extensions you want to load.
-- a Zip archive of those same extensions.
-- a Gzipped tarball of the extensions.
-
->In the case of the archive formats, only flat archives are supported. This means the decompressed content should consist of files at the root level without any directories.
-
 ## Docker
-The [rqlite Docker image](https://hub.docker.com/r/rqlite/rqlite/) comes preloaded with some useful SQLite extensions -- you just need to enable them. Currently available extensions are shown in the table below.
+The [rqlite Docker image](https://hub.docker.com/r/rqlite/rqlite/) comes preloaded with some useful SQLite extensions -- you just need to enable them when you launch a rqlite container. There is no need to compile these extensions ahread of time -- they are immediately available for use once you download the rqlite Docker image.
+
+Currently available extensions are shown in the table below.
 
 | Extension | Purpose | Key |
 |-----------------|-----------------|-----------------|
@@ -34,12 +23,25 @@ To enable an extension, set the environment variable `SQLITE_EXTENSIONS` so that
 docker run -e SQLITE_EXTENSIONS='sqlean,icu' -p4001:4001 rqlite/rqlite
 ```
 
-## Tutorial
+## Loading your own extensions
+You can also load your own extensions into an rqlite node. Loading an extension is a two-step process:
+- Compile the extension source code so it is available as a shared library or [DLL](https://en.wikipedia.org/wiki/Dynamic-link_library). Often you can download an extension already in compiled form, suitable for your Operating System.
+- Supply the compiled extension to rqlite at launch time via the `rqlited` command-line flag `-extensions-path`.
+
+`-extensions-path` supports a comma-delimited set of paths. Each path may point to one of the following:
+- a single extension file
+- a directory containing all the extensions you want to load.
+- a Zip archive of those same extensions.
+- a Gzipped tarball of the extensions.
+
+>In the case of the archive formats, only flat archives are supported. This means the decompressed content should consist of files at the root level without any directories.
+
+### Tutorial
 _Check out [this blog post](https://www.philipotoole.com/rqlite-8-27-loadable-sqlite-extensions-support/) for more extension demos._
 
 This tutorial will guide you through the process of compiling and loading an SQLite extension into rqlite, using the rot13 and carray extensions as examples. Both are available on the [SQLite website](https://www.sqlite.org/src/file/ext/misc).
 
-### Compile the extensions
+#### Compile the extensions
 Download the source code and compile it using `gcc`. Once compiled we add the object files to a new directory dedicated to extensions. We will also create zipfile containing both extensions, to demonstrate an alternative approach.
 ```
 # Create a directory to store the compiled extensions
@@ -53,7 +55,7 @@ gcc -g -fPIC -shared carray.c -o ~/extensions/carray.so
 zip -j ~/extensions.zip ~/extensions/rot13.so ~/extensions/carray.so
 ```
 
-### Loading the extensions
+#### Loading the extensions
 Run the following command on each rqlite node to load the extensions during startup:
 ```
 rqlited -extensions-path=~/extensions data
@@ -72,7 +74,7 @@ rqlited -extensions-path=~/extensions/rot13.so,~/extensions/carray.so data
 
 That's it! Your extensions are now available for use by rqlite.
 
-### Checking your work
+#### Checking your work
 Below is an example of the _rot13_ extension being invoked at the rqlite shell:
 ```
 Welcome to the rqlite CLI.
