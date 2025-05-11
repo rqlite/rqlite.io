@@ -82,8 +82,8 @@ bye~
 ```
 Connecting to a host running somewhere else on the network:
 ```
-$ rqlite -H 192.168.0.1 -p 8493
-192.168.0.1:8493>
+$ rqlite -H 192.168.0.1
+192.168.0.1:4001>
 ```
 
 ## Command history
