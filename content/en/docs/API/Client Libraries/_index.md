@@ -18,6 +18,10 @@ There are client libraries available for a variety of programming languages, inc
 - https://github.com/rqlite/sqlalchemy-rqlite
 - https://github.com/Tjstretchalot/rqdb
 
+### Java
+- [https://github.com/rqlite/rqlite-java-http](https://github.com/rqlite/rqlite-java-http) - "thin" client, which provides access to rqlite's HTTP interface with minimal abstraction.
+- [https://github.com/rqlite/rqlite-jdbc](https://github.com/rqlite/rqlite-jdbc) - Fully featured Type 4 JDBC driver.
+
 ### Rust
 - https://docs.rs/rqlite/latest/rqlite
 - https://docs.rs/rqlite_client/
@@ -42,10 +46,6 @@ There are client libraries available for a variety of programming languages, inc
 
 ### Delphi (Pascal)
 - https://github.com/OwlHatSoftware/rqliteclient4delphi
-
-### Java
-- [https://github.com/rqlite/rqlite-java-http](https://github.com/rqlite/rqlite-java-http) - "thin" client, which provides access to rqlite's HTTP interface with minimal abstraction.
-- [https://github.com/rqlite/rqlite-jdbc](https://github.com/rqlite/rqlite-jdbc) - Type 4 JDBC driver.
 
 ## Help wanted!
 The client libraries offer various levels of functionality, depending on your programming language of choice. If you're looking for a way to contribute to rqlite, contributing to the client library source code for your favourite language is a great way to help. 
