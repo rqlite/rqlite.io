@@ -437,11 +437,9 @@ curl -XPOST 'localhost:4001/db/execute?raft_index' -H "Content-Type: application
     "results": [
         {
             "last_insert_id": 3,
-            "rows_affected": 1,
-            "time": 0.000112891
+            "rows_affected": 1
         }
     ],
-    "time": 0.010601169,
     "raft_index": 6
 }
 ```
