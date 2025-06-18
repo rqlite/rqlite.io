@@ -428,7 +428,7 @@ Queries, by default, are also serviced by the cluster Leader. Like write-request
 Any writes to the SQLite database go through the Raft log, ensuring only changes committed by a quorum of rqlite nodes are actually applied to the SQLite database. Queries do not __necessarily__ go through the Raft log, however, since they do not change the state of the database, and therefore do not need to be captured in the log. Only if _Strong_ read consistency is requested does a query go through the Raft log.
 
 ### Tracking Raft Indexes
-You can learn which Raft log index a given request was written into by setting `raft_index` as a URL parameter (assuming the request actually modifies database). For example:
+You can learn which Raft log index a given request was written into by setting `raft_index` as a URL parameter (assuming the request actually modifies the database). For example:
 ```bash
 curl -XPOST 'localhost:4001/db/execute?raft_index' -H "Content-Type: application/json" -d '[
     ["INSERT INTO foo(name, age) VALUES(?, ?)", "fiona", 20]
