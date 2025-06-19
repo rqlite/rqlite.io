@@ -427,6 +427,23 @@ Queries, by default, are also serviced by the cluster Leader. Like write-request
 ### Data and the Raft log
 Any writes to the SQLite database go through the Raft log, ensuring only changes committed by a quorum of rqlite nodes are actually applied to the SQLite database. Queries do not __necessarily__ go through the Raft log, however, since they do not change the state of the database, and therefore do not need to be captured in the log. Only if _Strong_ read consistency is requested does a query go through the Raft log.
 
+### Tracking Raft Indexes
+You can learn which Raft log index a given request was written into by setting `raft_index` as a URL parameter (assuming the request actually modifies the database). For example:
+```bash
+curl -XPOST 'localhost:4001/db/execute?raft_index' -H "Content-Type: application/json" -d '[
+    ["INSERT INTO foo(name, age) VALUES(?, ?)", "fiona", 20]
+]'
+{
+    "results": [
+        {
+            "last_insert_id": 3,
+            "rows_affected": 1
+        }
+    ],
+    "raft_index": 6
+}
+```
+
 ### Request Forwarding Timeouts
 If a Follower forwards a request to a Leader, by default the Leader must respond within 30 seconds. You can control this timeout by setting the `timeout` parameter. For example, to set a 2 minute timeout, you would issue the following request:
 ```bash
