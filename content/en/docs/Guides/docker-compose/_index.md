@@ -5,7 +5,7 @@ description: "How to deploy and run rqlite using Docker Compose"
 weight: 15
 ---
 
-[Docker Compose](https://docs.docker.com/compose/) is a tool for defining and running multi-container applications. It is a effective approach for an efficient development and deployment experience.
+[Docker Compose](https://docs.docker.com/compose/) is a tool for defining and running multi-container applications. It is an effective approach for an efficient development and deployment experience.
 
 These directions assume you've already got Docker Compose installed. If not, head over to [docs.docker.com/compose](https://docs.docker.com/compose/) to learn how to get set up.
 
