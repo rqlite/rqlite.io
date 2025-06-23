@@ -11,8 +11,7 @@ These directions assume you've already got Docker Compose installed. If not, hea
 
 ---
 
-## Implementation Examples
-
+## Using Docker Compose with rqlite
 Full documentation on using Docker Compose with rqlite is available in the [rqlite Docker Compose repo](https://github.com/rqlite/docker-compose) on GitHub. The documentation covers the following scenarios:
   * **Single-node database**: A basic setup for a standalone rqlite instance.
   * **General clustering with 3 nodes**: A manual configuration for a three-node rqlite cluster.
