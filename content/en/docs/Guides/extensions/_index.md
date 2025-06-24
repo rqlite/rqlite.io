@@ -7,7 +7,7 @@ weight: 5
 rqlite supports loading [SQLite Run-Time Loadable Extensions](https://www.sqlite.org/loadext.html). You can load multiple extensions into rqlite, and take advantage of the wide range of functionality availble via extensions. Whether you need advanced data types, custom functions, or new search capabilities, extensions enable you to tailor rqlite to your specific needs.
 
 ## Docker
-The [rqlite Docker image](https://hub.docker.com/r/rqlite/rqlite/) comes preloaded with some useful SQLite extensions -- you just need to enable them when you launch a rqlite container. There is no need to compile these extensions ahread of time -- they are immediately available for use once you download the rqlite Docker image.
+The [rqlite Docker image](https://hub.docker.com/r/rqlite/rqlite/) comes preloaded with some useful SQLite extensions -- you just need to enable them when you launch a rqlite container. There is no need to compile these extensions ahread of time -- they are immediately available for use once you pull the rqlite Docker image.
 
 Currently available extensions are shown in the table below.
 
@@ -24,7 +24,9 @@ docker run -e SQLITE_EXTENSIONS='sqlean,icu' -p4001:4001 rqlite/rqlite
 ```
 
 ## Loading your own extensions
-You can also load your own extensions into an rqlite node. Loading an extension is a two-step process:
+You can also load your own extensions into an rqlite node. This is necessary if the Docker image doesn't come preloaded with the extension you want, or you are not running rqlite using Docker.
+
+Loading an extension is a two-step process:
 - Compile the extension source code so it is available as a shared library or [DLL](https://en.wikipedia.org/wiki/Dynamic-link_library). Often you can download an extension already in compiled form, suitable for your Operating System.
 - Supply the compiled extension to rqlite at launch time via the `rqlited` command-line flag `-extensions-path`.
 
