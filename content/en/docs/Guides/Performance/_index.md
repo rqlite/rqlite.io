@@ -58,11 +58,14 @@ If you can tolerate a very small risk of some data loss in the event that a node
 Obviously running rqlite on better disks, better networks, or both, will improve performance generally.
 
 ### Use a memory-backed filesystem
-It is possible to run rqlite entirely on-top of a memory-backed file system. This means that **both** the Raft log and SQLite database would be stored in memory only, which will maximise IO performance. For example, on Linux you can create a memory-based filesystem like so:
+It is possible to run rqlite entirely on-top of a memory-backed file system and testing shows that this approach can result in 100x improvement in performance. Using a memory backed-file system means that **both** the Raft log and SQLite database would be stored in memory only, which will maximise IO performance.
+
+**This comes with risks, however**. If, for example, your entire cluster loses power you will lose all data. But if your approach is to completely rebuild your rqlite node, or rqlite cluster, in the event of complete failure, this option may be of interest to you. Perhaps you always rebuild your rqlite cluster from a different source of data, or a backup, so can recover an rqlite cluster regardless of its state. 
+
+On Linux you can create a memory-based filesystem like so:
 ```bash
 mount -t tmpfs -o size=512m tmpfs /mnt/ramdisk
 ```
-**This comes with risks, however**. If, for example, your entire cluster loses power you will lose all data. But if your approach is to completely rebuild your rqlite node, or rqlite cluster, in the event of complete failure, this option may be of interest to you. Perhaps you always rebuild your rqlite cluster from a different source of data, or a backup, so can recover an rqlite cluster regardless of its state. Testing shows that using rqlite with a memory-only file system can result in 100x improvement in performance.
 
 ### Placing the SQLite database on a different file system
 Another option is to run rqlite with the SQLite database file on a different filesystem than the Raft log. This can result in better write performance as each system gets its own dedicated I/O resources.
