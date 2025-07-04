@@ -62,10 +62,10 @@ It is possible to run rqlite entirely on-top of a memory-backed file system and 
 
 **This comes with risks, however**. If, for example, your entire cluster loses power you will lose all data. But if your approach is to completely rebuild your rqlite node, or rqlite cluster, in the event of complete failure, this option may be of interest to you. Perhaps you always rebuild your rqlite cluster from a different source of data, or a backup, so can recover an rqlite cluster regardless of its state. 
 
-On Linux you can create a memory-based filesystem like so:
-```bash
-mount -t tmpfs -o size=512m tmpfs /mnt/ramdisk
-```
+>On Linux you can create a memory-based filesystem as follows:
+>```bash
+>mount -t tmpfs -o size=512m tmpfs /mnt/ramdisk
+>```
 
 ### Placing the SQLite database on a different file system
 Another option is to run rqlite with the SQLite database file on a different filesystem than the Raft log. This can result in better write performance as each system gets its own dedicated I/O resources.
