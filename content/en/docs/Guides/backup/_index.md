@@ -84,7 +84,7 @@ To configure automatic backups to an [Amazon S3 bucket](https://aws.amazon.com/s
 
 If you're running rqlite within Amazon Web Services and want to use the IAM Role from the environment (such as an [EC2 role](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/iam-roles-for-amazon-ec2.html) or an [IRSA role for EKS](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html)), you can omit `access_key_id` and `secret_access_key` from the `sub` object, or set them to a zero-value such as `null` or the empty string. This will cause the AWS SDK used by rqlite to follow the [default credential provider chain](https://docs.aws.amazon.com/sdk-for-go/v1/developer-guide/configuring-sdk.html#specifying-credentials).
 
-#### Other S3-Compliant Providers
+### S3-Compliant Providers
 rqlite can back up to any non-Amazon cloud storage that exposes an S3-compliant API. Examples include [Wasabi](https://wasabi.com/), [Backblaze B2](https://www.backblaze.com/cloud-storage), or self-hosted solutions such as [MinIO](https://min.io/). This is done by specifying the `endpoint` field in the `sub` object, and, where needed, the `force_path_style` field.
 
 Wasabi supports virtual-host-style URL formats (as with native S3), but does require an explicit endpoint based on the bucket's region. The example below targets a bucket called `rqlite-kq7z9xg` in Wasabi's eu-central-1 region:
@@ -292,7 +292,7 @@ To initiate an automatic restore from a backup in an [S3 bucket](https://aws.ama
 ```
 By default rqlite will exit with an error if it fails to download the backup file. If you wish an rqlite node to continue starting up even if the download fails, set `continue_on_failure: true`.
 
-#### Other S3-Compliant Providers
+### S3-Compliant Providers
 The `sub` configuration examples for non-Amazon S3 storage from the *Automated Backups* section above apply equally well to *Automatic Restores*. This allows you to download a previously uploaded backup from, for example, Wasabi and MinIO.
 
 ### Google Cloud Storage
