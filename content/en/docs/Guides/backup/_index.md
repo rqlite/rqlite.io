@@ -302,8 +302,7 @@ To initiate an automatic restore from a backup in a [Google Cloud Storage](https
 	"version": 1,
 	"type": "s3",
 	"timeout": "60s",
-	"continue_on_failure": false,
-
+	"continue_on_failure": true,
 	"sub": {
 		"project_id": "$PROJECT_ID",
 		"bucket": "$BUCKET",
