@@ -57,7 +57,7 @@ You can combine `compress` with `vacuum` (`?compress&vacuum`) for the smallest p
 rqlite's _Backup_ system is extensively tested. However you should periodically check your backups, and ensure they are valid SQLite files. One way to do this is to use SQLite itself to run an [integrity check](https://www.sqlite.org/pragma.html#pragma_integrity_check) on your backups.
 
 ## Automatic Backups
-rqlite supports automatically, and periodically, backing up its data to S3-compatible Cloud-hosted storage. To save network traffic rqlite uploads a **compressed** copy of its SQLite database, and will not upload a backup if the SQLite database hasn't changed since the last upload took place. Only the Leader performs the upload.
+rqlite supports automatically, and periodically, backing up its data to Cloud-hosted storage. To save network traffic rqlite uploads a **compressed** copy of its SQLite database, and will not upload a backup if the SQLite database hasn't changed since the last upload took place. Only the Leader performs the upload.
 
 Backups are controlled via a special configuration file, which is supplied to `rqlited` using the `-auto-backup` flag. In the event that you lose your rqlite cluster you can use the backup in the Cloud to [recover your rqlite system](https://rqlite.io/docs/guides/backup/#restoring-from-sqlite).
 
@@ -84,7 +84,7 @@ To configure automatic backups to an [Amazon S3 bucket](https://aws.amazon.com/s
 
 If you're running rqlite within Amazon Web Services and want to use the IAM Role from the environment (such as an [EC2 role](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/iam-roles-for-amazon-ec2.html) or an [IRSA role for EKS](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html)), you can omit `access_key_id` and `secret_access_key` from the `sub` object, or set them to a zero-value such as `null` or the empty string. This will cause the AWS SDK used by rqlite to follow the [default credential provider chain](https://docs.aws.amazon.com/sdk-for-go/v1/developer-guide/configuring-sdk.html#specifying-credentials).
 
-### Other S3-Compliant Providers
+#### Other S3-Compliant Providers
 rqlite can back up to any non-Amazon cloud storage that exposes an S3-compliant API. Examples include [Wasabi](https://wasabi.com/), [Backblaze B2](https://www.backblaze.com/cloud-storage), or self-hosted solutions such as [MinIO](https://min.io/). This is done by specifying the `endpoint` field in the `sub` object, and, where needed, the `force_path_style` field.
 
 Wasabi supports virtual-host-style URL formats (as with native S3), but does require an explicit endpoint based on the bucket's region. The example below targets a bucket called `rqlite-kq7z9xg` in Wasabi's eu-central-1 region:
@@ -125,6 +125,23 @@ For MinIO deployments that use [path-style requests](https://docs.aws.amazon.com
 	}
 }
 ```
+### Google Cloud Storage
+To configure automatic backups to a [Google Cloud Storage bucket](https://cloud.google.com/storage), create a file with the following (example) contents and pass the file path to rqlite's `-auto-backup` flag:
+```json
+{
+	"version": 1,
+	"type": "gcs",
+	"interval": "5m",
+	"vacuum": false,
+	"sub": {
+		"project_id": "$PROJECT_ID",
+		"bucket": "$BUCKET",
+		"name": "db.sqlite3.gz",
+		"credentials_path": "$CREDENTIALS_PATH"
+	}
+}
+```
+Configure your `project_id`, `bucket`, and `name`. `credentials_path` is the path to the file containing the [Service Account key in JSON format](https://cloud.google.com/iam/docs/keys-create-delete).
 
 ### Other configuration options
 If you wish **to disable compression** of the backup add `no_compress: true` to the top-level section of the configuration file. Uploaded backups can also **automatically prepend a timestamp to the last element of specified path** of the auto-uploaded backup, which will result in a new backup file being created each time. This can be useful for point-in-time recoveries. To enable timestamping add `timestamp: true` to the top-level section of the configuration file
@@ -275,5 +292,24 @@ To initiate an automatic restore from a backup in an [S3 bucket](https://aws.ama
 ```
 By default rqlite will exit with an error if it fails to download the backup file. If you wish an rqlite node to continue starting up even if the download fails, set `continue_on_failure: true`.
 
-### Other S3-Compliant Providers
+#### Other S3-Compliant Providers
 The `sub` configuration examples for non-Amazon S3 storage from the *Automated Backups* section above apply equally well to *Automatic Restores*. This allows you to download a previously uploaded backup from, for example, Wasabi and MinIO.
+
+### Google Cloud Storage
+To initiate an automatic restore from a backup in a [Google Cloud Storage](https://cloud.google.com/storage), create a file with the following (example) contents and supply the file path to rqlite using the command line option `-auto-restore`:
+```json
+{
+	"version": 1,
+	"type": "s3",
+	"timeout": "60s",
+	"continue_on_failure": false,
+
+	"sub": {
+		"project_id": "$PROJECT_ID",
+		"bucket": "$BUCKET",
+		"name": "db.sqlite3.gz",
+		"credentials_path": "$CREDENTIALS_PATH"
+	}
+}
+```
+Similar to Backup configure your `project_id`, `bucket`, and `name`. `credentials_path` is the path to the file containing the [Service Account key in JSON format](https://cloud.google.com/iam/docs/keys-create-delete).
