@@ -10,7 +10,7 @@ rqlite can be secured in various way, and with different levels of control.
 SQLite has some [documentation on security](https://www.sqlite.org/security.html), which is worth reviewing. Much of it can be applied to rqlite, though implementing some of the practices would need you to [recompile rqlite](/docs/install-rqlite/building-from-source/).
 
 ## File system security
-You should control access to the data directory that each rqlite node uses. There is no reason for any user to directly access this directory. File-level security is also very important if you decide to use _TLS Certificates and Keys_ with rqlite (see later).
+You should control access to the data directory that each rqlite node uses. There is no reason for any user to directly access this directory. File-level security is also very important if you decide to use _TLS Certificates and Keys_ with rqlite (see later). You could also consider running rqlite on an encrypted file system.
 
 You are also responsible for securing access to the SQLite database file if you change its path via `rqlited` command-line flags. Unless your application requires it, there is no reason for any client to directly access the SQLite file, and writing to the SQLite file will cause rqlite to fail.
 > If you plan to have systems other than rqlite access the SQLite database file then you should carefully review the [_Direct Access_ guide](/docs/guides/direct-access/).
