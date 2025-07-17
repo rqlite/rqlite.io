@@ -30,9 +30,9 @@ $ curl -XPOST 'localhost:4001/db/execute?queue' -H "Content-Type: application/js
 }
 $
 ```
-Setting the URL query parameter `queue` enables queuing mode, adding the request data to an internal queue whch rqlite manages for you. 
+Setting the URL query parameter `queue` enables queuing mode, adding the request data to an internal queue whch rqlite manages for you. Once the request has been queued, the response is returned to the client.
 
-rqlite will merge the requests, once a batch-size of them has been queued on the node or a configurable timeout expires, and execute them as though they had been both contained in a single request. 
+rqlite will later merge queued requests, once a batch-size of them has been queued on the node (or a configurable timeout expires), and execute them as though they had been both contained in a single request. 
 
 Each response includes a monotonically-increasing `sequence_number`, which allows you to track when this request is actually persisted to the Raft log. The `/status` [diagnostics](/docs/guides/monitoring-rqlite) endpoint includes the sequence number of the latest request successfully written to Raft.
 
