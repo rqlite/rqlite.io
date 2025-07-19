@@ -6,6 +6,8 @@ weight: 30
 ---
 rqlite replicates SQLite to ensure fault tolerance and high availability for your data. While this distributed architecture introduces overhead compared to a standalone SQLite database, rqlite still delivers performance that meets the needs of many applications. Additionally, its performance can be further optimized, making it a versatile choice for a broad range of use cases.
 
+> Review the [Status and Diagnostics documentation](/docs/guides/monitoring-rqlite/) to learn how to monitor rqlite.
+
 ## Performance Factors
 rqlite performance -- usually defined as the number of database updates performed in a given period of time -- is primarily determined by two factors:
 - Disk performance
