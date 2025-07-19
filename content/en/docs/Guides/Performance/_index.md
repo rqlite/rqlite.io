@@ -19,6 +19,13 @@ Disk performance is the single biggest determinant of rqlite performance _on a l
 ### Network
 When running a rqlite cluster, network latency is also a factor -- and will become the performance bottleneck once latency gets high enough. This is because the Raft must contact every other node **twice** before a change is committed to the Raft log (though it does contact those nodes in parallel). Obviously the faster your network, the shorter the time to contact the nodes.
 
+### Snapshotting
+In Raft, log entries grow over time as operations are applied. To limit this growth, a periodic _Snapshot_ captures the state of the SQLite database at a given log index, allowing older entries to be discarded.
+
+In rqlite, snapshotting affects performance in several ways. The most important thing to know is that writes are blocked during snapshot creation. Frequent snapshots reduce node start-up time but increase CPU and I/O load. Infrequent snapshots use fewer resources and obviously block writes less often, but result in larger logs and slower follower catch-up. Large snapshots can also mean it takes a new node longer to join a cluster.
+
+Tuning snapshot frequency and size can be important for balancing performance and resource use when working with large data sets or high write loads. Snapshotting is controlled via the flags `-raft-snap`, `-raft-snap-wal-size` and `-raft-snap-int`.
+
 ## Improving Performance
 There are a few ways to improve both read and write performance, but not all will be suitable for a given application.
 
