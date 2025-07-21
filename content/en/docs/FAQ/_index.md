@@ -10,7 +10,7 @@ rqlite is about replicating a set of data, which has been written to it using SQ
 On top of that, rqlite provides strong guarantees about what state any copy of that data is in, with respect to a special node called the _Leader_. That is where [Raft Consensus Protocol](https://raft.github.io/) comes in. By using Raft, rqlite prevents divergent copies of the data, and ensures there is an one authoritative, consistent copy of that data at all times.
 
 ## When should I use rqlite?
-rqlite is for applications needing an easy-to-use, fault-tolerant, and highly-available relational database. Its lightweight nature means it's well-suited for high availability at the edge, providing reliable data storage even on single devices. It also works as straightforward, robust cloud storage for applications that need an easy-to-manage, replicated relational database. 
+rqlite is for applications needing an easy-to-use, fault-tolerant, and highly-available relational database. Its lightweight nature means it's well-suited for high availability at the edge, providing reliable data storage even on single devices. It also works as straightforward, robust cloud-based solution for applications that need an easy-to-manage, replicated relational database. 
 
 ## Why would I use this, versus some other distributed database?
 _[Complexity is your enemy](https://x.com/richardbranson/status/242582296157384704)._
