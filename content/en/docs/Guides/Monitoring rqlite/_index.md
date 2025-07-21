@@ -75,6 +75,29 @@ Welcome to the rqlite CLI. Enter ".help" for usage hints.
   leader: false
  ```
 
+## Leader API
+You can determine the cluster leader directly via a call to the HTTP API.
+```bash
+curl localhost:4001/leader?pretty
+{
+    "id": "1",
+    "api_addr": "http://localhost:4001",
+    "addr": "localhost:4002",
+    "version": "8",
+    "voter": true,
+    "reachable": true,
+    "leader": true,
+    "time": 2.26e-7,
+    "time_s": "402ns"
+}
+```
+
+If you wish to force a Leadership election, you can do so via a direct call to the same HTTP API:
+```bash
+curl -XPOST http://localhost:4001/leader
+```
+Alternatively issue `.stepdown` at the rqlite shell. 
+
  ## Readiness checks
  rqlite nodes serve a "ready" status at `/readyz`. The endpoint will return `HTTP 200 OK` if the node is ready to respond to database requests and cluster management operations. An example access is shown below.
 
