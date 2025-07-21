@@ -15,6 +15,8 @@ An important aspect to note is that all the autoclustering methods described bel
 
 This approach ensures a more flexible and error-tolerant approach to cluster management, making it easier to deploy and scale your rqlite deployment.
 
+>In the examples below, each rqlite node is assumed to use the same network addresses for listening and for being contacted by other nodes. If this is not the case — for example, when using Bridge Networks — those addresses may differ. In such cases, set `-http-adv-addr` and `-raft-adv-addr` to specify the addresses other nodes should use.
+
 ## Automatic Bootstrapping
 _Automatic Bootstrapping_, allows you to start all the nodes at once, and in a very similar manner. **You just need to know the network addresses of the nodes ahead of time**. 
 For simplicity, let's assume you want to run a 3-node rqlite cluster. The network addresses of the nodes are `$HOST1`, `$HOST2`, and `$HOST3`. To bootstrap the cluster, use the `-bootstrap-expect` option like so:
