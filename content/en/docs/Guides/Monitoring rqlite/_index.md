@@ -78,7 +78,7 @@ Welcome to the rqlite CLI. Enter ".help" for usage hints.
 ## Leader API
 You can determine the cluster leader directly via a call to the HTTP API.
 ```bash
-curl localhost:4001/leader?pretty
+$ curl localhost:4001/leader?pretty
 {
     "id": "1",
     "api_addr": "http://localhost:4001",
@@ -94,7 +94,7 @@ curl localhost:4001/leader?pretty
 
 If you wish to force a Leadership election, you can do so via a direct call to the same HTTP API:
 ```bash
-curl -XPOST http://localhost:4001/leader
+$ curl -XPOST http://localhost:4001/leader
 ```
 Alternatively issue `.stepdown` at the rqlite shell. 
 
