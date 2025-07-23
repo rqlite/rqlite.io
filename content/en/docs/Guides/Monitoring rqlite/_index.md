@@ -96,6 +96,10 @@ If you wish to force a Leadership election, you can do so via a direct call to t
 ```bash
 $ curl -XPOST http://localhost:4001/leader
 ```
+or optionally explicitly specifying the new Leader:
+```bash
+$ curl -XPOST http://localhost:4001/leader -H "Content-Type: application/json" -d '{"id": "node1"}'
+```
 Alternatively issue `.stepdown` at the rqlite shell. 
 
  ## Readiness checks
