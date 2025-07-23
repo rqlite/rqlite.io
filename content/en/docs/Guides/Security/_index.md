@@ -63,6 +63,7 @@ rqlite, via the configuration file, also supports user-level permissions. Each u
 - _join_: user can join a cluster. In practice only a node joins a cluster, so it's the joining node that must supply the credentials.
 - _join-read-only_: user can join a cluster, but only as a read-only node.
 - _remove_: user can remove a node from a cluster. If a node performs an auto-remove on shutdown, then the `-join-as` user must have this permission.
+- _leader-ops_: user can perform Leader-related operations via `/leader`.
 
 Note that for a user to be able to access the [Unified Endpoint](/docs/api/api/#unified-endpoint), they must have **both** _execute_ and _query_ permissions.
 
