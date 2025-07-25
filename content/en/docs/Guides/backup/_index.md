@@ -18,7 +18,7 @@ You can also access the rqlite API directly, via a HTTP `GET` request to the end
 ```bash
 curl -s -XGET localhost:4001/db/backup -o bak.sqlite3
 ```
->The backup copy returned by rqlite is always in [WAL](https://www.sqlite.org/wal.html) mode. If you wish, you can always change the backup copy to [DELETE mode using the SQLite shell](https://www.sqlite.org/pragma.html#pragma_journal_mode).
+>By default the backup copy returned by rqlite is in [WAL](https://www.sqlite.org/wal.html) mode. If you wish, you can request the backup copy to be in [DELETE mode](https://www.sqlite.org/pragma.html#pragma_journal_mode) by setting the query parameter `fmt=delete` e.g. `localhost:4001/db/backup?fmt=delete`. Requesting a DELETE mode backup involves making a copy of the SQLite database so ensure you have sufficient disk space or the backup may fail.
 
 Note that if the node is not the Leader, the node will transparently forward the request to Leader, wait for the backup data from the Leader, and return it to the client. If, instead, you want a backup of SQLite database of the actual node that receives the request, add `noleader` to the URL as a query parameter. 
 
