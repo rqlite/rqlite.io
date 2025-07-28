@@ -2,7 +2,7 @@
 ---
 title: "Features and Use Cases"
 linkTitle: "Features and Use Cases"
-description: "Features and Use Cases"
+description: "Making the most of rqlite"
 weight: 1
 date: 2025-07-05
 ---
