@@ -1,4 +1,3 @@
-
 ---
 title: "Features and Use Cases"
 linkTitle: "Features and Use Cases"
@@ -7,55 +6,56 @@ weight: 1
 date: 2025-07-05
 ---
 
-rqlite is a lightweight, distributed relational database built on SQLite. It combines SQLite’s simplicity with a fault-tolerant, highly available system, making it exceptionally easy to operate
-rqlite.io
-. In practice, rqlite extends the single-node SQLite engine with a Raft-based replication layer under the hood, so your data is automatically replicated across a cluster of nodes. This means you get the convenience of SQLite while ensuring your application’s data remains safe and highly available even if some nodes fail or go offline. Below we outline rqlite’s key features and some common scenarios where these features make rqlite an ideal choice.
-Key Features
-Core functionality:
-Relational – provides full SQL support via the SQLite engine, including advanced capabilities like full-text search and JSON data handling
-GitHub
-.
-Extensible – allows loading of SQLite extensions (for example, adding vector search or cryptographic functions) to extend the database’s capabilities
-GitHub
-.
-Atomic requests – supports executing multiple SQL statements in a single request as one atomic transaction, ensuring all-or-nothing consistency for batched operations
-GitHub
-.
-Easy operations:
-Easy deployment – distributed as a single self-contained binary with no external dependencies, so it can be installed and running in seconds
-GitHub
-.
-High availability – replicates the database across multiple nodes (using a Raft consensus algorithm) to provide fault tolerance – an outage of one node won’t disrupt the cluster
-GitHub
-.
-Dynamic clustering – supports automatic node discovery and cluster formation via systems like Kubernetes, Docker Compose, Consul, etc., which simplifies managing and scaling a multi-node cluster
-GitHub
-.
-Effortless backups – can create live (hot) backups of the database, including automatic backups to cloud storage such as AWS S3 or Google Cloud, and allows easy restore from a standard SQLite file or cloud backup when needed
-GitHub
-.
-Developer experience:
-Simple APIs and tools – offers a straightforward HTTP API for all database operations
-GitHub
-, as well as a built-in CLI and client libraries for many languages (e.g. Go, Python, JavaScript) to simplify integration.
-Robust security – supports end-to-end TLS encryption and provides authentication/authorization controls, so you can safely deploy rqlite in production or multi-tenant environments
-GitHub
-.
-Tunable consistency – lets you adjust read consistency levels (e.g. weak, strong) and write durability settings, allowing you to balance performance versus strict data guarantees based on your application’s needs
-GitHub
-.
-These features make rqlite a powerful yet easy-to-use database solution. The combination of a full SQL interface, transparent replication, and lightweight deployment means developers can focus on their application logic instead of managing complex database systems. Next, we look at several common use cases where rqlite excels.
-Common Use Cases
-Reliable storage at the edge (IoT) – rqlite shines in edge computing and IoT deployments that demand extremely high availability and data durability in resource-constrained or remote environments
-gcore.com
-. For example, imagine a fleet of IoT devices or edge servers at remote sites: by running a small rqlite cluster on each site, you ensure data is preserved and available locally even if connectivity to a central cloud is intermittent. Because rqlite prioritizes data safety over absolute write speed, it’s well-suited for scenarios where every data point must be reliably stored but ultra-low latency isn’t critical (as is often the case with sensor logs, equipment readings, etc.).
-Lightweight, fault-tolerant databases for on-premises or cloud applications – rqlite can significantly simplify the stack for applications that need a reliable database but want to avoid the complexity of traditional heavy database servers. For instance, one software provider replaced a traditional PostgreSQL database with rqlite in the product they ship to customers, which reduced storage complexity and enabled lighter, more supportable Kubernetes clusters
-rqlite.io
-. In both cloud and on-prem environments, rqlite’s single-binary design and self-managed clustering make it easy to embed and operate as part of your application stack, providing high availability without the need for dedicated DBA overhead.
-Geographically distributed read-intensive workloads – rqlite’s replication makes it a good fit for applications that need to distribute data across regions for low-latency reads. Because any node can serve read requests, you can deploy rqlite nodes in multiple data centers or geographies to keep data close to users. One user reports using rqlite as a globally distributed, read-heavy key-value store that updates in seconds and effortlessly keeps data in sync worldwide
-rqlite.io
-. This use case highlights rqlite’s ability to propagate writes through the cluster so that all nodes eventually converge on the same state, simplifying the task of maintaining a coherent dataset across distant locations.
-Embedded in larger platforms – rqlite is often integrated into other systems to provide a resilient internal datastore with minimal fuss. For example, the k0s Kubernetes distribution (which packages all core components into a single binary for simplicity) uses rqlite under the hood to maintain cluster state reliably
-gcore.com
-. By embedding rqlite, platforms like k0s inherit a fault-tolerant SQLite-backed database for storing important metadata, without introducing external databases or complex setup. Similarly, other software projects have used rqlite to store configuration, state, or small amounts of critical data that need to be replicated across nodes for high availability.
-These are just a few examples of where rqlite is a great fit. In general, rqlite is ideal whenever you need to combine the ease of SQLite with distributed reliability – from cloud services looking for simpler high-availability data storage, to edge systems that cannot afford to lose data. By offering robust features in a lightweight package, rqlite empowers developers to build resilient applications without the operational burden of traditional database clusters.
+---
+title: "Features and Uses"
+description: "Overview of rqlite’s capabilities and practical use cases"
+weight: 1
+section: docs
+---
+
+## Overview
+
+rqlite is a lightweight, user-friendly, distributed relational database built on SQLite. It combines the simplicity of SQLite with a fault-tolerant, highly available system. Whether you're deploying resilient services in the cloud or reliable applications at the edge, rqlite provides a developer-friendly database that's exceptionally easy to operate. In short, rqlite is ideal for applications that need an easy-to-use, **fault-tolerant**, and **highly-available** relational database without the heavy complexity of traditional distributed databases.
+
+One of rqlite’s primary goals is **simplicity of deployment and operation**. It’s delivered as a single self-contained binary that you can drop onto a machine and run – forming a cluster can take just seconds with minimal configuration. This design greatly reduces the operational overhead typically associated with distributed systems. All data is automatically replicated to multiple nodes using the Raft consensus algorithm, ensuring there is always a consistent copy of your data available. (rqlite prioritizes data consistency and high availability over write throughput – every write goes through the Raft log – so it’s not intended for write-scaling, but rather for keeping your data safe and available in the face of failures.)
+
+## Key Features
+
+### Core functionality
+
+- **Relational** – Built on SQLite, rqlite supports full **SQL** for querying and manipulating data. This includes advanced SQLite features like full-text search (FTS5), JSON document support, and more, so you get the power of a SQL database in a highly-available setting.  
+- **Extensible** – You can load **SQLite extensions** into rqlite nodes to extend database capabilities. For example, it's possible to add modules for vector search, cryptography, mathematical functions, and other custom functionality by loading the same extensions that SQLite supports.  
+- **Atomic writes** – rqlite ensures that multiple SQL statements sent in a single request are executed *atomically*. If one statement fails, the entire batch is rolled back, providing a simple form of transaction-like behavior for multi-statement requests.
+
+### Easy operations
+
+- **Simple deployment** – No external dependencies or complex setup—rqlite is just one binary. A new node can be up and running in seconds. This makes it straightforward to embed in applications or deploy in environments like Docker and Kubernetes.  
+- **High availability** – rqlite uses Raft replication to keep data in sync across a cluster of nodes. Because the data is fully replicated, any node can fail without taking the database offline. As long as a majority of nodes are up, the cluster continues to serve both read and write requests.  
+- **Dynamic clustering** – Forming a cluster is easy. Nodes can discover each other and join automatically via multiple mechanisms (DNS, Consul, etcd, or Kubernetes coordination). You can start a cluster with a single command (using the `-join` flag or a discovery service) and rqlite will handle leader election and data synchronization behind the scenes. Nodes can also be added as read-only replicas to scale out read traffic without affecting consensus.  
+- **Effortless backups** – rqlite supports hot backups of the underlying SQLite database. You can retrieve a consistent snapshot of the data at any time via the API or the CLI. It also offers integrations for automated backups to cloud storage (e.g. AWS S3, MinIO, Google Cloud) and even allows restoring a node directly from a standard SQLite `.dump` or backup file. This makes it easy to protect data and quickly recover or clone clusters.
+
+### Developer experience
+
+- **Convenient APIs** – rqlite offers a simple HTTP API for all database operations. Applications can write to and query the database over HTTP/JSON, which means no special drivers are required (though client libraries are available in various languages for convenience). For interactive or ad-hoc use, a built-in CLI tool (`rqlite` shell) is provided, and a lightweight web-based UI is available as well.  
+- **Secure by design** – rqlite can be deployed with full end-to-end encryption and access control. It supports TLS/SSL for all client-server and inter-node communication, so data in transit is secure. You can enable basic authentication and **role-based access control** to restrict who can read or write to the database, making it suitable for production use cases that require security.  
+- **Tunable consistency** – Clients can choose the read consistency level on each query, trading off freshness vs. performance as needed. By default reads are served quickly (potentially from a local node), but you can request *strong* consistency (ensuring the read is up-to-date with the leader) or even *linearizable* reads for the absolute latest data. Additionally, rqlite offers a **queued write** mode for better write throughput when ultimate durability is not critical, giving you flexibility to balance performance with consistency/durability requirements.
+
+## Common Use Cases
+
+### Edge and IoT deployments
+
+rqlite’s lightweight footprint makes it ideal for running on edge devices, remote offices, and IoT hardware. In these scenarios, you often need a small local database that keeps working even if connectivity to a central server is lost. rqlite can be deployed as a *single-node* database on such devices to provide local storage with a SQL interface (many people use a single rqlite node simply to get networked SQLite access via HTTP). When connectivity is available or redundancy is needed, multiple devices can form a cluster so that data is replicated and fault-tolerant. This is perfect for its use in environments like factories, vehicles, or sensor networks where simplicity and reliability are crucial.
+
+### Simplified cloud services
+
+rqlite is a great fit for cloud applications that require a replicated relational datastore but want to avoid the operational complexity of managing a traditional database cluster. For moderate-size workloads, rqlite can replace heavier databases like PostgreSQL or MySQL in situations where you need high availability and ease of maintenance more than extreme write scalability. Its distributed architecture (based on Raft) ensures that your application’s data is safe if a node or VM fails, without needing to run complex clustering software or manage a separate consensus layer – rqlite does it for you out of the box.
+
+Because it’s so easy to deploy (especially via containers), it integrates well with orchestration systems like Kubernetes: for example, some teams run rqlite to lighten their Kubernetes stack, using it as an embedded datastore for services that need shared state, thereby reducing external dependencies. Overall, in cloud or microservice architectures, rqlite shines when you want a **robust**, *maintenance-free* store for configuration, small datasets, or operational metadata that must be highly available.
+
+### Read-intensive, globally distributed apps
+
+Since every rqlite node stores a full copy of the database, read-heavy workloads can be spread across many nodes. You can add **read-only replicas** (nodes that don’t participate in voting) to a cluster purely to handle read traffic – this is useful for scaling out reads or placing nodes in different geographic regions for lower latency access.
+
+This pattern is useful when you have data that doesn’t change often but needs to be quickly and widely accessible. Some users leverage rqlite as a distributed **key-value store** (with SQL capabilities on top) for configuration or reference data that must be propagated globally. In such cases, updates are infrequent but you want those changes to replicate to all sites, and you want every location to be able to query the data locally.
+
+rqlite provides an elegant solution here: it guarantees that all replicas see the same data (strong consistency via Raft), and any node can serve read queries (with tunable consistency options if needed). This allows you to build globally distributed services that remain *in sync* without a lot of infrastructure overhead.
