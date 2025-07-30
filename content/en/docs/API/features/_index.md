@@ -6,13 +6,6 @@ weight: 1
 date: 2025-07-05
 ---
 
----
-title: "Features and Uses"
-description: "Overview of rqlite’s capabilities and practical use cases"
-weight: 1
-section: docs
----
-
 ## Overview
 
 rqlite is a lightweight, user-friendly, distributed relational database built on SQLite. It combines the simplicity of SQLite with a fault-tolerant, highly available system. Whether you're deploying resilient services in the cloud or reliable applications at the edge, rqlite provides a developer-friendly database that's exceptionally easy to operate. In short, rqlite is ideal for applications that need an easy-to-use, **fault-tolerant**, and **highly-available** relational database without the heavy complexity of traditional distributed databases.
