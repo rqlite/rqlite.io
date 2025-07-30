@@ -198,8 +198,13 @@ enable = false
     disable = false
 
 [[menu.main]]
-    name = "Install"
+    name = "Features"
     weight = 30
+    url = "/docs/features"
+
+[[menu.main]]
+    name = "Install"
+    weight = 35
     url = "/docs/install-rqlite"
 
 [[menu.main]]
