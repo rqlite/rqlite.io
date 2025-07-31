@@ -16,7 +16,7 @@ One of rqlite’s primary goals is **simplicity of deployment and operation**. I
 
 ### Core functionality
 
-- **Relational** – Built on SQLite, rqlite supports full **SQL** for querying and manipulating data. This includes advanced SQLite features like [full-text search (FTS5)](https://www.sqlite.org/fts5.html), [JSON document support](https://www.sqlite.org/json1.html), and more, so you get the power of a SQL database in a highly-available setting.  
+- **Relational** – Built on SQLite, rqlite supports full **SQL** for querying and manipulating data. This includes advanced SQLite features like [full-text search](https://www.sqlite.org/fts5.html), [JSON document support](https://www.sqlite.org/json1.html), and more, so you get the power of a SQL database in a highly-available setting.  
 - **Extensible** – You can load [**SQLite extensions**](/docs/guides/extensions/) into rqlite nodes to extend database capabilities. For example, it's possible to add modules for [vector search](https://github.com/asg017/sqlite-vec), [cryptography, mathematical functions](https://github.com/nalgeon/sqlean), and other custom functionality by loading the same extensions that SQLite supports.  
 - **Atomic writes** – rqlite ensures that multiple SQL statements sent in a single request are executed *atomically*. If one statement fails, the entire batch is rolled back, providing a simple form of transaction-like behavior for multi-statement requests.
 
