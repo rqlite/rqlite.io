@@ -39,6 +39,8 @@ The API can also be accessed directly:
 curl -s -XGET localhost:4001/db/backup?fmt=sql -o bak.sql
 ```
 
+You can also limit the SQL text backup to specific tables via by setting `tables` as a query parameter. E.g. `localhost:4001/db/backup?fmt=sql&tables=users,customers`.
+
 ### Requesting a VACUUMed copy
 You can request that the backup copy of the SQLite database, served by the API, first be [vacuumed](https://www.sqlite.org/lang_vacuum.html). This can be done via the API like so:
 ```bash
