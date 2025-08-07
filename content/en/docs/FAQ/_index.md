@@ -50,6 +50,8 @@ Yes, but only for reads (and only if you then select `none` as your [_Read Consi
 The simplest way to increase performance is to use higher-performance disks and a lower-latency network. This is known as _scaling vertically_. You could also consider using [Queued Writes](/docs/api/queued-writes/), or [Bulk Updates](/docs/api/bulk-api/) if you wish to improve write performance specifically. You can also check out the detailed guide on [_Performance_](/docs/guides/performance/).
 
 ## Where does rqlite fit into the CAP theorem?
+_Check out this [blog post](https://philipotoole.com/consistency-over-availability-how-rqlite-handles-the-cap-theorem/)._
+
 The [CAP theorem](https://en.wikipedia.org/wiki/CAP_theorem) states that it is impossible for a distributed database to provide consistency, availability, and partition tolerance simulataneously -- that, in the face of a network partition, the database can be available or consistent, but not both.
 
 Raft is a Consistency-Partition (CP) protocol. This means that if a rqlite cluster is partitioned, only the side of the cluster that contains a majority of the nodes will be available. The other side of the cluster will not respond to writes. However the side that remains available will return consistent results, and when the partition is healed, consistent results will continue to be returned.
