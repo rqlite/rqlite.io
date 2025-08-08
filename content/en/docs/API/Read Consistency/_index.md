@@ -17,13 +17,15 @@ Even though serving queries does not require Raft consensus (because the databas
 This is why rqlite offers selectable read consistency levels of _weak_ (the default), _linearizable_, _strong_, and _none_. Each is explained below, and examples of each are shown at the end of this page.
 
 ## Weak
->_Weak_ consistency is used if you don't specify any level, or if an unrecognized level is specified -- and it's probably the right choice for your application.
+>_Weak_ consistency is used if you don't specify any level, or if an unrecognized level is specified -- and it's almost certainly the right choice for your application.
 
 _Weak_ instructs the node receiving the read request to check that it is the Leader, and if it is the Leader, the node simply reads its local SQLite database. If the node determines it is not the Leader, the node will transparently forward the request to the Leader, which will in turn perform a _Weak_ read of its database. In that case the node waits for the response from the Leader, and then returns that response to the client.
 
 _Weak_ reads are usually very fast, but have some potential shortcomings, which are described below.
 
 A node checks if it's the Leader by checking state local to the node, so this check is very fast. However there is a small window of time (less than a second by default) during which a node may think it's the Leader, but has actually been deposed, a new Leader elected, and other writes have taken place on the cluster. If this happens the node may not be quite up-to-date with the rest of cluster, and stale data may be returned. Technically this means that _weak_ reads are not [_Linearizable_](https://aphyr.com/posts/313-strong-consistency-models).
+
+In practise this type of inconsistency is very unlikely to happen, which is why _Weak_ is the right choice for most applications.
 
 ## Linearizable
 > Linearizable reads implement the process described in section 6.4 of the [Raft dissertation](https://raw.githubusercontent.com/ongardie/dissertation/refs/heads/master/online.pdf) titled _Processing read-only queries more efficiently_.
