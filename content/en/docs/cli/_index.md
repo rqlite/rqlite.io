@@ -6,6 +6,9 @@ weight: 25
 ---
 `rqlite` is a command line tool for interacting with a rqlite node. Consult the [SQLite query language documentation](https://www.sqlite.org/lang.html) for full details on the supported SQL syntax.
 
+## Install
+The rqlite shell comes packaged with the [official release](https://github.com/rqlite/rqlite/releases/latest). It is also shipped with the [Docker image](https://hub.docker.com/r/rqlite/rqlite) and [rqlite Homebrew](https://formulae.brew.sh/formula/rqlite) packages.
+
 ## Usage
 
 ```
