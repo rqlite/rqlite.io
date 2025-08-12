@@ -98,13 +98,13 @@ th {
 	<tr>
 		<td><code>-node-ca-cert</code></td>
 		<td>Path to X.509 CA certificate for node-to-node encryption.
-		    <br><br>If this path is set, and nodes enable TLS inter-node communications i.e. over the Raft TCP connection, then the certificates presented by other nodes must be signed by this Certificate Authority.
+		    <br><br>If this path is configured and nodes use TLS for Raft connections, then any certificate presented during connection setup must be signed by this Certificate Authority - whether it&#39;s the node&#39;s certificate in one-way TLS or both certificates in mutual TLS.
 </td>
 	</tr>
 	<tr>
 		<td><code>-node-cert</code></td>
 		<td>Path to X.509 certificate for node-to-node mutual authentication and encryption.
-		    <br><br>Setting this path enables TLS-encrypted inter-node communications. Specifically this is the certificate presented by this node when another node connects to it. If not set the node does not enable TLS.
+		    <br><br>Setting this path enables one-way TLS-encrypted inter-node communications. Specifically this is the certificate presented by this node when another node connects to it. If not set the node does not enable TLS.
 </td>
 	</tr>
 	<tr>
@@ -115,8 +115,8 @@ th {
 	</tr>
 	<tr>
 		<td><code>-node-no-verify</code></td>
-		<td>Skip verification of any node-node certificate.
-		    <br><br>Validity is defined as signed by an acceptable CA, that the hostname in the certificate matches the hostname of the connecting node, and that the presented certificates are not expired.
+		<td>Skip verification of any presented certificate..
+		    <br><br>Validity is defined as signed by an acceptable CA, is unexpired, and that the hostname in the certificate matches the hostname of the connecting node. This applies whether it&#39;s the node&#39;s certificate in one-way TLS or both certificates in mutual TLS.
 </td>
 	</tr>
 	<tr>
@@ -128,7 +128,7 @@ th {
 	<tr>
 		<td><code>-node-verify-server-name</code></td>
 		<td>Hostname to verify on certificate returned by a node.
-		    <br><br>When node verifies a certificate it normally checks that the hostname in the certificate matches the hostname of the connecting node. This flags explicitly tells the node which hostname will actually be in the presented certificate. This allows you to sign a single certificate, with a single hostname, and distribute that to all nodes. It&#39;s mostly useful when enabling mutual TLS.
+		    <br><br>When a node verifies a certificate, it normally checks that the certificate&#39;s hostname matches the peer&#39;s hostname. This flag explicitly tells the node which hostname to expect in the certificate. It allows you to use a single certificate, with a single hostname, across all nodes. This is primarily useful when mutual TLS is enabled.
 </td>
 	</tr>
 	<tr>
