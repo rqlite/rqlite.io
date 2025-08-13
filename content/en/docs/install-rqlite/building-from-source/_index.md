@@ -11,7 +11,7 @@ A rqlite release is [generated automatically using GitHub Actions](https://githu
 >While SQLite functionality is compiled into rqlite (so you do not need SQLite to be installed on the host machine) [libc](https://www.gnu.org/software/libc/) is dynamically linked -- in other words, libc must be available on the host machine. This shouldn't be an issue in practise and maximises compatibility with whatever host machine you run rqlite on.
 
 ## Building rqlite
-*Building rqlite requires Go 1.23.4 or later. [gvm](https://github.com/moovweb/gvm) is a great tool for installing and managing your versions of Go. You must also have a [C compiler](https://github.com/mattn/go-sqlite3?tab=readme-ov-file#compilation) installed.*
+*Building rqlite requires Go 1.23.4 or later. [gvm](https://github.com/moovweb/gvm) is a great tool for installing and managing your versions of Go. Since you need to compile SQLite sourc code, you must also have a [C compiler](https://github.com/mattn/go-sqlite3?tab=readme-ov-file#compilation) installed.*
 
 One goal of rqlite is to keep the build process as simple as possible, to aid development and debugging. Download, build, and run rqlite like so (tested on 64-bit Ubuntu 20.04, macOS, and Windows):
 
