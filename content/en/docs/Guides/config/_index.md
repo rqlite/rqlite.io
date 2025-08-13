@@ -311,19 +311,19 @@ th {
 	</tr>
 	<tr>
 		<td><code>-write-queue-capacity</code></td>
-		<td>QueuedWrites queue capacity.
+		<td>Queued Writes queue capacity.
 		    <br><br>The larger this value the more Queued Write requests can be queued up internally by the node. This queue is asynchronously drained, as requests are transmitted through the Raft log. Any time the queue is full Queued Writes requests are blocked.
 </td>
 	</tr>
 	<tr>
 		<td><code>-write-queue-batch-size</code></td>
-		<td>QueuedWrites queue batch size.
+		<td>Queued Writes queue batch size.
 		    <br><br>The larger the batch size the more Queued Write statements will be batched from the internal queue and stored in a single Raft log entry. However, larger batches will consume more memory, and may increase latency.
 </td>
 	</tr>
 	<tr>
 		<td><code>-write-queue-timeout</code></td>
-		<td>QueuedWrites queue timeout.</td>
+		<td>Queued Writes queue timeout.</td>
 	</tr>
 	<tr>
 		<td><code>-write-queue-tx</code></td>
