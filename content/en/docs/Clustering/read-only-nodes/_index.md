@@ -4,9 +4,14 @@ linkTitle: "Read-only nodes"
 description: "Adding read-scalability to your cluster"
 weight: 20
 ---
-rqlite supports adding _read-only_ nodes. You can use this feature to add read scalability to the cluster if you need a high volume of reads, or want to distribute copies of the data nearer to clients -- but don't want those nodes counted towards the quorum. These types of nodes are also known as _non-voting_ nodes.
 
-What this means is that a read-only node doesn't participate in the Raft consensus system i.e. it doesn't contribute towards quorum, nor does it cast a vote during the Leader election process. Just like voting nodes, however, read-only nodes still subscribe to the stream of writes broadcast by the Leader, and update the local SQLite database using the data they receive from the Leader.
+rqlite supports adding _read-only nodes_ to a cluster. These nodes let you increase read scalability when handling large volumes of queries or when you want to place replicas closer to clients.
+
+>An rqlite node can serve thousands of queries per second, assuming you use the default read consistency level. Don't add read-only nodes unless you are sure you need them.
+
+Read-only nodes are especially useful at the network edge. If the link between the edge and voting nodes is slow or unreliable, a read-only node at the edge can continue serving queries locally, even during outages. The data may be stale, but this can be an acceptable trade-off for many applications.
+
+Also called non-voting nodes, read-only nodes do not participate in Raft consensus: they do not count towards quorum and do not vote in Leader elections. They do, however, receive the Leader’s stream of writes and apply them to their local SQLite database, just like voting nodes.
 
 ## Querying a read-only node
 A read request to a read-only node must use a [read-consistency level](/docs/api/read-consistency/) of `none` or `auto`. If any other level is specified — or if no level is set explicitly — the node will transparently forward the request to the Leader, negating the benefits of using a read-only node.
