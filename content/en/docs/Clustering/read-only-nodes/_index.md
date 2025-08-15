@@ -5,7 +5,7 @@ description: "Adding read-scalability to your cluster"
 weight: 20
 ---
 
-rqlite supports adding _read-only nodes_ to a cluster. These nodes let you increase read scalability when handling large volumes of queries or when you want to place replicas closer to clients.
+rqlite supports adding _read-only nodes_ to a cluster. These nodes let you increase read scalability when handling large volumes of queries or when you want to place copies of your data closer to clients.
 
 >An rqlite node can serve thousands of queries per second, assuming you use the default read consistency level. Don't add read-only nodes unless you are sure you need them.
 
