@@ -95,6 +95,7 @@ The **default** response is of the form:
     "time": 0.0220043
 }
 ```
+Note that `types` contains the [declared type](https://www.sqlite.org/capi3ref.html#sqlite3_column_decltype) of the columns, not the [Storage Class](https://www.sqlite.org/datatype3.html).
 
 You can also query via a HTTP POST request, with both JSON and Plain Text supported as the request body:
 ```bash
