@@ -111,6 +111,13 @@ No, a read does not block other reads, nor does a read block a write -- as long 
 
 > This is generally true, but there is one situation where reads might block writes. Raft-based systems, such as rqlite, require that the database be copied to the Raft subsystem periodically and this process, known as _Snapshotting_, requires exclusive access to the database. Therefore a read can block Snapshotting, and since writes cannot take place during Snapshotting, it is possible for a read to block a write indirectly. Snapshotting usually takes only a few milliseconds to run however, so this is usually not an issue in practise.
 
+## Do I need any special software or dependencies to run rqlite?
+Depending on your Operation System, libc may be required. On Linux specifically glibc >= 2.34 is required. If you do not have a compatible glibc version `rqlited` may fail to start, meaning you need to run a more modern version of your Operating System or distribution. You may see a message such as:
+```bash
+./rqlited: /lib/x86_64-linux-gnu/libc.so.6: version `GLIBC_2.33' not found (required by ./rqlited)
+```
+SQLite is never required on the host machine however, as it is compiled into the rqlite release.
+
 ## How is it different than dqlite?
 dqlite is library, written in C, that you need to integrate with your own software. That requires programming. rqlite is a standalone application -- it's a full [RDBMS](https://techterms.com/definition/rdbms) (albeit a relatively simple one). rqlite has everything you need to read and write data, and backup, maintain, and monitor the database itself.
 
