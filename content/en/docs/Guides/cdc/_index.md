@@ -1,7 +1,7 @@
 ---
 title: "Change Data Capture"
 linkTitle: "Change Data Capture"
-description: "Stream SQLite changes from rqlite to external systems
+description: "Stream database changes from rqlite to external systems
 "
 weight: 3
 ---
