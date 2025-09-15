@@ -13,7 +13,7 @@ A rqlite release is [generated automatically using GitHub Actions](https://githu
 ## Building rqlite
 *Building rqlite requires Go 1.23.4 or later. [gvm](https://github.com/moovweb/gvm) is a great tool for installing and managing your versions of Go. Since you need to compile SQLite sourc code, you must also have a [C compiler](https://github.com/mattn/go-sqlite3?tab=readme-ov-file#compilation) installed.*
 
-One goal of rqlite is to keep the build process as simple as possible, to aid development and debugging. Download, build, and run rqlite like so (tested on 64-bit Ubuntu 20.04, macOS, and Windows):
+One goal of rqlite is to keep the build process as simple as possible, to aid development and debugging. Download, build, and run rqlite like so (tested on 64-bit Ubuntu 22.04, macOS, and Windows):
 
 ```bash
 mkdir rqlite # Or any directory of your choice.
