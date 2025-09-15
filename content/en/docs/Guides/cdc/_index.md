@@ -53,7 +53,7 @@ If `-cdc-config` is a URL, it is used as the endpoint. If it is a file path, rql
 
 ## Configuration
 
-`Config` fields and behavior.
+`Config` fields and behavior. You can [review the GitHub repository](https://github.com/rqlite/rqlite/blob/v9.0.1/cdc/config.go#L57) for full details on the Configuration options.
 
 ### Endpoint and identity
 
