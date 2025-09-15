@@ -9,7 +9,7 @@ weight: 3
 
 ## Overview
 
-CDC captures INSERT, UPDATE, and DELETE activity and sends it to a user‑defined HTTP endpoint as JSON. Only the cluster Leader transmits. All nodes locally record events for durability. Delivery is **at least once**. Duplicates are rare in normal operation and are suppressible downstream via the Raft log index.
+CDC captures INSERT, UPDATE, and DELETE activity and sends it to a user‑defined HTTP endpoint as JSON. Only the cluster Leader transmits and delivery is **at least once**. Duplicates are rare in normal operation and can be deduped downstream via an always-unique _CDC Event Index_.
 
 ## Guarantees and design
 
@@ -147,22 +147,6 @@ Events are sent as HTTP POST JSON. Each payload entry corresponds to one committ
 }
 ```
 
-**Fields**
-
-* **node\_id**: Sender node address.
-* **service\_id**: From config, if set.
-* **payload\[]**: One or more committed groups.
-
-  * **index**: Raft log index. Monotonically increasing. Globally unique per change group.
-  * **commit\_timestamp**: Unix epoch time. Precision is implementation‑defined.
-  * **events\[]**: Row‑level changes.
-
-    * **op**: `INSERT`, `UPDATE`, or `DELETE`.
-    * **table**: Table name.
-    * **new\_row\_id**: Primary key value of the affected row.
-    * **before**: Column map before change (for UPDATE/DELETE).
-    * **after**: Column map after change (for INSERT/UPDATE).
-
 When `row_ids_only` is true, `before` and `after` are omitted.
 
 ## Downstream de‑duplication
@@ -176,13 +160,6 @@ Consumers should track the highest processed **index**. Ignore any payload group
 * Choose **retry policy** based on endpoint characteristics. Use exponential backoff for flaky networks.
 * Monitor queue size and disk usage when using infinite retries.
 * Prefer TLS with verified server certificates. Use mTLS for stronger authentication.
-
-## Troubleshooting
-
-* Use `-cdc-config=stdout` to verify payload shape during development.
-* If you see duplicates after a leadership change or restart, ensure your consumer tracks the highest **index**.
-* If no events arrive: confirm the node is Leader, the endpoint is reachable, and `table_filter` is not excluding your tables.
-* For TLS errors: verify CA path, server certificate CN/SAN against `server_name`, and client cert/key for mTLS.
 
 ## Examples
 
