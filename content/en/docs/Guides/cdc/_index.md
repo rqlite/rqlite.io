@@ -8,6 +8,7 @@ weight: 3
 
 
 ## Overview
+_Check out the [CDC announcement blog post](https://philipotoole.com/rqlite-9-0-real-time-change-data-capture-for-distributed-sqlite/) for a practical demonstration of CDC_.
 
 CDC captures INSERT, UPDATE, and DELETE activity and sends it to a user‑defined HTTP endpoint as JSON. Only the cluster Leader transmits and delivery is **at least once**. Duplicates are rare in normal operation and can be deduped downstream via an always-unique _CDC Event Index_.
 
