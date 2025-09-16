@@ -146,9 +146,9 @@ To configure automatic backups to a [Google Cloud Storage bucket](https://cloud.
 Configure your `project_id`, `bucket`, and `name`. `credentials_path` is the path to the file containing the [Service Account key in JSON format](https://cloud.google.com/iam/docs/keys-create-delete).
 
 ### Other configuration options
-If you wish **to disable compression** of the backup add `no_compress: true` to the top-level section of the configuration file. Uploaded backups can also **automatically prepend a timestamp to the last element of specified path** of the auto-uploaded backup, which will result in a new backup file being created each time. This can be useful for point-in-time recoveries. To enable timestamping add `timestamp: true` to the top-level section of the configuration file
-
-The configuration file also supports variable expansion -- this means any string starting with `$` will be replaced with that [value from Environment variables](https://pkg.go.dev/os#ExpandEnv) when it is loaded by rqlite.
+- If you wish **to disable compression** of the backup add `no_compress: true` to the top-level section of the configuration file.
+- Uploaded backups can also **automatically prepend a timestamp to the last element of specified path** of the auto-uploaded backup, which will result in a new backup file being created each time. This can be useful for point-in-time recoveries. To enable timestamping add `timestamp: true` to the top-level section of the configuration file
+- The configuration file also supports variable expansion -- this means any string starting with `$` will be replaced with that [value from Environment variables](https://pkg.go.dev/os#ExpandEnv) when it is loaded by rqlite.
 
 #### Example
 ```json
