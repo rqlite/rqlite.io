@@ -59,11 +59,11 @@ You can combine `compress` with `vacuum` (`?compress&vacuum`) for the smallest p
 rqlite's _Backup_ system is extensively tested. However you should periodically check your backups, and ensure they are valid SQLite files. One way to do this is to use SQLite itself to run an [integrity check](https://www.sqlite.org/pragma.html#pragma_integrity_check) on your backups.
 
 ## Automatic Backups
-rqlite supports automatically, and periodically, backing up its data to Cloud-hosted storage. To save network traffic rqlite uploads a **compressed** copy of its SQLite database, and will not upload a backup if the SQLite database hasn't changed since the last upload took place.
+rqlite supports automatically, and periodically, backing up its data to Cloud-hosted storage and the local file system. To save network traffic and disk space rqlite writes a **compressed** copy of its SQLite database, and will not create a backup if the SQLite database hasn't changed since the last upload took place.
 
 > Only the Leader performs the backup. If a new node becomes the Leader it will take over the backup process.
 
-Backups are controlled via a special configuration file, which is supplied to `rqlited` using the `-auto-backup` flag. In the event that you lose your rqlite cluster you can use the backup in the Cloud to [recover your rqlite system](https://rqlite.io/docs/guides/backup/#restoring-from-sqlite).
+Backups are controlled via a special configuration file, which is supplied to `rqlited` using the `-auto-backup` flag. In the event that you lose your rqlite cluster you can use your backup to [recover your rqlite system](https://rqlite.io/docs/guides/backup/#restoring-from-sqlite).
 
 > Automatically backing up rqlite involves making a copy of the SQLite database on disk. Make sure you have enough free disk space or the backup operation may fail.
 
@@ -146,6 +146,21 @@ To configure automatic backups to a [Google Cloud Storage bucket](https://cloud.
 }
 ```
 Configure your `project_id`, `bucket`, and `name`. `credentials_path` is the path to the file containing the [Service Account key in JSON format](https://cloud.google.com/iam/docs/keys-create-delete).
+
+### File System
+To configure backups to the local file system, create a file with the following (example) contents:
+```json
+{
+  "version": 1,
+  "type": "file",
+  "interval": "1m",
+  "vacuum": false,
+  "sub": {
+    "dir": "/var/backups/rqlite",
+    "file": "backup.sqlite.gz"
+  }
+}
+```
 
 ### Other configuration options
 - If you wish **to disable compression** of the backup add `no_compress: true` to the top-level section of the configuration file.
