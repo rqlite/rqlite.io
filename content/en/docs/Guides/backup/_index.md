@@ -59,7 +59,9 @@ You can combine `compress` with `vacuum` (`?compress&vacuum`) for the smallest p
 rqlite's _Backup_ system is extensively tested. However you should periodically check your backups, and ensure they are valid SQLite files. One way to do this is to use SQLite itself to run an [integrity check](https://www.sqlite.org/pragma.html#pragma_integrity_check) on your backups.
 
 ## Automatic Backups
-rqlite supports automatically, and periodically, backing up its data to Cloud-hosted storage. To save network traffic rqlite uploads a **compressed** copy of its SQLite database, and will not upload a backup if the SQLite database hasn't changed since the last upload took place. Only the Leader performs the upload.
+rqlite supports automatically, and periodically, backing up its data to Cloud-hosted storage. To save network traffic rqlite uploads a **compressed** copy of its SQLite database, and will not upload a backup if the SQLite database hasn't changed since the last upload took place.
+
+> **Only the Leader performs the upload**. If a new node becomes the Leader it will take over the backup process.
 
 Backups are controlled via a special configuration file, which is supplied to `rqlited` using the `-auto-backup` flag. In the event that you lose your rqlite cluster you can use the backup in the Cloud to [recover your rqlite system](https://rqlite.io/docs/guides/backup/#restoring-from-sqlite).
 
