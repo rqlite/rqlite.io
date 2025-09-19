@@ -157,7 +157,7 @@ To configure backups to the local file system, create a file with the following 
   "vacuum": false,
   "sub": {
     "dir": "/var/backups/rqlite",
-    "file": "backup.sqlite.gz"
+    "name": "backup.sqlite.gz"
   }
 }
 ```
