@@ -61,7 +61,7 @@ rqlite's _Backup_ system is extensively tested. However you should periodically 
 ## Automatic Backups
 rqlite supports automatically, and periodically, backing up its data to Cloud-hosted storage. To save network traffic rqlite uploads a **compressed** copy of its SQLite database, and will not upload a backup if the SQLite database hasn't changed since the last upload took place.
 
-> **Only the Leader performs the upload**. If a new node becomes the Leader it will take over the backup process.
+> Only the Leader performs the backup. If a new node becomes the Leader it will take over the backup process.
 
 Backups are controlled via a special configuration file, which is supplied to `rqlited` using the `-auto-backup` flag. In the event that you lose your rqlite cluster you can use the backup in the Cloud to [recover your rqlite system](https://rqlite.io/docs/guides/backup/#restoring-from-sqlite).
 
