@@ -15,7 +15,7 @@ You can send your read and writes requests to any node in your cluster.
 
 **Which endpoint should you use?** If you know ahead of time whether you are doing reads or writes, you should choose the endpoint dedicated to that type of request (either `/db/execute` or `/db/query`), as you will know precisely what to expect when rqlite responds. This encourages the most robust interaction with rqlite.
 
-In contrast the format of the response from `/db/request` will depend on whether you send read or write requests, and may require you (or your code) to inspect the response more closely before parsing it. But `/db/request` can be more convenient in some cases, as you don't need to worry about choosing a particular endpoint ahead of time -- just send all your requests to `/db/request`.
+In contrast the format of the response from `/db/request` will depend on whether you send read or write requests, and will require your code to inspect the response more closely before parsing it. But `/db/request` can be more convenient in some cases, as you don't need to worry about choosing a particular endpoint ahead of time -- just send all your requests to `/db/request`.
 
 The best way to understand the API is to work through the simple examples below. There are also [client libraries available](/docs/api/client-libraries/).
 
