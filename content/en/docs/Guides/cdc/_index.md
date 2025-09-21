@@ -16,7 +16,7 @@ CDC captures INSERT, UPDATE, and DELETE activity and sends it to a user‑define
 
 * **At‑least‑once** delivery to the webhook. Receiving HTTP 200 or 202 from the destination web server is considered a delivery. 
 * **Leader‑only emission.** Followers never transmit, but still record events to disk-backed FIFO queue per node.
-* **High‑water mark (HWM).** The Leader continually broadcasts the Raft index of highest successfuly delivered event. Other nodes the drop CDC events with an index less than the HWM. Any new Leader also skips events with an index ≤ HWM when reading.
+* **High‑water mark (HWM).** The Leader continually broadcasts the Raft index of highest successfuly delivered event. Other nodes the drop CDC events with an index less than the HWM. Any new Leader also skips events with an index ≤ HWM when reading. The period between these broadcasts is configurable. The shorter the interval, the fewer event retransmissions when a Leader election takes place, or a cluster restarts.
 * **No dependence on the Raft log for replay.** Thanks to the disk-backed FIFO queue CDC is independent of Raft log or any log compaction.
 
 ## Enabling CDC
@@ -35,8 +35,9 @@ rqlited -cdc-config="http://localhost:8000/my-cdc-endpoint" ~/node-data
 rqlited -cdc-config="stdout" ~/node-data
 ```
 
-**Config file:**
+**Configuration file:**
 
+Minimal configuration file:
 ```
 # cdc.json
 {
@@ -44,6 +45,7 @@ rqlited -cdc-config="stdout" ~/node-data
 }
 ```
 
+Then pass that file to rqlite:
 ```
 rqlited -cdc-config=/path/to/cdc.json ~/node-data
 ```
@@ -71,17 +73,18 @@ If `-cdc-config` is a URL, it is used as the endpoint. If it is a file path, rql
   "ca_cert_file": "/path/ca.pem",           # for server verification
   "cert_file": "/path/client.crt",          # mTLS client cert (optional)
   "key_file": "/path/client.key",           # mTLS client key (optional)
-  "insecure_skip_verify": false,              # true disables server cert verification
-  "server_name": "webhook.example.com"       # SNI/hostname check override
+  "insecure_skip_verify": false,            # true disables server cert verification
+  "server_name": "webhook.example.com"      # SNI/hostname check override
 }
 ```
 
-Use `insecure_skip_verify: true` only for controlled testing.
+Use `insecure_skip_verify: true` only for testing purposes.
 
 ### Batching and transmission
 
 * **max\_batch\_size** *(int, default: internal)*: Max events per POST.
 * **max\_batch\_delay** *(duration, default: internal)*: Max time to wait before sending a partially filled batch.
+* **high\_watermark\_interval** *(duration, default: internal)*: Period the Leader informs other nodes of successfully transmitted events.
 * **transmit\_timeout** *(duration, default: internal)*: HTTP request timeout. On timeout, the batch is retried.
 * **transmit\_max\_retries** *(int pointer, optional)*: Max retry attempts. Omit for infinite retries.
 * **transmit\_retry\_policy** *(enum)*: `LinearRetryPolicy` (default) or `ExponentialRetryPolicy`.
@@ -91,7 +94,7 @@ Use `insecure_skip_verify: true` only for controlled testing.
 **Notes**
 
 * Success is an HTTP 2xx. Any other status or network error triggers retry.
-* With infinite retries and a down endpoint, local queues will grow until disk is full. Set limits or monitor free space.
+* With infinite retries and a down endpoint, CDC queues will grow until disk is full. Set limits or monitor free space.
 
 ### Example full config
 
@@ -121,7 +124,7 @@ Use `insecure_skip_verify: true` only for controlled testing.
 
 ## Event model and JSON format
 
-Events are sent as HTTP POST JSON. Each payload entry corresponds to one committed Raft log index.
+Events are sent as HTTP POST JSON. Each payload entry corresponds to one committed Raft log index, and there may be more than one in the payload.
 
 **Example**
 
@@ -156,7 +159,8 @@ Consumers should track the highest processed **index**. Ignore any payload group
 ## Operational guidance
 
 * Set a **table\_filter** early to avoid unnecessary load.
-* Size **max\_batch\_size** and **max\_batch\_delay** to balance throughput and latency.
+* You can modify **high\_watermark\_interval** to reduce the potential for duplicate events, at the cost of a relatively small increase in network traffic between nodes. If your rate of writes is high, you may wish to reduce this value.
+* Size **max\_batch\_size** and **max\_batch\_delay** to balance throughput and latency. If your rate of writes is high you may wish to increase both of these values.
 * Choose **retry policy** based on endpoint characteristics. Use exponential backoff for flaky networks.
 * Monitor queue size and disk usage when using infinite retries.
 * Prefer TLS with verified server certificates. Use mTLS for stronger authentication.
