@@ -218,7 +218,7 @@ Once booted you may [convert this standalone node to a cluster](/docs/clustering
 ### Loading a node
 rqlite supports _Loading_ a node from two data source types. _Loading_ can take longer than _Booting_ but you can send a _Load_ request to a cluster. This can make it more convenient.
 
-- **An actual SQLite database file**. This is usually a fast way to initialize a rqlite system from an existing SQLite database, though can be particularly memory-intensive if the database file size is greater than a few 100 MBs.
+- **An actual SQLite database file**. This is usually a fast way to initialize a rqlite system from an existing SQLite database, though can be particularly CPU-intensive and memory-intensive if the database file size is approaches 100MB. If you find that loading is not reliable, you may need to switch to the [_booting_](/docs/guides/backup/#booting-with-a-sqlite-database) process.
 
 - **SQLite dump in text format**. This is another convenient manner to initialize a system from an existing SQLite database (or other database). The behavior of this type of load operation is **undefined** if there is already data loaded into your rqlite cluster.  **Note that this operation may be quite slow.** If you find the restore times to be too long, you should first load the SQL statements directly into a SQLite database, and then _boot_ or _load_ your rqlite system using the resulting SQLite database file.
 
