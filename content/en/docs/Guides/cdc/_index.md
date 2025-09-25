@@ -15,8 +15,8 @@ CDC captures INSERT, UPDATE, and DELETE activity and sends it to a user‑define
 ## Guarantees and design
 
 * **At‑least‑once** delivery to the webhook. Receiving HTTP 200 or 202 from the destination web server is considered a delivery. 
-* **Leader‑only emission.** Followers never transmit, but still record events to disk-backed FIFO queue per node.
-* **High‑water mark (HWM).** The Leader continually broadcasts the Raft index of highest successfuly delivered event. Other nodes the drop CDC events with an index less than the HWM. Any new Leader also skips events with an index ≤ HWM when reading. The period between these broadcasts is configurable. The shorter the interval, the fewer event retransmissions when a Leader election takes place, or a cluster restarts.
+* **Leader‑only emission.** Followers never transmit, but still record events to disk-backed FIFO queue per node. This ensures a Follower which is subsequently elected Leader doesn't omit to send any CDC events.
+* **High‑water mark (HWM).** The Leader continually broadcasts the Raft index of highest successfuly delivered event. Other nodes the drop CDC events with an index less than the HWM. Any new Leader also skips events with an index ≤ HWM when reading or replaying. The period between these broadcasts is configurable - the shorter the interval, the fewer ossible event retransmissions when a Leader election takes place, or a cluster restarts.
 * **No dependence on the Raft log for replay.** Thanks to the disk-backed FIFO queue CDC is independent of Raft log or any log compaction.
 
 ## Enabling CDC
@@ -58,13 +58,13 @@ If `-cdc-config` is a URL, it is used as the endpoint. If it is a file path, rql
 
 ### Endpoint and identity
 
-* **endpoint** *(string, required)*: HTTP endpoint or the special value `"stdout"`.
-* **service\_id** *(string, optional)*: Added to each event so consumers can distinguish multiple rqlite sources.
+* **endpoint** *(string, required)*: HTTP endpoint or the special value `"stdout"`
+* **service\_id** *(string, optional)*: If set it is added to each event so consumers can distinguish multiple rqlite CDC sources.
 
 ### Event content
 
-* **row\_ids\_only** *(bool, default false)*: When true, send only primary key row IDs and operation type. Omit `before`/`after` maps.
-* **table\_filter** *(regexp, optional)*: Only tables whose names match are captured.
+* **row\_ids\_only** *(bool, default false)*: When true, send only primary key row IDs and operation type. Omit `before`/`after` information.
+* **table\_filter** *(regexp, optional)*: Only changes to those tables whose names match are included in CDC events.
 
 ### TLS (HTTPS)
 
@@ -94,7 +94,7 @@ Use `insecure_skip_verify: true` only for testing purposes.
 **Notes**
 
 * Success is an HTTP 2xx. Any other status or network error triggers retry.
-* With infinite retries and a down endpoint, CDC queues will grow until disk is full. Set limits or monitor free space.
+* With infinite retries and an unavailable endpoint, CDC queues will grow until disk is full -- be sure to monitor disk usage when running CDC in production.
 
 ### Example full config
 
@@ -154,7 +154,7 @@ When `row_ids_only` is true, `before` and `after` are omitted.
 
 ## Downstream de‑duplication
 
-Consumers should track the highest processed **index**. Ignore any payload groups with `index` ≤ last processed. Alternatively, ensure downstream handlers are idempotent.
+Consumers should track the highest processed **index**. Ignore any payload groups with `index` ≤ last processed. Alternatively, ensure downstream handlers are idempotent and can handle an occasional out-of-order CDC event.
 
 ## Operational guidance
 
@@ -170,7 +170,7 @@ Consumers should track the highest processed **index**. Ignore any payload group
 **Create table and insert a row**
 
 ```
-# Start single node printing CDC to stdout
+# Start single node printing CDC to stdout - this can be useful for debug and testing.
 rqlited -cdc-config=stdout ~/node
 
 # Execute statements
@@ -232,9 +232,4 @@ curl -XPOST 'localhost:4001/db/execute?pretty' \
 * Validate request signatures or require mTLS for authentication.
 * Use `service_id` to multiplex events from multiple clusters.
 * Log and alert on repeated retry cycles and growing local queues.
-
-## Compatibility
-
-* Only the Leader sends. On leadership change, the new Leader drains its FIFO and resumes transmission.
 * Raft log indices are stable identifiers for de‑duplication.
-* CDC operates independently of backup/restore and Raft log compaction.
