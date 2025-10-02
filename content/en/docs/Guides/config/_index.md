@@ -42,6 +42,12 @@ th {
 		<td>Comma-delimited list of paths to directories, zipfiles, or tar.gz files containing SQLite extensions.</td>
 	</tr>
 	<tr>
+		<td><code>-cdc-config</code></td>
+		<td>Set CDC HTTP endpoint, or path to CDC config file. If not set, CDC not enabled.
+		    <br><br>If the passed value is a valid URL then CDC events will be posted to that endpoint. Otherwise the value is interpreted as the path to the CDC configuration file.
+</td>
+	</tr>
+	<tr>
 		<td><code>-http-addr</code></td>
 		<td>HTTP server bind address. To enable HTTPS, set X.509 certificate and key.
 		    <br><br>This is the interface rqlite will listen on for API requests. 0.0.0.0 is an acceptable address and will mean that rqlite will listen on all interfaces.
