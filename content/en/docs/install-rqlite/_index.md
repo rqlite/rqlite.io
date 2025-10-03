@@ -13,7 +13,7 @@ Prebuilt binaries are available for a variety of systems including **Linux**, **
 
 Check out the [rqlite Docker page](https://hub.docker.com/r/rqlite/rqlite/) for more details on running rqlite nodes via Docker.
 
-Also available on the [GitHub Container Registry](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry):
+#### GitHub Container Registry
 
 `docker pull ghcr.io/rqlite/rqlite`
 
