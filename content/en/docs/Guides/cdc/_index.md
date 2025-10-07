@@ -16,7 +16,7 @@ CDC captures INSERT, UPDATE, and DELETE activity and sends it to a user‑define
 
 * **At‑least‑once** delivery to the webhook. Receiving HTTP 200 or 202 from the destination web server is considered a delivery. 
 * **Leader‑only emission.** Followers never transmit, but still record events to disk-backed FIFO queue per node. This ensures a Follower which is subsequently elected Leader doesn't omit to send any CDC events.
-* **High‑water mark (HWM).** The Leader continually broadcasts the Raft index of highest successfuly delivered event. Other nodes the drop CDC events with an index less than the HWM. Any new Leader also skips events with an index ≤ HWM when reading or replaying. The period between these broadcasts is configurable - the shorter the interval, the fewer ossible event retransmissions when a Leader election takes place, or a cluster restarts.
+* **High‑water mark (HWM).** The Leader continually broadcasts the Raft index of highest successfuly delivered event. Other nodes the drop CDC events with an index less than the HWM. Any new Leader also skips events with an index ≤ HWM when reading or replaying. The period between these broadcasts is configurable - the shorter the interval, the fewer potential event retransmissions when a Leader election takes place, or a cluster restarts.
 * **No dependence on the Raft log for replay.** Thanks to the disk-backed FIFO queue CDC is independent of Raft log or any log compaction.
 
 ## Enabling CDC
