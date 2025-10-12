@@ -39,7 +39,7 @@ rqlited -node-id 3 -http-addr=$HOST3:4001 -raft-addr=$HOST3:4002 \
 
 `-bootstrap-expect` should be set to the number of nodes that must be available before the bootstrapping process will commence, in this case 3. You also set `-join` to the **Raft** addresses of all 3 nodes in the cluster. **It's also required that each launch command has the same values for `-bootstrap-expect` and `-join`.**
 
-After the cluster has formed, you can launch more nodes with the same options. A node will always attempt to first perform a normal cluster-join using the given join addresses, before trying the bootstrap approach.
+>If you wish to grow a cluster after it has bootstrapped, you can launch more nodes with the exact same options. A new node will always attempt a normal cluster-join operation using the given `-join` addresses, before trying the bootstrap approach. This can make scripting and automation convenient as you don't need to differentiate between the initial bootstrap and simply adding new nodes to an existing cluster.
 
 ### Docker
 With Docker you can launch every node identically:
