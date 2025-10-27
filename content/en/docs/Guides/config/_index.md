@@ -50,7 +50,7 @@ th {
 	<tr>
 		<td><code>-http-addr</code></td>
 		<td>HTTP server bind address. To enable HTTPS, set X.509 certificate and key.
-		    <br><br>This is the interface rqlite will listen on for API requests. 0.0.0.0 is an acceptable address and will mean that rqlite will listen on all interfaces.
+		    <br><br>TThis is the interface rqlite will listen on for API requests. 0.0.0.0 is an acceptable address and will mean that rqlite will listen on all interfaces. However if you do use 0.0.0.0 you must then set `-http-adv-addr`to the actual network address (or hostname) the node can be reached on, as rqlite transmits its HTTP API address in certain circumstances.
 </td>
 	</tr>
 	<tr>
@@ -146,7 +146,7 @@ th {
 	<tr>
 		<td><code>-raft-addr</code></td>
 		<td>Raft communication bind address.
-		    <br><br>This is the interface rqlite will listen on for connections from other node, as part of managing Raft consensus. 0.0.0.0 is an acceptable address and will mean that `rqlite` will listen on all interfaces.
+		    <br><br>This is the interface rqlite will listen on for connections from other node, as part of managing Raft consensus. 0.0.0.0 is an acceptable address and will mean that `rqlite` will listen on all interfaces. However if you do use 0.0.0.0 you must then set `-raft-adv-addr`to the actual network address (or hostname) the node can be reached on, as rqlite transmits its Raft network address in certain circumstances.
 </td>
 	</tr>
 	<tr>
