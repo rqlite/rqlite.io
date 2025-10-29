@@ -6,10 +6,6 @@ weight: 40
 ---
 rqlite can be compiled for a wide variety of operating systems and platforms.
 
-## Release process
-A rqlite release is [generated automatically using GitHub Actions](https://github.com/rqlite/rqlite/blob/master/.github/workflows/build-release-binaries.yml) anytime a new GitHub release is created and tagged.
->While SQLite functionality is compiled into rqlite (so you do not need SQLite to be installed on the host machine) [libc](https://www.gnu.org/software/libc/) is dynamically linked -- in other words, libc must be available on the host machine. This shouldn't be an issue in practise and maximises compatibility with whatever host machine you run rqlite on. Note that when running an official release on Linux rqlite currently requires glibc 2.32 or later.
-
 ## Building rqlite
 *Building rqlite requires Go 1.23.4 or later. [gvm](https://github.com/moovweb/gvm) is a great tool for installing and managing your versions of Go. Since you need to compile SQLite source code, you must also have a [C compiler](https://github.com/mattn/go-sqlite3?tab=readme-ov-file#compilation) installed.*
 
@@ -84,6 +80,9 @@ ok      github.com/rqlite/rqlite/http  0.006s
 ok      github.com/rqlite/rqlite/store 6.117s
 ok      github.com/rqlite/rqlite/system_test   7.853s
 ```
+## Release process
+A rqlite release is [generated automatically using GitHub Actions](https://github.com/rqlite/rqlite/blob/master/.github/workflows/build-release-binaries.yml) anytime a new GitHub release is created and tagged.
+>While SQLite functionality is compiled into rqlite (so you do not need SQLite to be installed on the host machine) [libc](https://www.gnu.org/software/libc/) is dynamically linked -- in other words, libc must be available on the host machine. This shouldn't be an issue in practise and maximises compatibility with whatever host machine you run rqlite on. Note that when running an official release on Linux rqlite currently requires glibc 2.32 or later.
 
 ## Development philosophy
 ### Clean commit histories
