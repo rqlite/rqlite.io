@@ -51,7 +51,9 @@ The Raft layer always creates a file -- it creates the _Raft log_. This log stor
 rqlite automatically performs log compaction, so that disk usage due to the log remains bounded. After a configurable number of changes rqlite snapshots the SQLite database, and truncates the Raft log. This is a technical feature of the Raft consensus system, and most users of rqlite need not be concerned with this.
 
 ### SQLite
-SQLite runs in [WAL mode](https://www.sqlite.org/wal.html) and with [`SYNCHRONOUS=off`](https://www.sqlite.org/pragma.html#pragma_synchronous). In normal operation this configuration risks database corruption in the event of crash, but does provide substantially better write performance. However, since the SQLite database is completely recreated everytime `rqlited` starts, using the information stored in the Raft log, corruption is a non-issue.
+SQLite runs in [WAL mode](https://www.sqlite.org/wal.html) and with [`SYNCHRONOUS=off`](https://www.sqlite.org/pragma.html#pragma_synchronous), which maximises write performance. However this configuration risks database corruption in the event of crash. To address this risk, rqlite periodically switches SQLite to `SYNCHRONOUS=FULL` mode, thereby [fsync'ing](https://man7.org/linux/man-pages/man2/fsync.2.html) the entire SQLite to disk. Once fsync'ed, it switches back to `SYNCHRONOUS=OFF`.
+
+When rqlite restarts, it starts from the last known fsync'ed version of the SQLite database. In the event that no such copy is available (or if there is any question about its correctness) the SQLite database is completely rebuilt using the information stored in the Raft log. 
 
 ### Autoclustering
 When using _Automatic Bootstrapping_, each node notifies all other nodes of its existence. The first node to have been contacted by enough other nodes (set by `-boostrap-expect`) bootstraps the cluster. Only one node can bootstrap a cluster, so any other node that attempts to do so later will fail, and instead become a _Follower_ in the new cluster.
