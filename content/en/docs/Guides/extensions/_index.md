@@ -13,8 +13,9 @@ Currently available extensions are shown in the table below.
 
 | Extension | Purpose | Key |
 |-----------------|-----------------|-----------------|
-| [Sqlean: The ultimate set of SQLite extensions](https://github.com/nalgeon/sqlean) | Set of useful functions | `sqlean` |
-| [sqlite-vec: A vector search SQLite extension](https://github.com/asg017/sqlite-vec) | Vector search engine | `sqlite-vec` |
+| [Sqlean](https://github.com/nalgeon/sqlean) | Curated set of useful functions | `sqlean` |
+| [sqlite-vec](https://github.com/asg017/sqlite-vec) | Vector search engine | `sqlite-vec` |
+| [sqliteai-vector](https://github.com/sqliteai/sqlite-vector) | Vector search engine | `sqliteai-vector` |
 | [SQLite ICU](https://sqlite.org/src/dir/ext/icu) | Integration of the _International Components<br>for Unicode_ library with SQLite | `icu` |
 | [SQLite Misc](https://sqlite.org/src/dir/ext/misc) | A [subset](https://github.com/rqlite/rqlite-sqlite-ext/tree/master/misc) of the SQLite miscellaneous extensions | `misc` |
   
