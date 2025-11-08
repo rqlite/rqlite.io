@@ -9,7 +9,7 @@ rqlite supports loading [SQLite Run-Time Loadable Extensions](https://www.sqlite
 ## Docker
 The [rqlite Docker image](https://hub.docker.com/r/rqlite/rqlite/) comes preloaded with some useful SQLite extensions -- you just need to enable them when you launch a rqlite container. There is no need to compile these extensions ahread of time -- they are immediately available for use once you pull the rqlite Docker image.
 
-Currently available extensions are shown in the table below.
+Currently built-in extensions are shown in the table below.
 
 | Extension | Purpose | Key |
 |-----------------|-----------------|-----------------|
