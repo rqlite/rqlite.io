@@ -163,6 +163,15 @@ curl -XPOST 'localhost:4001/db/query?pretty&timings' -H "Content-Type: applicati
     ["SELECT * FROM foo WHERE name=:name", {"name": "fiona"}]
 ]'
 ```
+**Example injection attack**
+
+In practise, values such as `fiona` are dynamically set by clients, but Parameterized Statements protect against something like the following:
+```bash
+curl -XPOST 'localhost:4001/db/query?pretty&timings' -H "Content-Type: application/json" -d '[
+    ["SELECT * FROM foo WHERE name=?", "fiona; DROP TABLE foo"]
+]'
+```
+
 ## Transactions
 A **form** of transactions are supported. To execute statements within a transaction, add `transaction` to the URL. An example of the above operation executed within a transaction is shown below.
 
