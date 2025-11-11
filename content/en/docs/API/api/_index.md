@@ -7,8 +7,8 @@ weight: 5
 date: 2017-01-05
 ---
 Each rqlite node exposes an HTTP API allowing data to be inserted into, and read back from, the database. Specifically there are three endpoints to know:
-- `/db/execute` which accepts only write requests (`INSERT`, `UPDATE`, `DELETE`)
-- `/db/query` which accepts only read requests (`SELECT`)
+- `/db/execute` which expects write requests (`INSERT`, `UPDATE`, `DELETE`).
+- `/db/query` which accepts **only** read requests (`SELECT`). Attempting to change the database via this endpoint will result in an error.
 - `/db/request` which accepts both read and write requests. This endpoint is known as the [_Unified Endpoint_](/docs/api/api/#unified-endpoint).
 
 You can send your read and writes requests to any node in your cluster. 
