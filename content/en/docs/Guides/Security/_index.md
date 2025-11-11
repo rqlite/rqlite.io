@@ -25,6 +25,9 @@ If the IP addresses (or subnets) of rqlite clients is also known, it may also be
 AWS EC2 [Security Groups](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-network-security.html), for example, support all this functionality. So if running rqlite in the AWS EC2 cloud you can implement this level of security at the network level.
 
 ## Securing HTTP Access
+### Protecting against SQL injection
+Be sure to use [_Parameterized Statements_](/docs/api/api/#parameterized-statements), where necessary, to protect against SQL Injection attacks.
+
 ### Query security
 rqlite executes all SQL statements sent to the [`/db/query` endpoint](/docs/api/api/) using a read-only connection to the SQLite database. This ensures that no request sent to the `/db/query` endpoint can ever modify the underlying database, or its configuration, regardless of the content of the request. Therefore if you restrict a client to only the `/db/query` endpoint you can be sure that client will never modify the database.
 
