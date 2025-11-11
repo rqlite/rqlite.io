@@ -26,7 +26,7 @@ AWS EC2 [Security Groups](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/us
 
 ## Securing HTTP Access
 ### Query security
-rqlite executes all SQL statements sent to the [`/db/query` endpoint](/docs/api/api/) using a read-only connection to the SQLite database. This ensures that no request sent to the `/db/query` endpoint can ever modify the underlying database, or its configuration, regardless of the content of the request. Therefore if you restrict a client to only the `/db/query` endpoint you can be sure that client can never modify the database.
+rqlite executes all SQL statements sent to the [`/db/query` endpoint](/docs/api/api/) using a read-only connection to the SQLite database. This ensures that no request sent to the `/db/query` endpoint can ever modify the underlying database, or its configuration, regardless of the content of the request. Therefore if you restrict a client to only the `/db/query` endpoint you can be sure that client will never modify the database.
 
 ### HTTPS and Mutual TLS
 rqlite supports secure access via HTTPS, using [_Transport Layer Security (TLS)_](https://www.cloudflare.com/learning/ssl/what-is-an-ssl-certificate/). Using TLS ensures that all communication between clients and a cluster is encrypted. The HTTPS API also supports [Mutual TLS](https://www.cloudflare.com/learning/access-management/what-is-mutual-tls/). If Mutual TLS is enabled only clients that present a trusted certificate can access rqlite via the HTTP API.
