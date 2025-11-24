@@ -8,5 +8,5 @@ menu:
     weight: 20
 ---
 
-Detailed documentation on the design, implementation, and operation of rqlite.
+Documentation to get you up and running quickly with rqlite.
 
