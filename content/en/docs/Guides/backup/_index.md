@@ -277,7 +277,9 @@ Database restored successfully
 ```
 
 #### Best Practices
-When restoring an rqlite system, it is recommended that the cluster be **freshly deployed, without any pre-existing data**. This is the easiest state to manage and monitor -- and if a _Restore_ operation should fail (which is quite unlikely) it is best to start again with a new cluster. Finally, make sure there is **no other write traffic being sent to your rqlite system** while you are restoring from a backup.
+When restoring an rqlite system, it is recommended that the cluster be **freshly deployed, without any pre-existing data**. This is the easiest state to manage and monitor -- and if a _Restore_ operation should fail (which is quite unlikely) it is best to start again with a new cluster. However if you do decide to _Load_ or _Boot_ a system with a SQLite binary file any existing data will be replaced in its entirety by the operation.
+
+You should also ensure there is **no other write traffic being sent to your rqlite system** while you are restoring from a backup. Not doing so can lead to confusing results.
 
 Note that SQLite dump files normally contain a command to disable Foreign Key constraints. If you are running with Foreign Key Constraints enabled, and wish to re-enable this, this is the one time you should explicitly re-enable those constraints via the following `curl` command:
 ```bash
