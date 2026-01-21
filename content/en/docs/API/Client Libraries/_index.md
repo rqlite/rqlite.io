@@ -10,7 +10,7 @@ There are client libraries available for a variety of programming languages, inc
 
 ### Go
 - https://github.com/rqlite/rqlite-go-http - "thin" client, which provides access to rqlite's HTTP interface with minimal abstraction.
-- https://github.com/rqlite/gorqlite
+- https://github.com/rqlite/gorqlite - older, but richer, client library.
 - https://github.com/goki/rqlite (a [GORM](https://gorm.io/) driver)
 
 ### Python
