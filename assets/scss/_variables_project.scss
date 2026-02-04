@@ -16,3 +16,33 @@ $yellow: #FFFF00;
 .td-page-meta--child { display: none !important; }
 .td-page-meta--issue { display: none !important; }
 .td-page-meta--project-issue { display: none !important; }
+
+/* Warning shortcode styling */
+.warning {
+  background-color: #fff3cd;
+  border: 1px solid #ffc107;
+  border-left: 4px solid #ffc107;
+  border-radius: 4px;
+  padding: 1rem 1.25rem;
+  margin: 1rem 0;
+  color: #856404;
+}
+
+.warning::before {
+  content: "⚠️ ";
+}
+
+/* Note/info shortcode styling */
+.note {
+  background-color: #d1ecf1;
+  border: 1px solid #17a2b8;
+  border-left: 4px solid #17a2b8;
+  border-radius: 4px;
+  padding: 1rem 1.25rem;
+  margin: 1rem 0;
+  color: #0c5460;
+}
+
+.note::before {
+  content: "ℹ️ ";
+}
