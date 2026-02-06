@@ -81,9 +81,39 @@ curl -XPOST 'localhost:4001/db/execute' -H "Content-Type: application/json" -d '
 ]'
 ```
 
-
 #### CURRENT_TIME*
 Using `CURRENT_TIMESTAMP`, `CURRENT_TIME`, and `CURRENT_DATE` can also be problematic, depending on your use case.
+
+## Try it out
+You can examine how rqlite rewrites SQL statements, but without making any changes to the database. Send any SQL statement to the special endpoint `/db/sql` and rqlite will return the rewritten statement. For example:
+```bash
+$ curl -XPOST 'localhost:4001/db/sql?pretty' -H "Content-Type: application/json" -d '[
+>      "INSERT INTO foo(v) VALUES(RANDOM())",
+>      "INSERT INTO foo(v) VALUES(RANDOMBLOB(16))"
+> ]'
+{
+    "results": [
+        {
+            "original": "INSERT INTO foo(v) VALUES(RANDOM())",
+            "rewritten": "INSERT INTO \"foo\" (\"v\") VALUES (954556320032354600)"
+        },
+        {
+            "original": "INSERT INTO foo(v) VALUES(RANDOMBLOB(16))",
+            "rewritten": "INSERT INTO \"foo\" (\"v\") VALUES (x'C3CF32746F0B10FD0D0E1F3AEC6D877B')"
+        }
+    ]
+}
+
+$ curl -G 'localhost:4001/db/sql?pretty' --data-urlencode 'q=INSERT INTO foo(t) VALUES(datetime("now"))'
+{
+    "results": [
+        {
+            "original": "INSERT INTO foo(t) VALUES(datetime(\"now\"))",
+            "rewritten": "INSERT INTO \"foo\" (\"t\") VALUES (datetime(2461077.945987))"
+        }
+    ]
+}
+```
 
 ## Credits
 Many thanks to [Ben Johnson](https://github.com/benbjohnson) who wrote the SQLite parser used by rqlite.
