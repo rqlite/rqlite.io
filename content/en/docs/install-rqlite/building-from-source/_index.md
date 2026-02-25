@@ -1,7 +1,7 @@
 ---
 title: "Build from source"
 linkTitle: "Build from source"
-description: "How to build rqlite from source"
+description: "Build rqlite from source using Go and a C compiler. Includes instructions for cloning, compiling, testing, working with forks, and the release process."
 weight: 40
 ---
 rqlite can be compiled for a wide variety of operating systems and platforms.

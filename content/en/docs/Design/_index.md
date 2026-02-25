@@ -2,7 +2,7 @@
 ---
 title: "rqlite Design"
 linkTitle: "Design and implementation"
-description: "Learn about the design and implementation of the database"
+description: "Explore rqlite's architecture: Raft consensus, log compaction, SQLite WAL mode, automatic clustering internals, and links to design talks and blog posts."
 weight: 70
 date: 2017-01-05
 ---

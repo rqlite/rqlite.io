@@ -1,7 +1,7 @@
 ---
 title: "Docker Compose"
 linkTitle: "Docker Compose"
-description: "How to deploy and run rqlite using Docker Compose"
+description: "Run rqlite with Docker Compose for single-node, 3-node manual clustering, and automatic clustering setups. Quick multi-container deployment guide."
 weight: 15
 ---
 

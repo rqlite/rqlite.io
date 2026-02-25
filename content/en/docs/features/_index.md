@@ -1,7 +1,7 @@
 ---
 title: "Features and Use Cases"
 linkTitle: "Features and Use Cases"
-description: "Making the most of rqlite"
+description: "Explore rqlite features including SQL support, fault tolerance, automatic clustering, and use cases for edge, cloud, and IoT deployments."
 weight: 1
 date: 2025-07-05
 ---
