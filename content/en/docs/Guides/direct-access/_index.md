@@ -1,7 +1,7 @@
 ---
 title: "Directly accessing SQLite"
 linkTitle: "Directly accessing SQLite"
-description: "Directly accessing the SQLite database"
+description: "Guidelines for directly reading the rqlite SQLite database file. Learn safe read-only access practices and why direct writes must never be performed."
 weight: 7
 --- 
 

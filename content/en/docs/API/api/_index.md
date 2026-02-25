@@ -2,7 +2,7 @@
 ---
 title: "Accessing rqlite"
 linkTitle: "Accessing rqlite"
-description: "How to write data and read it back"
+description: "Use the rqlite HTTP API to execute SQL writes, run queries, handle transactions, and work with parameterized statements and the unified endpoint."
 weight: 5
 date: 2017-01-05
 ---

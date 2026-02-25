@@ -1,8 +1,8 @@
 ---
 title: "Change Data Capture"
 linkTitle: "Change Data Capture"
-description: "Stream database changes from rqlite to external systems
-"
+description: "Stream INSERT, UPDATE, and DELETE changes from rqlite to HTTP webhooks using Change Data Capture. Supports batching, TLS, table filtering, and retries."
+
 weight: 3
 ---
 

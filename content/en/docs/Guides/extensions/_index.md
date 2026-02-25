@@ -1,7 +1,7 @@
 ---
 title: "SQLite Extensions"
 linkTitle: "SQLite Extensions"
-description: "Loading and Managing SQLite Extensions in rqlite"
+description: "Load SQLite extensions into rqlite for vector search, custom functions, and more. Prebuilt extensions available in Docker, or compile and load your own."
 weight: 5
 ---
 rqlite supports loading [SQLite Run-Time Loadable Extensions](https://www.sqlite.org/loadext.html). You can load multiple extensions into rqlite, and take advantage of the wide range of functionality availble via extensions. Whether you need advanced data types, custom functions, or new search capabilities, extensions enable you to tailor rqlite to your specific needs.

@@ -1,7 +1,7 @@
 ---
 title: "Backup and Restore"
 linkTitle: "Backup and Restore"
-description: "Backing up and restoring your rqlite system"
+description: "Back up and restore your rqlite database. Supports hot backups, SQL dumps, automatic uploads to S3 and Google Cloud Storage, plus fast boot recovery."
 weight: 40
 ---
 ## Backing up rqlite

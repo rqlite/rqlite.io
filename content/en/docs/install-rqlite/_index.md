@@ -1,7 +1,7 @@
 ---
 title: "Install rqlite"
 linkTitle: "Install rqlite"
-description: "How to download and install rqlite"
+description: "Download and install rqlite on Linux, macOS, or Windows. Available as prebuilt binaries, Docker images, and via Homebrew for quick setup."
 weight: 20
 ---
 Prebuilt binaries are available for a variety of systems including **Linux**, **macOS**, and **Microsoft Windows**, and can be built for many target CPUs, including x86, AMD, MIPS, RISC, PowerPC, and ARM. You can find prebuilt binaries on the rqlite [GitHub releases page](https://github.com/rqlite/rqlite/releases/latest).

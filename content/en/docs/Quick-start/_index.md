@@ -1,7 +1,7 @@
 ---
 title: "Quick start"
 linkTitle: "Quick start"
-description: "Get up and running quickly with rqlite"
+description: "Install rqlite, start a node, insert data with SQL, and form a fault-tolerant distributed SQLite cluster in minutes. Includes Docker and Homebrew."
 weight: 10
 ---
 The quickest way to get running is to download a pre-built release binary, available on the [GitHub releases page](https://github.com/rqlite/rqlite/releases/latest). There are releases available for **Linux** and **Windows**.
