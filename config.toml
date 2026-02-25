@@ -213,7 +213,7 @@ enable = false
     url = "/blog"
 
 [[menu.main]]
-    name = "GitHub"
+    name = ""
     weight = 60
-    url = "https://github.com/rqlite"
-    pre = "<i class='fa-brands fa-github'></i>"
+    url = "https://github.com/rqlite/rqlite"
+    pre = "<img src='https://img.shields.io/github/stars/rqlite/rqlite?style=social' alt='GitHub stars'>"
