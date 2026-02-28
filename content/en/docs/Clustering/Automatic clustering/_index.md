@@ -60,17 +60,17 @@ Let's look at an example of creating a 3-node cluster, which autoclusters using 
 Node 1:
 ```bash
 $ rqlited -node-id=1 -http-addr=$HOST1:4001 -raft-addr=$HOST1:4002 \
--disco-mode=dns -disco-config='{"name":"rqlite.cluster"}' -bootstrap-expect 3 data
+-disco-mode=dns -disco-config='{"name":"rqlite.cluster"}' -bootstrap-expect=3 data
 ```
 Node 2:
 ```bash
 $ rqlited -node-id=2 -http-addr=$HOST2:4001 -raft-addr=$HOST2:4002 \
--disco-mode=dns -disco-config='{"name":"rqlite.cluster"}' -bootstrap-expect 3 data
+-disco-mode=dns -disco-config='{"name":"rqlite.cluster"}' -bootstrap-expect=3 data
 ```
 Node 3:
 ```bash
 $ rqlited -node-id=3 -http-addr=$HOST3:4001 -raft-addr=$HOST3:4002 \
--disco-mode=dns -disco-config='{"name":"rqlite.cluster"}' -bootstrap-expect 3 data
+-disco-mode=dns -disco-config='{"name":"rqlite.cluster"}' -bootstrap-expect=3 data
 ```
 DNS is then configured such that resolving `rqlite.cluster` would return 3 IP addresses -- the IP addresses for `$HOST1`, `$HOST2`, and `$HOST3`. Note that when using DNS each rqlite node will assume the other nodes are listening on the same Raft port as it is listening on (port 4002 in the example above).
 
