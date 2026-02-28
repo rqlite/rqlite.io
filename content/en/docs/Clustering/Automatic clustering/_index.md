@@ -23,18 +23,18 @@ For simplicity, let's assume you want to run a 3-node rqlite cluster. The networ
 
 Node 1:
 ```bash
-rqlited -node-id 1 -http-addr=$HOST1:4001 -raft-addr=$HOST1:4002 \
--bootstrap-expect 3 -join $HOST1:4002,$HOST2:4002,$HOST3:4002 data
+rqlited -node-id=1 -http-addr=$HOST1:4001 -raft-addr=$HOST1:4002 \
+-bootstrap-expect=3 -join=$HOST1:4002,$HOST2:4002,$HOST3:4002 data
 ```
 Node 2:
 ```bash
-rqlited -node-id 2 -http-addr=$HOST2:4001 -raft-addr=$HOST2:4002 \
--bootstrap-expect 3 -join $HOST1:4002,$HOST2:4002,$HOST3:4002 data data
+rqlited -node-id=2 -http-addr=$HOST2:4001 -raft-addr=$HOST2:4002 \
+-bootstrap-expect=3 -join=$HOST1:4002,$HOST2:4002,$HOST3:4002 data data
 ```
 Node 3:
 ```bash
-rqlited -node-id 3 -http-addr=$HOST3:4001 -raft-addr=$HOST3:4002 \
--bootstrap-expect 3 -join $HOST1:4002,$HOST2:4002,$HOST3:4002 data data
+rqlited -node-id=3 -http-addr=$HOST3:4001 -raft-addr=$HOST3:4002 \
+-bootstrap-expect=3 -join=$HOST1:4002,$HOST2:4002,$HOST3:4002 data data
 ```
 
 `-bootstrap-expect` should be set to the number of nodes that must be available before the bootstrapping process will commence, in this case 3. You also set `-join` to the **Raft** addresses of all 3 nodes in the cluster. **It's also required that each launch command has the same values for `-bootstrap-expect` and `-join`.**
@@ -44,7 +44,7 @@ rqlited -node-id 3 -http-addr=$HOST3:4001 -raft-addr=$HOST3:4002 \
 ### Docker
 With Docker you can launch every node identically:
 ```bash
-docker run rqlite/rqlite -bootstrap-expect 3 -join $HOST1:4002,$HOST2:4002,$HOST3:4002
+docker run rqlite/rqlite -bootstrap-expect=3 -join=$HOST1:4002,$HOST2:4002,$HOST3:4002
 ```
 where `$HOST[1-3]` are the expected network addresses of the containers.
 
@@ -59,17 +59,17 @@ Let's look at an example of creating a 3-node cluster, which autoclusters using 
 
 Node 1:
 ```bash
-$ rqlited -node-id 1 -http-addr=$HOST1:4001 -raft-addr=$HOST1:4002 \
+$ rqlited -node-id=1 -http-addr=$HOST1:4001 -raft-addr=$HOST1:4002 \
 -disco-mode=dns -disco-config='{"name":"rqlite.cluster"}' -bootstrap-expect 3 data
 ```
 Node 2:
 ```bash
-$ rqlited -node-id 2 -http-addr=$HOST2:4001 -raft-addr=$HOST2:4002 \
+$ rqlited -node-id=2 -http-addr=$HOST2:4001 -raft-addr=$HOST2:4002 \
 -disco-mode=dns -disco-config='{"name":"rqlite.cluster"}' -bootstrap-expect 3 data
 ```
 Node 3:
 ```bash
-$ rqlited -node-id 3 -http-addr=$HOST3:4001 -raft-addr=$HOST3:4002 \
+$ rqlited -node-id=3 -http-addr=$HOST3:4001 -raft-addr=$HOST3:4002 \
 -disco-mode=dns -disco-config='{"name":"rqlite.cluster"}' -bootstrap-expect 3 data
 ```
 DNS is then configured such that resolving `rqlite.cluster` would return 3 IP addresses -- the IP addresses for `$HOST1`, `$HOST2`, and `$HOST3`. Note that when using DNS each rqlite node will assume the other nodes are listening on the same Raft port as it is listening on (port 4002 in the example above).
@@ -98,17 +98,17 @@ Let's assume your Consul cluster is running at `http://example.com:8500`. Let's 
 Node 1:
 ```bash
 rqlited -node-id $ID1 -http-addr=$HOST1:4001 -raft-addr=$HOST1:4002 \
--disco-key rqlite1 -disco-mode consul-kv -disco-config '{"address":"example.com:8500"}' data
+-disco-key=rqlite1 -disco-mode=consul-kv -disco-config='{"address":"example.com:8500"}' data
 ```
 Node 2:
 ```bash
 rqlited -node-id $ID2 -http-addr=$HOST2:4001 -raft-addr=$HOST2:4002 \
--disco-key rqlite1 -disco-mode consul-kv -disco-config '{"address":"example.com:8500"}' data
+-disco-key=rqlite1 -disco-mode=consul-kv -disco-config='{"address":"example.com:8500"}' data
 ```
 Node 3:
 ```bash
 rqlited -node-id $ID3 -http-addr=$HOST3:4001 -raft-addr=$HOST3:4002 \
--disco-key rqlite1 -disco-mode consul-kv -disco-config '{"address":"example.com:8500"}' data
+-disco-key=rqlite1 -disco-mode=consul-kv -disco-config='{"address":"example.com:8500"}' data
 ```
 
 These three nodes will automatically find each other, and cluster. You can start the nodes in any order, and at anytime. Furthermore, the cluster Leader will continually update Consul with its address. This means other nodes can be launched later and automatically join the cluster, even if the Leader changes. `-disco-key` is optional, but using it allows you use a single Consul system to bootstrap multiple rqlite clusters -- simply use a different key for each cluster. Refer to the [_Next Steps_](#next-steps) documentation below for further details on Consul configuration.
@@ -116,7 +116,7 @@ These three nodes will automatically find each other, and cluster. You can start
 ### Docker
 It's even easier with Docker, as you can launch every node almost identically:
 ```bash
-docker run rqlite/rqlite -disco-mode=consul-kv -disco-config '{"address":"example.com:8500"}'
+docker run rqlite/rqlite -disco-mode=consul-kv -disco-config='{"address":"example.com:8500"}'
 ```
 __________________________
 
@@ -127,24 +127,24 @@ Let's assume etcd is available at `example.com:2379`.
 
 Node 1:
 ```bash
-rqlited -node-id $ID1 -http-addr=$HOST1:4001 -raft-addr=$HOST1:4002 \
--disco-key rqlite1 -disco-mode etcd-kv -disco-config '{"endpoints":["example.com:2379"]}' data
+rqlited -node-id=$ID1 -http-addr=$HOST1:4001 -raft-addr=$HOST1:4002 \
+-disco-key=rqlite1 -disco-mode=etcd-kv -disco-config='{"endpoints":["example.com:2379"]}' data
 ```
 Node 2:
 ```bash
-rqlited -node-id $ID2 -http-addr=$HOST2:4001 -raft-addr=$HOST2:4002 \
--disco-key rqlite1 -disco-mode etcd-kv -disco-config '{"endpoints":["example.com:2379"]}' data
+rqlited -node-id=$ID2 -http-addr=$HOST2:4001 -raft-addr=$HOST2:4002 \
+-disco-key=rqlite1 -disco-mode=etcd-kv -disco-config='{"endpoints":["example.com:2379"]}' data
 ```
 Node 3:
 ```bash
-rqlited -node-id $ID3 -http-addr=$HOST3:4001 -raft-addr=$HOST3:4002 \
--disco-key rqlite1 -disco-mode etcd-kv -disco-config '{"endpoints":["example.com:2379"]}' data
+rqlited -node-id=$ID3 -http-addr=$HOST3:4001 -raft-addr=$HOST3:4002 \
+-disco-key=rqlite1 -disco-mode=etcd-kv -disco-config='{"endpoints":["example.com:2379"]}' data
 ```
  Like with Consul autoclustering, the cluster Leader will continually report its address to etcd. Again `-disco-key` is optional, but using it allows you use a single etcd system to bootstrap multiple rqlite clusters -- simply use a different key for each cluster. Refer to the [_Next Steps_](#next-steps) documentation below for further details on etcd configuration.
 
  ### Docker
 ```bash
-docker run rqlite/rqlite -disco-mode=etcd-kv -disco-config '{"endpoints":["example.com:2379"]}'
+docker run rqlite/rqlite -disco-mode=etcd-kv -disco-config='{"endpoints":["example.com:2379"]}'
 ```
 
 ## Next Steps
