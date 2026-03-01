@@ -29,12 +29,12 @@ rqlited -node-id=1 -http-addr=$HOST1:4001 -raft-addr=$HOST1:4002 \
 Node 2:
 ```bash
 rqlited -node-id=2 -http-addr=$HOST2:4001 -raft-addr=$HOST2:4002 \
--bootstrap-expect=3 -join=$HOST1:4002,$HOST2:4002,$HOST3:4002 data data
+-bootstrap-expect=3 -join=$HOST1:4002,$HOST2:4002,$HOST3:4002 data
 ```
 Node 3:
 ```bash
 rqlited -node-id=3 -http-addr=$HOST3:4001 -raft-addr=$HOST3:4002 \
--bootstrap-expect=3 -join=$HOST1:4002,$HOST2:4002,$HOST3:4002 data data
+-bootstrap-expect=3 -join=$HOST1:4002,$HOST2:4002,$HOST3:4002 data
 ```
 
 `-bootstrap-expect` should be set to the number of nodes that must be available before the bootstrapping process will commence, in this case 3. You also set `-join` to the **Raft** addresses of all 3 nodes in the cluster. **It's also required that each launch command has the same values for `-bootstrap-expect` and `-join`.**
