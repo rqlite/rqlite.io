@@ -1,7 +1,7 @@
 ---
 title: "Configuring rqlite"
 linkTitle: "Configuring rqlite"
-description: "How to configure rqlite"
+description: "Complete reference for rqlite command-line flags including networking, Raft consensus, TLS security, clustering, discovery, and write queue settings."
 weight: 2
 ---
 This page explains each command-line flag for rqlite, and provides some usage guidelines.

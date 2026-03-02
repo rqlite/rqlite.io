@@ -1,7 +1,7 @@
 ---
 title: "Automatic clustering"
 linkTitle: "Automatic clustering"
-description: "Dynamically form rqlite clusters and automate your deployment of rqlite"
+description: "Automatically form rqlite clusters using DNS, Consul, etcd, or bootstrap discovery. Nodes self-organize without manual leader configuration."
 weight: 10
 ---
 

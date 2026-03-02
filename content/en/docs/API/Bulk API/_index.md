@@ -2,7 +2,7 @@
 ---
 title: "Bulk Writes"
 linkTitle: "Bulk Writes"
-description: "Bulk Writes allow you to write multiple records in a single request"
+description: "Send multiple SQL statements in a single HTTP request using the rqlite Bulk API. Supports transactions, parameterized queries, and bulk reads."
 weight: 10
 date: 2017-01-05
 ---

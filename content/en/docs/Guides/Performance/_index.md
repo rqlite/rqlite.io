@@ -1,7 +1,7 @@
 ---
 title: "Performance"
 linkTitle: "Performance"
-description: "Maximizing the performance of rqlite"
+description: "Optimize rqlite write and read performance with batching, queued writes, VACUUM, PRAGMA optimize, faster disks, and memory-backed filesystems."
 weight: 30
 ---
 rqlite replicates SQLite to ensure fault tolerance and high availability for your data. While this distributed architecture introduces overhead compared to a standalone SQLite database, rqlite still delivers performance that meets the needs of many applications. Additionally, its performance can be further optimized, making it a versatile choice for a broad range of use cases.
