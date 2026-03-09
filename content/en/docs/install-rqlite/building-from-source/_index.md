@@ -84,6 +84,14 @@ ok      github.com/rqlite/rqlite/system_test   7.853s
 A rqlite release is [generated automatically using GitHub Actions](https://github.com/rqlite/rqlite/blob/master/.github/workflows/build-release-binaries.yml) anytime a new GitHub release is created and tagged.
 >While SQLite functionality is compiled into rqlite (so you do not need SQLite to be installed on the host machine) [libc](https://www.gnu.org/software/libc/) is dynamically linked -- in other words, libc must be available on the host machine. This shouldn't be an issue in practise and maximises compatibility with whatever host machine you run rqlite on. Note that when running an official release on Linux rqlite currently requires glibc 2.32 or later.
 
+### Backporting fixes
+Generally speaking fixes are not backported to earlier major releases, though if the issue is very serious it may be. For the record, the backport-and-release process is as follows:
+- Checkout the tag on which the fix is to be backported.
+- Create a new branch from that tag via `git switch -c v<new-release-number>-work`.
+- Patch the code.
+- Push up the branch `v<new-release-number>-work` to GitHub.
+- Make a release on that branch using the tag `v<new-release-number>`. This will kick off the release workflow on GitHub.
+
 ## Development philosophy
 ### Clean commit histories
 If you open a pull request, please ensure the commit history is clean. Squash the commits into logical blocks, perhaps a single commit if that makes sense. What you want to avoid is commits such as "WIP" and "fix test" in the history. This is so we keep history on master clean and straightforward.
