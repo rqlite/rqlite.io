@@ -22,6 +22,8 @@ Yes, you may read the SQLite file directly, but **it is critical to follow certa
 
 - Read-Only Access: Any client reading the SQLite database should open the database connection in [read-only mode](https://www.sqlite.org/c3ref/open.html).[^2]
 
+- Do not open connections to the database in [_EXCLUSIVE_ locking mode](https://sqlite.org/pragma.html#pragma_locking_mode). Doing so may block rqlite's access to the SQLite database.
+
 > Why are these guidelines important? A SQLite client, even if it wrote no data to the database, may checkpoint the WAL when closing its connection. Checkpointing the WAL will alter the state of the database and will break rqlite. It's also important to note that while direct reads in production are a known use case, it has not been extensively tested.
 
 ## The impact of Long-Running Reads
