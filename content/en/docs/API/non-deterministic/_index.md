@@ -82,7 +82,7 @@ curl -XPOST 'localhost:4001/db/execute' -H "Content-Type: application/json" -d '
 ```
 
 #### CURRENT_TIME*
-Using `CURRENT_TIMESTAMP`, `CURRENT_TIME`, and `CURRENT_DATE` can also be problematic, depending on your use case.
+Using `CURRENT_TIMESTAMP`, `CURRENT_TIME`, and `CURRENT_DATE` can also be problematic, depending on your use case. In particular using `CURRENT_TIMESTAMP` (for example) as a default value for a column will mean different values for the same row on different nodes, unless the column is explicitly set by system writing to rqlite. To avoid this you should avoid using default timestamps, and explicitly set them in the row data when writing to rqlite.
 
 ## Try it out
 You can examine how rqlite rewrites SQL statements, but without making any changes to the database. Send any SQL statement to the special endpoint `/db/sql` and rqlite will return the rewritten statement. For example:
