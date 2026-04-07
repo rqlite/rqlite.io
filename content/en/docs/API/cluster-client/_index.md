@@ -22,7 +22,7 @@ The simplest approach is to configure your client with a fixed list of node addr
 
 Your application is initialized with the HTTP addresses of some or all cluster nodes -- for example `http://node1:4001`, `http://node2:4001`, `http://node3:4001`. Requests are sent to each address in turn using round-robin, spreading load across the cluster. If a node is unreachable, the client skips it and tries the next address.
 
-This is the approach used by the [rqlite-go-http](https://github.com/rqlite/rqlite-go-http) Go client library:
+This is the approach currently in development in the [rqlite-go-http](https://github.com/rqlite/rqlite-go-http) Go client library:
 
 ```go
 client, err := rqlitehttp.NewClient("http://node1:4001", nil)
