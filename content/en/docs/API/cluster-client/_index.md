@@ -1,6 +1,6 @@
 ---
-title: "Connecting a Client to a Cluster"
-linkTitle: "Working with a cluster"
+title: "Connecting to a cluster"
+linkTitle: "Connecting to a cluster"
 weight: 7
 description: >-
      Strategies for connecting your application to an rqlite cluster.
