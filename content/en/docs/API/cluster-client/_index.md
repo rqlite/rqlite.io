@@ -75,7 +75,7 @@ backend rqlite_back
     server node3 10.0.1.3:4001 check
 ```
 
-> rqlite provides a [`/readyz` endpoint](/docs/guides/monitoring-rqlite/) that returns HTTP 200 when the node is healthy and ready to serve requests. Use this as your health check.
+> rqlite provides a [`/readyz` endpoint](/docs/guides/monitoring-rqlite/#readiness-checks) that returns HTTP 200 when the node is healthy and ready to serve requests. Use this as your health check.
 
 **Trade-offs:**
 
