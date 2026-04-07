@@ -1,4 +1,3 @@
-```markdown
 ---
 title: "Connecting a Client to a Cluster"
 linkTitle: "Client-Cluster Connectivity"
@@ -142,4 +141,3 @@ If you're running in **Kubernetes or a cloud platform**, a load balancer or DNS-
 All four strategies work correctly with rqlite's transparent request forwarding. You can also combine approaches -- for example, using DNS to discover an initial node and then switching to API-based discovery for ongoing cluster awareness.
 
 For a full list of available client libraries, see [Client Libraries](/docs/api/client-libraries/).
-```
