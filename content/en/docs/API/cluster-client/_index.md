@@ -9,29 +9,25 @@ description: >-
 When running rqlite as a cluster, your application needs a strategy for connecting to the cluster's nodes. Since any rqlite node can accept both read and write requests, you have several options -- each with different trade-offs around simplicity, operational overhead, and resilience. This page describes four common approaches.
 
 ## How rqlite handles client requests
-Before choosing a connection strategy, it's important to understand how rqlite routes requests internally. rqlite uses the [Raft consensus protocol](https://raft.github.io/), which means the cluster always has a single _Leader_ node and one or more _Follower_ nodes. All writes must be processed by the Leader.
+Before choosing a connection strategy, it's important to understand how rqlite routes requests internally. rqlite uses the [Raft consensus protocol](https://raft.github.io/), which means the cluster always has a single _Leader_ node and one or more _Follower_ nodes. All writes must be processed by the Leader, though read requests can be handled any node depending on the requested [consistency level](/docs/api/read-consistency/). By default read requests are also sent to the Leader.
 
-However, **you don't need to know which node is the Leader**. If a Follower receives a write request (or a read at the default [consistency level](/docs/api/read-consistency/)), it transparently forwards the request to the Leader, waits for the response, and returns it to your client. From the client's perspective, every node behaves the same way.
+However, **you don't need to know which node is the Leader**. If a Follower receives a write request, it transparently forwards the request to the Leader, waits for the response, and returns it to your client. From the client's perspective, every node behaves the same way.
 
-> This transparent forwarding means that, for most connection strategies, your client can talk to _any_ node in the cluster. rqlite does the right thing automatically. See [Accessing rqlite](/docs/api/api/) for full details on request forwarding and the `redirect` query parameter.
+> This transparent forwarding means that, for most connection strategies, your client can talk to _any_ node in the cluster. rqlite does the right thing automatically. See [Accessing rqlite](/docs/api/api/) for full details on request forwarding.
 
 The forwarding mechanism means that even simple connection strategies work correctly. The strategies below differ in how your client _discovers_ which nodes to talk to and how it handles node failures.
 
 ## Static list with round-robin
 The simplest approach is to configure your client with a fixed list of node addresses and cycle through them.
 
-Your application is initialized with the HTTP addresses of some or all cluster nodes -- for example `http://node1:4001`, `http://node2:4001`, `http://node3:4001`. Requests are sent to each address in turn using round-robin, spreading load across the cluster. If a node is unreachable, the client skips it and tries the next address.
+Your application is initialized with the HTTP addresses of some or all cluster nodes -- for example `http://node1:4001`, `http://node2:4001`, `http://node3:4001`. Requests are sent to each address in turn using round-robin, spreading load across the cluster. If a node is unreachable, the client skips it and tries the next address. An alternative approach is to simply pick a node at random from the list of supplied addresses.
 
-This is the approach currently in development in the [rqlite-go-http](https://github.com/rqlite/rqlite-go-http) Go client library:
-
-```go
-client, err := rqlitehttp.NewClient("http://node1:4001", nil)
-```
+This is the approach currently in development in the [rqlite-go-http](https://github.com/rqlite/rqlite-go-http) Go client library.
 
 **Trade-offs:**
 
 - Simple to implement and understand. No extra infrastructure is needed.
-- No additional permissions are required -- the client only makes normal data API calls.
+- No additional permissions are required -- the client only makes normal API calls.
 - The client cannot automatically detect new nodes joining the cluster or removed nodes. If the cluster topology changes, the list must be updated.
 - Works well when your cluster membership is stable and known at deployment time.
 
@@ -41,7 +37,7 @@ Instead of hard-coding addresses, you can configure a DNS name that resolves to 
 There are two common DNS approaches:
 
 ### A records with multiple IPs
-Create a DNS A record (for example `rqlite.example.com`) that returns the IP addresses of all nodes in the cluster. Most DNS clients will round-robin across the returned addresses. If you're running in Kubernetes, a [headless Service](https://kubernetes.io/docs/concepts/services-networking/service/#headless-services) does exactly this.
+Create a DNS A record (for example `rqlite.example.com`) that returns the IP addresses of all nodes in the cluster. Most DNS clients will round-robin across the returned addresses. If you're running in Kubernetes, a [headless Service](/docs/guides/kubernetes/) does exactly this.
 
 ```
 rqlite.example.com.  60  IN  A  10.0.1.1
@@ -60,7 +56,7 @@ SRV records can encode both hostnames and port numbers, which is useful if your 
 - Requires operator control over DNS, or a platform (like Kubernetes) that manages it for you.
 
 ## Load balancer
-Place a load balancer -- such as HAProxy, Nginx, a cloud-managed load balancer, or a Kubernetes Service -- in front of your rqlite nodes. Your client connects to a single, stable endpoint and the load balancer distributes requests across healthy nodes.
+Place a load balancer -- such as [HAProxy](https://www.haproxy.org/), [nginx](https://nginx.org/), a cloud-managed load balancer, or a Kubernetes Service -- in front of your rqlite nodes. Your client connects to a single, stable endpoint and the load balancer distributes requests across healthy nodes.
 
 Because rqlite transparently forwards requests to the Leader, any basic load-balancing strategy (round-robin, least-connections, random) works correctly. The load balancer doesn't need to be leader-aware.
 
