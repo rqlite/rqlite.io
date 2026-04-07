@@ -1,7 +1,7 @@
 ---
 title: "Connecting a Client to a Cluster"
-linkTitle: "Client-Cluster Connectivity"
-weight: 25
+linkTitle: "Accessing Clusters"
+weight: 7
 description: >-
      Strategies for connecting your application to an rqlite cluster.
 ---
