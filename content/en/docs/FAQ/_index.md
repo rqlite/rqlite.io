@@ -1,7 +1,7 @@
 ---
 title: "FAQ"
 linkTitle: "FAQ"
-description: "Frequently-asked questions about rqlite"
+description: "Answers to common rqlite questions: use cases, SQLite compatibility, CAP theorem, transactions, performance tuning, and comparisons with dqlite and LiteFS."
 weight: 60
 ---
 ## What exactly does rqlite do?

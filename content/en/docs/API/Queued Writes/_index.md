@@ -2,7 +2,7 @@
 ---
 title: "Queued Writes"
 linkTitle: "Queued Writes"
-description: "Queued Writes allow you to trade durability for performance"
+description: "Boost rqlite write throughput with Queued Writes. Requests are batched and applied asynchronously, trading durability for significantly faster inserts."
 weight: 10
 date: 2017-01-05
 ---
