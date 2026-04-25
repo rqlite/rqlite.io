@@ -1,11 +1,11 @@
 .home-page {
-  --home-bg: #0a0a0a;
-  --home-bg-elev: #111111;
-  --home-text: #e5e5e5;
-  --home-text-muted: #9ca3af;
-  --home-hairline: #262626;
+  --home-bg: #fafafa;
+  --home-bg-elev: #ffffff;
+  --home-text: #0a0a0a;
+  --home-text-muted: #6b7280;
+  --home-hairline: #e5e5e5;
   --home-accent: #0169c9;
-  --home-accent-bright: #0197fd;
+  --home-accent-deep: #013397;
 
   background: var(--home-bg);
   color: var(--home-text);
@@ -29,7 +29,7 @@
 }
 
 .home-page a {
-  color: var(--home-accent-bright);
+  color: var(--home-accent);
   text-decoration: none;
 }
 .home-page a:hover {
@@ -55,8 +55,8 @@
   text-transform: uppercase;
   letter-spacing: 0.14em;
   font-size: 0.8125rem;
-  font-weight: 500;
-  color: var(--home-accent-bright);
+  font-weight: 600;
+  color: var(--home-accent);
   margin: 0 0 1.5rem;
 }
 
@@ -102,8 +102,8 @@
   border-color: var(--home-accent);
 }
 .home-cta--primary:hover {
-  background: var(--home-accent-bright);
-  border-color: var(--home-accent-bright);
+  background: var(--home-accent-deep);
+  border-color: var(--home-accent-deep);
   color: #ffffff;
 }
 
