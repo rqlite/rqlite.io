@@ -78,6 +78,29 @@
   max-width: 40rem;
 }
 
+.home-section-title {
+  font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  margin: 0 0 2.5rem;
+  max-width: 40rem;
+  color: var(--home-text);
+}
+
+.home-prose {
+  max-width: 38rem;
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  color: var(--home-text);
+}
+.home-prose p {
+  margin: 0 0 1.25rem;
+}
+.home-prose p:last-child {
+  margin-bottom: 0;
+}
+
 .home-cta-row {
   display: flex;
   flex-wrap: wrap;

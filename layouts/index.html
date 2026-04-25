@@ -13,5 +13,16 @@
       </div>
     </div>
   </section>
+
+  <section class="home-section home-why">
+    <div class="home-container">
+      <p class="home-eyebrow">Why rqlite</p>
+      <h2 class="home-section-title">When SQLite isn't enough and Postgres is too much.</h2>
+      <div class="home-prose">
+        <p>SQLite is the most-deployed database engine in the world: a single file, no server, no fuss. But a single file is fragile — lose the disk and you lose the data. rqlite keeps SQLite's simplicity and layers Raft-based replication on top, so the same database lives on three or five nodes and any one of them can fail without taking the cluster down.</p>
+        <p>Postgres is the right answer when you need write-scaling and a deep ecosystem. It's heavy when you just need durable, replicated relational storage for configuration, control-plane data, or moderate workloads. rqlite ships as a single static binary, forms a cluster with one flag, and asks for nothing else — no external coordinator, no separate consensus layer.</p>
+      </div>
+    </div>
+  </section>
 </div>
 {{ end }}
