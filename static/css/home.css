@@ -1,0 +1,136 @@
+.home-page {
+  --home-bg: #0a0a0a;
+  --home-bg-elev: #111111;
+  --home-text: #e5e5e5;
+  --home-text-muted: #9ca3af;
+  --home-hairline: #262626;
+  --home-accent: #0169c9;
+  --home-accent-bright: #0197fd;
+
+  background: var(--home-bg);
+  color: var(--home-text);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Escape any container Docsy wraps `main` in, so section backgrounds
+     extend edge-to-edge regardless of the theme's layout. */
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+}
+
+.home-page,
+.home-page * {
+  box-sizing: border-box;
+}
+
+.home-page a {
+  color: var(--home-accent-bright);
+  text-decoration: none;
+}
+.home-page a:hover {
+  text-decoration: underline;
+}
+
+.home-container {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.home-section {
+  padding: 5rem 0;
+  border-bottom: 1px solid var(--home-hairline);
+}
+
+.home-hero {
+  padding: 7rem 0 6rem;
+}
+
+.home-eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--home-accent-bright);
+  margin: 0 0 1.5rem;
+}
+
+.home-headline {
+  font-size: clamp(2.25rem, 5vw, 4rem);
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  margin: 0 0 1.5rem;
+  max-width: 52rem;
+  color: var(--home-text);
+}
+
+.home-subhead {
+  font-size: 1.125rem;
+  line-height: 1.55;
+  color: var(--home-text-muted);
+  margin: 0 0 2.5rem;
+  max-width: 40rem;
+}
+
+.home-cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.home-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.25rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  border: 1px solid transparent;
+  text-decoration: none !important;
+  transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease;
+}
+
+.home-cta--primary {
+  background: var(--home-accent);
+  color: #ffffff;
+  border-color: var(--home-accent);
+}
+.home-cta--primary:hover {
+  background: var(--home-accent-bright);
+  border-color: var(--home-accent-bright);
+  color: #ffffff;
+}
+
+.home-cta--secondary {
+  background: transparent;
+  color: var(--home-text);
+  border-color: var(--home-hairline);
+}
+.home-cta--secondary:hover {
+  border-color: var(--home-text);
+  color: var(--home-text);
+}
+
+@media (max-width: 768px) {
+  .home-hero {
+    padding: 4rem 0 3rem;
+  }
+  .home-headline {
+    letter-spacing: -0.01em;
+  }
+  .home-cta {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-cta {
+    transition: none;
+  }
+}
