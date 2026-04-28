@@ -76,24 +76,6 @@ It is possible to run rqlite entirely on-top of a memory-backed file system and 
 >mount -t tmpfs -o size=512m tmpfs /mnt/ramdisk
 >```
 
-### Placing the SQLite database on a different file system
-Another option is to run rqlite with the SQLite database file on a different filesystem than the Raft log. This can result in better write performance as each system gets its own dedicated I/O resources.
-
-#### Linux examples
-The first example below shows rqlite storing the Raft log on one disk (_disk1_), but the on-disk SQLite database on a second disk (_disk2_).
-```bash
-rqlited -on-disk-path /disk2/node1/db.sqlite /disk1/data
-```
-
-A second example of running rqlite with a SQLite file on a memory-backed file system, but keeping the data directory on persistent disk, is shown below. The data directory is where the Raft log is stored.
-```bash
-# Create a RAM disk, and then launch rqlite, telling it to
-# put the SQLite database on the RAM disk.
-mount -t tmpfs -o size=4096m tmpfs /mnt/ramdisk
-rqlited -on-disk-path /mnt/ramdisk/node1/db.sqlite /path_to_persistent_disk/data
-```
-where `/path_to_persistent_disk/data` is a directory path on your persistent disk. Because the Raft log is the authoritative source of truth, storing the SQLite database on a memory-backed filesystem does not risk data loss. rqlite always completely rebuilds the SQLite database from scratch on restart.
-
 ## Memory Usage
 Go's garbage collector (GC) usually manages memory effectively. However, there are cases where you may need to adjust the GC process to maintain reasonable memory usage. Large, repeated requests to rqlite may result in significant memory usage spikes. Although the GC eventually reclaims this memory, it may take too long before a GC cycle starts -- and that can result in high memory usage in the meantime. In extreme cases an _Out-of-Memory_ error may cause rqlite to exit.
 >What qualifies as "large"? As an example, if you allocate 1GB of memory to `rqlited`, a request larger than 25MB would be considered large.
