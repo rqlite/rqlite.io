@@ -8,7 +8,7 @@
 #   RQLITE_VERSION   Version to install (e.g. v9.4.1). Default: latest.
 #   INSTALL_DIR      Directory to install binaries into. Default: /usr/local/bin.
 
-set -e
+set -eu
 
 GITHUB_REPO="rqlite/rqlite"
 INSTALL_DIR="${INSTALL_DIR:-/usr/local/bin}"
@@ -58,7 +58,7 @@ detect_arch() {
 
 # Resolve the version to install.
 get_version() {
-    if [ -n "$RQLITE_VERSION" ]; then
+    if [ -n "${RQLITE_VERSION:-}" ]; then
         # Ensure the version starts with 'v'.
         case "$RQLITE_VERSION" in
             v*) echo "$RQLITE_VERSION" ;;
@@ -76,6 +76,20 @@ get_version() {
         error "Failed to parse latest release version from: $url"
     fi
     echo "$version"
+}
+
+# Warn if an existing rqlited is already on PATH at a different location.
+check_existing() {
+    existing=$(command -v rqlited 2>/dev/null) || return 0
+    [ -n "$existing" ] || return 0
+    [ "$existing" = "${INSTALL_DIR}/rqlited" ] && return 0
+
+    info ""
+    info "Note: an existing rqlited is already on your PATH at:"
+    info "        ${existing}"
+    info "      Installing to ${INSTALL_DIR}/rqlited will not remove it,"
+    info "      and whichever directory comes first in PATH will win."
+    info ""
 }
 
 # Verify INSTALL_DIR is writable, walking up to the nearest existing ancestor
@@ -107,6 +121,7 @@ EOF
 main() {
     check_os
     check_writable
+    check_existing
 
     arch=$(detect_arch)
     version=$(get_version)
@@ -142,6 +157,21 @@ main() {
     info ""
     info "rqlite ${version} installed successfully to ${INSTALL_DIR}"
     info ""
+
+    case ":${PATH:-}:" in
+        *":${INSTALL_DIR}:"*) ;;
+        *)
+            info "Note: ${INSTALL_DIR} is not in your PATH. To run rqlite from any"
+            info "      directory, add it with:"
+            info ""
+            info "          export PATH=\"${INSTALL_DIR}:\$PATH\""
+            info ""
+            info "      Add that line to your shell's startup file (e.g. ~/.bashrc,"
+            info "      ~/.zshrc) to make it permanent."
+            info ""
+            ;;
+    esac
+
     info "Start a node:  rqlited ~/data"
     info "Connect:       rqlite"
     info ""
