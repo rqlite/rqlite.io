@@ -1,0 +1,10 @@
+{{- $src := .Get "src" -}}
+{{- $alt := .Get "alt" -}}
+{{- $width := .Get "width" | default "600" -}}
+{{- $id := .Get "id" | default (printf "lb-%d" .Ordinal) -}}
+<a href="#{{ $id }}" class="lightbox-trigger"><img src="{{ $src }}" alt="{{ $alt }}" width="{{ $width }}"></a>
+<div class="lightbox-overlay" id="{{ $id }}">
+  <a href="#_" class="lightbox-close" aria-label="Close">&times;</a>
+  <a href="#_" class="lightbox-backdrop" aria-hidden="true" tabindex="-1"></a>
+  <img src="{{ $src }}" alt="{{ $alt }}">
+</div>
