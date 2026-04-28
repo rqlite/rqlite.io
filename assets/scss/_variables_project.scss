@@ -21,3 +21,59 @@ $yellow: #FFFF00;
   height: 20px;
   vertical-align: middle;
 }
+
+.lightbox-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 9999;
+  justify-content: center;
+  align-items: center;
+}
+
+.lightbox-overlay:target {
+  display: flex;
+}
+
+.lightbox-overlay img {
+  max-width: 95%;
+  max-height: 95%;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+  position: relative;
+  z-index: 1;
+}
+
+.lightbox-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.lightbox-close {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  color: #fff;
+  font-size: 40px;
+  font-weight: bold;
+  text-decoration: none;
+  line-height: 1;
+  z-index: 2;
+}
+
+.lightbox-close:hover,
+.lightbox-close:focus {
+  color: #ccc;
+  text-decoration: none;
+}
+
+.lightbox-trigger {
+  cursor: zoom-in;
+}
