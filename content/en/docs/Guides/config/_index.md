@@ -50,7 +50,7 @@ th {
 	<tr>
 		<td><code>-http-addr</code></td>
 		<td>HTTP server bind address. To enable HTTPS, set X.509 certificate and key.
-		    <br><br>This is the interface rqlite will listen on for API requests. 0.0.0.0 is an acceptable address and will mean that rqlite will listen on all interfaces. However if you do use 0.0.0.0 you must then set <code>-http-adv-addr</code>to the actual network address (or hostname) the node can be reached on, as rqlite transmits its HTTP API address in certain circumstances.
+		    <br><br>This is the interface rqlite will listen on for API requests. 0.0.0.0 is an acceptable address and will mean that rqlite will listen on all interfaces. However if you do use 0.0.0.0 you must then set &lt;code&gt;-http-adv-addr&lt;/code&gt; to the actual network address (or hostname) the node can be reached on, as rqlite transmits its HTTP API address in certain circumstances.
 </td>
 	</tr>
 	<tr>
@@ -144,9 +144,15 @@ th {
 </td>
 	</tr>
 	<tr>
+		<td><code>-compress-snap-transport</code></td>
+		<td>Enable compression when transferring snapshots between nodes.
+		    <br><br>By default rqlite does not compress snapshots when transferring them between nodes. For high bandwidth networks this is the correct choice. Setting this flag will enable zstd compression, which may improve transfer speed on lower-bandwidth networks. If you set this flag on any node in a cluster, you must set it to the same value on every node in the cluster.
+</td>
+	</tr>
+	<tr>
 		<td><code>-raft-addr</code></td>
 		<td>Raft communication bind address.
-		    <br><br>This is the interface rqlite will listen on for connections from other nodes, as part of managing Raft consensus. 0.0.0.0 is an acceptable address and will mean that rqlite will listen on all interfaces. However if you do use 0.0.0.0 you must then set <code>-raft-adv-addr</code>to the actual network address (or hostname) the node can be reached on, as rqlite transmits its Raft network address to other nodes.
+		    <br><br>This is the interface rqlite will listen on for connections from other nodes, as part of managing Raft consensus. 0.0.0.0 is an acceptable address and will mean that `rqlite` will listen on all interfaces. However if you do use 0.0.0.0 you must then set &lt;code&gt;-raft-adv-addr&lt;/code&gt; to the actual network address (or hostname) the node can be reached on, as rqlite transmits its Raft network address to other nodes.
 </td>
 	</tr>
 	<tr>
@@ -204,12 +210,6 @@ th {
 		<td>Set discovery config, or path to cluster discovery config file.</td>
 	</tr>
 	<tr>
-		<td><code>-on-disk-path</code></td>
-		<td>Path for SQLite on-disk database file. If not set, use a file in data directory.
-		    <br><br>Generally speaking you shouldn&#39;t need to set this. Your system is easiest to manage if you let rqlite manage the SQLite database. However this can be useful under certain performance-sensitive scenarious.
-</td>
-	</tr>
-	<tr>
 		<td><code>-fk</code></td>
 		<td>Enable SQLite foreign key constraints.
 		    <br><br>SQLite doesn&#39;t enable foreign key constraints by default. If you&#39;d like rqlite to automatically do so then set this flag. This flag must be set on every node in your cluster.
@@ -264,9 +264,15 @@ th {
 </td>
 	</tr>
 	<tr>
-		<td><code>-raft-timeout</code></td>
+		<td><code>-raft-heartbeat-timeout</code></td>
 		<td>Raft heartbeat timeout.
 		    <br><br>Specifies the time a Follower will wait without contact from a Leader before the Follower initiates an election.
+</td>
+	</tr>
+	<tr>
+		<td><code>-raft-commit-timeout</code></td>
+		<td>Raft commit timeout.
+		    <br><br>Specifies the time without an Apply operation before the leader sends an AppendEntry RPC to followers, to ensure a timely commit of log entries.
 </td>
 	</tr>
 	<tr>
