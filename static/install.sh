@@ -78,23 +78,35 @@ get_version() {
     echo "$version"
 }
 
-# Run a command, prepending sudo if the target directory is not writable.
-maybe_sudo() {
-    if [ -w "$INSTALL_DIR" ]; then
-        "$@"
-    elif command -v sudo >/dev/null 2>&1; then
-        sudo "$@"
-    elif command -v doas >/dev/null 2>&1; then
-        doas "$@"
-    else
-        error "Cannot write to $INSTALL_DIR and neither sudo nor doas is available." \
-              "Re-run with INSTALL_DIR set to a writable path, for example:" \
-              "  INSTALL_DIR=~/.local/bin sh install.sh"
+# Verify INSTALL_DIR is writable, walking up to the nearest existing ancestor
+# if the directory itself does not yet exist.
+check_writable() {
+    dir="$INSTALL_DIR"
+    while [ ! -e "$dir" ]; do
+        dir=$(dirname "$dir")
+    done
+    if [ ! -w "$dir" ]; then
+        cat >&2 <<EOF
+
+rqlite would like to install to $INSTALL_DIR, but that path is not writable
+by the current user. No changes have been made.
+
+To continue, either:
+
+  • re-run with sudo to install to the same path:
+      sudo sh install.sh
+
+  • or choose a writable path instead, for example:
+      INSTALL_DIR=~/.local/bin sh install.sh
+
+EOF
+        exit 1
     fi
 }
 
 main() {
     check_os
+    check_writable
 
     arch=$(detect_arch)
     version=$(get_version)
@@ -123,7 +135,7 @@ main() {
     mkdir -p "$INSTALL_DIR"
     for bin in rqlited rqlite rqbench; do
         if [ -f "${src}/${bin}" ]; then
-            maybe_sudo install -m 755 "${src}/${bin}" "${INSTALL_DIR}/${bin}"
+            install -m 755 "${src}/${bin}" "${INSTALL_DIR}/${bin}"
         fi
     done
 
