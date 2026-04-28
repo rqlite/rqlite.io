@@ -11,7 +11,7 @@ date: 2017-01-05
 rqlite serves a built-in console app, making it more convenient to manage a rqlite deployment. The console app is available at [http://localhost:4001/console](http://localhost:4001/console) by default.
 
 {{< lightbox src="/console.png" alt="rqlite Console Application" width="600" >}}
-
+<br>
 If you are running your rqlite node on a different hostname (and perhaps port) adjust the address accordindly.
 
 ## Third-party Applications
