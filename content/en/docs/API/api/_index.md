@@ -132,6 +132,12 @@ Response:
 ```
 This form will have a map per row returned, with each column name as a key. This form can be more convenient for clients, as many programming languages will support loading the `rows` object directly into an array-of-maps data type.
 
+### Qualifying column names
+Sometimes two tables will have the same column names. If you're joining across such tables and need to disambiguate which columns correspond to which table, add `qualify_columns` as a query parameter. For example:
+```bash
+curl -G 'localhost:4001/db/query?pretty&timings&qualify_columns' --data-urlencode 'q=SELECT * FROM foo'
+```
+
 ## Parameterized Statements
 While the "raw" API described above can be convenient and simple to use, it is vulnerable to [SQL Injection attacks](https://owasp.org/www-community/attacks/SQL_Injection). To protect against this issue, rqlite also supports [SQLite parameterized statements](https://www.sqlite.org/lang_expr.html#varparam), for both read and writes. To use this feature, send the SQL statement and values as distinct elements within a new JSON array, as follows:
 
