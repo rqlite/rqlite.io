@@ -56,17 +56,18 @@ The HTTP API supports [Basic Auth](https://tools.ietf.org/html/rfc2617). Each rq
 ### User-level permissions
 rqlite, via the configuration file, also supports user-level permissions. Each user can be granted one or more of the following permissions:
 - _all_: user can perform all operations on a node.
-- _execute_: user may access the execute endpoint at `/db/execute`.
-- _query_: user may access the query endpoint at `/db/query` and the SQL rewriting endpoint at `/db/sql`.
-- _load_: user may load an SQLite dump file into a node via the `/db/load` or `/boot` endpoints.
 - _backup_: user may retrieve a backup via the endpoint `/db/backup`.
-- _snapshot_: user may initiate a Raft Snapshot via the endpoint `/snapshot`.
-- _status_: user can retrieve node status and Go runtime information.
-- _ready_: user can retrieve node readiness via `/readyz`
+- _execute_: user may access the execute endpoint at `/db/execute`.
 - _join_: user can join a cluster. In practice only a node joins a cluster, so it's the joining node that must supply the credentials.
 - _join-read-only_: user can join a cluster, but only as a read-only node.
-- _remove_: user can remove a node from a cluster. If a node performs an auto-remove on shutdown, then the `-join-as` user must have this permission.
 - _leader-ops_: user can perform Leader-related operations via `/leader`.
+- _load_: user may load an SQLite dump file into a node via the `/db/load` or `/boot` endpoints.
+- _query_: user may access the query endpoint at `/db/query` and the SQL rewriting endpoint at `/db/sql`.
+- _ready_: user can retrieve node readiness via `/readyz`
+- _remove_: user can remove a node from a cluster. If a node performs an auto-remove on shutdown, then the `-join-as` user must have this permission.
+- _snapshot_: user may initiate a Raft Snapshot via the endpoint `/snapshot`.
+- _status_: user can retrieve node status and Go runtime information.
+- _ui_: user can access the built-in management application at `/console`.
 
 Note that for a user to be able to access the [Unified Endpoint](/docs/api/api/#unified-endpoint), they must have **both** _execute_ and _query_ permissions.
 
