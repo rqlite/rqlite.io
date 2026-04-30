@@ -17,6 +17,7 @@ There are client libraries available for a variety of programming languages, inc
 - https://github.com/rqlite/pyrqlite
 - https://github.com/rqlite/sqlalchemy-rqlite
 - https://github.com/Tjstretchalot/rqdb
+- https://github.com/tangledgroup/tangled-pyrqlite
 
 ### Java
 - [https://github.com/rqlite/rqlite-java-http](https://github.com/rqlite/rqlite-java-http) - "thin" client, which provides access to rqlite's HTTP interface with minimal abstraction.
