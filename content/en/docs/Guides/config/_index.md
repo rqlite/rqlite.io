@@ -216,6 +216,12 @@ th {
 </td>
 	</tr>
 	<tr>
+		<td><code>-db-max-ro-conns</code></td>
+		<td>Maximum number of read-only connections to database.
+		    <br><br>This places a limit of the number of read queries the node can service concurrently. If this is not bounded query load could cause the node to hit the operating system&#39;s per-process thread limit and crash the node. Setting this to zero means there is no limit.
+</td>
+	</tr>
+	<tr>
 		<td><code>-auto-vacuum-int</code></td>
 		<td>Period between automatic VACUUMs. It not set, not enabled.
 		    <br><br>If set to a non-zero interval rqlite will execute VACUUM on the specified interval. This can help reduce SQLite disk usage, but writes are blocked while a VACUUM takes place. See the SQLite documentation for more information.
