@@ -79,9 +79,8 @@ th {
 	</tr>
 	<tr>
 		<td><code>-http-ca-cert</code></td>
-		<td>Path to X.509 CA certificate for HTTPS.
-		    <br><br>If this value is set rqlite will use this CA certificate to validate any other X509 certificate presented to it, if the node needs to contact another node&#39;s HTTP API. It also uses this CA to verify any X509 certificates presented to it by clients connecting to its HTTPS API.
-</td>
+		<td>Path to X.509 CA certificate for HTTPS mTLS.
+		    <br><br>Path to a PEM file containing one or more X.509 CA certificates. rqlite uses every certificate in this file as a trust anchor when verifying client certificates presented to its HTTPS API under mutual TLS. To restrict trust to a specific issuer, ensure the file contains only that issuer&#39;s certificate.</td>
 	</tr>
 	<tr>
 		<td><code>-http-cert</code></td>
