@@ -151,7 +151,7 @@ th {
 	<tr>
 		<td><code>-raft-addr</code></td>
 		<td>Raft communication bind address.
-		    <br><br>This is the interface rqlite will listen on for connections from other nodes, as part of managing Raft consensus. 0.0.0.0 is an acceptable address and will mean that `rqlite` will listen on all interfaces. However if you do use 0.0.0.0 you must then set &lt;code&gt;-raft-adv-addr&lt;/code&gt; to the actual network address (or hostname) the node can be reached on, as rqlite transmits its Raft network address to other nodes.
+		    <br><br>This is the interface rqlite will listen on for connections from other nodes, as part of managing Raft consensus. 0.0.0.0 is an acceptable address and will mean that `rqlite` will listen on all interfaces. However if you do use 0.0.0.0 you must then set <code>-raft-adv-addr</code> to the actual network address (or hostname) the node can be reached on, as rqlite transmits its Raft network address to other nodes.
 </td>
 	</tr>
 	<tr>
