@@ -41,6 +41,7 @@ The most important design articles, linked below, show how the database has evol
 - [How rqlite is tested](https://philipotoole.com/how-is-rqlite-tested/) (2025)
 - [rqlite turns 10: Observations from a decade building Distributed Systems](https://philipotoole.com/rqlite-turns-10-lessons-from-a-decade-of-building-distributed-systems/) (2025)
 - [Fast restarts with gigabyte datasets](https://philipotoole.com/rqlite-9-2-the-distributed-database-built-on-sqlite-fast-restarts-with-gb-datasets/) (2025)
+- [How (and why) rqlite takes control of the SQLite Write-Ahead Log](https://philipotoole.com/how-and-why-rqlite-takes-control-of-the-sqlite-write-ahead-log/) (2026)
 
 You can find many other details on rqlite from the [rqlite blog](https://www.philipotoole.com/tag/rqlite/).
 
