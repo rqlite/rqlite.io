@@ -37,6 +37,7 @@ There are client libraries available for a variety of programming languages, inc
 - https://github.com/rqlite/rqlite-js
 - https://gitlab.com/jdesodt/seneca-rqlite-store
 - https://github.com/ManwilBahaa/rqlink - [Prisma-like](https://www.prisma.io/) ORM style client for rqlite.
+- https://github.com/qualithm/rqlite-client-js - native rqlite client for JavaScript and TypeScript runtimes.
 
 ### C#
 - https://github.com/rqlite/rqlite-dotnet
