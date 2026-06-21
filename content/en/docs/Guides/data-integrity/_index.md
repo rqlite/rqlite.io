@@ -17,7 +17,7 @@ This gives end-to-end integrity from the moment the snapshot was first written. 
 
 ## Database state after snapshot reap
 
-After rqlite merges previously snapshotted SQLite data, it runs SQLite's `PRAGMA integrity_check` against the resulting database. The check walks the database's internal structure: B-trees, indexes, and page references. A failure causes rqlite to log the error and refuse to proceed with the new state.
+After rqlite merges previously snapshotted SQLite data, it runs SQLite's [`PRAGMA integrity_check`](https://sqlite.org/pragma.html#pragma_integrity_check) against the resulting database. The check walks the database's internal structure: B-trees, indexes, and page references. A failure causes rqlite to log the error and refuse to proceed with the new state.
 
 `PRAGMA integrity_check` is a structural check. It detects malformed pages, broken indexes, and similar damage, but it does not detect every form of bitrot. A flipped bit inside a column value that leaves the surrounding page structure intact will pass the check.
 
@@ -27,7 +27,7 @@ rqlite does not scan every byte on disk on a continuous schedule while a node ru
 
 This division of responsibility matches SQLite's own design. SQLite's [atomic commit documentation](https://www.sqlite.org/atomiccommit.html) states that _SQLite assumes the detection and correction of bit errors — from cosmic rays, thermal noise, device driver bugs, or other causes — is the responsibility of the underlying hardware and operating system._ rqlite inherits that assumption and names it here so operators can make informed choices.
 
-The checks rqlite does perform — CRCs on log reads, CRCs at startup, snapshot CRCs end-to-end, and `PRAGMA integrity_check` after reap — add negligible runtime cost over the lifetime of a node. Continuous on-disk scrubbing is the expensive piece, and it is the piece best handled by the storage layer.
+The checks rqlite does perform — CRCs at startup, snapshot CRCs end-to-end, and `PRAGMA integrity_check` after reap — add negligible runtime cost over the lifetime of a node. Continuous on-disk scrubbing is the expensive piece, and it is the piece best handled by the storage layer.
 
 For continuous protection, deploy rqlite on a file system that performs its own checksumming and periodic scrubbing. [ZFS](https://en.wikipedia.org/wiki/ZFS) and [Btrfs](https://en.wikipedia.org/wiki/Btrfs), for example, do this natively. Most cloud block storage — AWS EBS, GCP Persistent Disk, Azure Managed Disk — handles this at the storage layer.
 
