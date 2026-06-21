@@ -7,7 +7,7 @@ weight: 35
 
 ## Data files at startup
 
-When a node starts, rqlite computes a CRC over every on-disk data file and compares it to a value that was stored when rqlite originally wrote the file (this value is stored in a _sidecar_ file). The node refuses to start if any file fails the check. This catches bitrot, or other modification, that may have occurred while a node sits shut down.
+When a node starts, rqlite computes a [CRC Checksum](https://en.wikipedia.org/wiki/Cyclic_redundancy_check) over every on-disk data file and compares it to a value that was stored when rqlite originally wrote the file (this value is stored in a _sidecar_ file). The node refuses to start if any file fails the check. This catches bitrot, or other modification, that may have occurred while a node sits shut down.
 
 ## Snapshots
 
