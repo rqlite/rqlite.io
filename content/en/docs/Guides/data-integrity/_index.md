@@ -35,7 +35,7 @@ rqlite does not scan every byte on disk on a continuous schedule while a node ru
 
 This division of responsibility matches SQLite's own design. SQLite's [atomic commit documentation](https://www.sqlite.org/atomiccommit.html) states that _SQLite assumes the detection and correction of bit errors — from cosmic rays, thermal noise, device driver bugs, or other causes — is the responsibility of the underlying hardware and operating system._ rqlite inherits that assumption and names it here so operators can make informed choices.
 
-The checks rqlite does perform — CRCs on log reads, CRCs at startup, snapshot CRCs end-to-end, and `PRAGMA integrity_check` after reap — add negligible runtime cost. Continuous on-disk scrubbing is the expensive piece, and it is the piece best handled by the storage layer.
+The checks rqlite does perform — CRCs on log reads, CRCs at startup, snapshot CRCs end-to-end, and `PRAGMA integrity_check` after reap — add negligible runtime cost over the lifetime of a node. Continuous on-disk scrubbing is the expensive piece, and it is the piece best handled by the storage layer.
 
 For continuous protection, deploy rqlite on a file system that performs its own checksumming and periodic scrubbing. [ZFS](https://en.wikipedia.org/wiki/ZFS) and [Btrfs](https://en.wikipedia.org/wiki/Btrfs), for example, do this natively. Most cloud block storage — AWS EBS, GCP Persistent Disk, Azure Managed Disk — handles this at the storage layer.
 
