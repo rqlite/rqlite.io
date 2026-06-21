@@ -1,7 +1,7 @@
 ---
 title: "Data Integrity"
 linkTitle: "Data Integrity"
-description: "Understanding data integrity guarantees"
+description: "Understanding rqlite data integrity guarantees"
 weight: 35
 ---
 
@@ -11,7 +11,7 @@ Every Raft log entry carries a [CRC checksum](https://en.wikipedia.org/wiki/Cycl
 
 ## Data files at startup
 
-When a node starts, rqlite computes a CRC over every on-disk data file and compares it to a value that was stored when rqlite wrote the file. The node refuses to start if any file fails the check. This catches bitrot that accumulates while a node sits shut down.
+When a node starts, rqlite computes a CRC over every on-disk data file and compares it to a value that was stored when rqlite originally wrote the file. The node refuses to start if any file fails the check. This catches bitrot that accumulates while a node sits shut down.
 
 ## Snapshots
 
