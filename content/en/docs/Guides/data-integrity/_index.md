@@ -5,10 +5,6 @@ description: "Understanding rqlite data integrity guarantees"
 weight: 35
 ---
 
-## Raft log entries
-
-Every Raft log entry carries a [CRC checksum](https://en.wikipedia.org/wiki/Cyclic_redundancy_check). rqlite verifies the CRC on every read, so it catches a corrupt entry the moment it tries to use it.
-
 ## Data files at startup
 
 When a node starts, rqlite computes a CRC over every on-disk data file and compares it to a value that was stored when rqlite originally wrote the file (this value is stored in a _sidecar_ file). The node refuses to start if any file fails the check. This catches bitrot, or other modification, that may have occurred while a node sits shut down.
