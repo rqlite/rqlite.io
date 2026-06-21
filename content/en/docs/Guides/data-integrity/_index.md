@@ -11,11 +11,11 @@ Every Raft log entry carries a [CRC checksum](https://en.wikipedia.org/wiki/Cycl
 
 ## Data files at startup
 
-When a node starts, rqlite computes a CRC over every on-disk data file and compares it to a value that was stored when rqlite originally wrote the file. The node refuses to start if any file fails the check. This catches bitrot that accumulates while a node sits shut down.
+When a node starts, rqlite computes a CRC over every on-disk data file and compares it to a value that was stored when rqlite originally wrote the file (this value is stored in a _sidecar_ file). The node refuses to start if any file fails the check. This catches bitrot, or other modification, that may have occurred while a node sits shut down.
 
 ## Snapshots
 
-rqlite computes a CRC over each snapshot at write time and stores the CRC alongside the snapshot file. When a Leader sends a snapshot to a Follower, it sends the stored CRC with it. The Follower recomputes the CRC over the bytes it received and rejects the snapshot if the values do not match.
+rqlite computes a CRC over each Raft _snapshot_ at write time and stores the CRC alongside the snapshot file. When a Leader sends a snapshot to a Follower, it sends the stored CRC with it. The Follower recomputes the CRC over the bytes it received and rejects the snapshot if the values do not match.
 
 This gives end-to-end integrity from the moment the snapshot was first written. It catches both transport corruption and any on-disk corruption that may have struck the sender's copy between snapshot creation and send.
 
