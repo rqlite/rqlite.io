@@ -5,13 +5,9 @@ description: "Understanding data integrity guarantees"
 weight: 35
 ---
 
-# Data Integrity
-
-rqlite protects against data corruption at several points. This page describes what rqlite checks, when, and what falls outside its scope.
-
 ## Raft log entries
 
-Every Raft log entry carries a CRC. rqlite verifies the CRC on every read, so it catches a corrupt entry the moment it tries to use it.
+Every Raft log entry carries a [CRC checksum](https://en.wikipedia.org/wiki/Cyclic_redundancy_check). rqlite verifies the CRC on every read, so it catches a corrupt entry the moment it tries to use it.
 
 ## Data files at startup
 
