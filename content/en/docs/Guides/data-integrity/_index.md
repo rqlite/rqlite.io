@@ -17,9 +17,9 @@ This gives end-to-end integrity from the moment the snapshot was first written. 
 
 ## Database state after snapshot reap
 
-After rqlite merges previously snapshotted SQLite data, it runs SQLite's [`PRAGMA integrity_check`](https://sqlite.org/pragma.html#pragma_integrity_check) against the resulting database. The check walks the database's internal structure: B-trees, indexes, and page references. A failure causes rqlite to log the error and refuse to proceed with the new state.
+After rqlite merges previously snapshotted SQLite data, it runs SQLite's [`PRAGMA quick_check`](https://sqlite.org/pragma.html#pragma_quick_check) against the resulting database. The check walks most of the database's internal structure: B-trees and page references. A failure causes rqlite to log the error and refuse to proceed with the new state.
 
-`PRAGMA integrity_check` is a structural check. It detects malformed pages, broken indexes, and similar damage, but it does not detect every form of bitrot. A flipped bit inside a column value that leaves the surrounding page structure intact will pass the check.
+`PRAGMA quick_check` is a structural check. It detects malformed pages, broken indexes, and similar damage, but it does not detect every form of bitrot. A flipped bit inside a column value that leaves the surrounding page structure intact will pass the check.
 
 ## What rqlite does not check
 
