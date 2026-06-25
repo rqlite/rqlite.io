@@ -2,7 +2,7 @@
 ---
 title: "Read Consistency"
 linkTitle: "Read Consistency"
-description: "rqlite support various levels of Read Consistency"
+description: "Configure rqlite read consistency levels — none, weak, linearizable, and strong — to balance query speed and data freshness across your cluster."
 weight: 20
 date: 2017-01-05
 ---

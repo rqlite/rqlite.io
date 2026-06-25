@@ -2,7 +2,7 @@
 ---
 title: "UI Applications"
 linkTitle: "UI Applications"
-description: "UI Applications for rqlite"
+description: "Graphical UI applications for managing and querying rqlite, including Dataflare and LibSQL Studio. Third-party tools for your distributed SQLite database."
 weight: 27
 date: 2017-01-05
 ---

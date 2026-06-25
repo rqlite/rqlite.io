@@ -1,7 +1,7 @@
 ---
 title: "Security"
 linkTitle: "Security"
-"description": "How to secure your rqlite deployment"
+description: "Secure rqlite with HTTPS, mutual TLS, basic auth, role-based permissions, and encrypted node-to-node communication. Includes configuration examples."
 weight: 20
 ---
 rqlite can be secured in various way, and with different levels of control.

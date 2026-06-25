@@ -1,7 +1,7 @@
 ---
 title: "Read-only nodes"
 linkTitle: "Read-only nodes"
-description: "Adding read-scalability to your cluster"
+description: "Scale read throughput by adding non-voting read-only nodes to your rqlite cluster. Ideal for edge deployments and geographically distributed queries."
 weight: 20
 ---
 

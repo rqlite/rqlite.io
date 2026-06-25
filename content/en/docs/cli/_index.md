@@ -1,7 +1,7 @@
 ---
 title: "rqlite shell"
 linkTitle: "rqlite shell"
-description: "How to access rqlite using the command-line tool"
+description: "Use the rqlite shell to run SQL queries, manage backups, check cluster status, and interact with your distributed SQLite database from the command line."
 weight: 25
 ---
 `rqlite` is a command line tool for interacting with a rqlite node. Consult the [SQLite query language documentation](https://www.sqlite.org/lang.html) for full details on the supported SQL syntax.

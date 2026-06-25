@@ -1,7 +1,7 @@
 ---
 title: "Non-deterministic functions"
 linkTitle: "Non-deterministic functions"
-description: "How rqlite handles non-deterministic functions"
+description: "Learn how rqlite rewrites non-deterministic SQL functions like RANDOM(), RANDOMBLOB(), and datetime('now') to ensure consistent replication across nodes."
 weight: 35
 date: 2017-01-05
 ---

@@ -1,7 +1,7 @@
 ---
 title: "General guidelines"
 linkTitle: "General guidelines"
-description: "General principles for creating and managing rqlite clusters"
+description: "Understand rqlite cluster sizing, quorum requirements, node management, failure recovery, and the Raft consensus protocol for optimal fault tolerance."
 weight: 5
 ---
 

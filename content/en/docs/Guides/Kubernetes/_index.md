@@ -1,7 +1,7 @@
 ---
 title: "Kubernetes"
 linkTitle: "Kubernetes"
-description: "How to deploy and run rqlite on Kubernetes"
+description: "Deploy rqlite on Kubernetes using Helm charts or a StatefulSet with DNS-based auto-clustering. Covers scaling, shrinking, and secrets management."
 weight: 10
 ---
 The following directions assume you have a Kubernetes cluster already available. Visit [kubernetes.io](https://kubernetes.io/) to learn how to deploy Kubernetes.

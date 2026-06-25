@@ -2,7 +2,7 @@
 ---
 title: "Client Libraries"
 linkTitle: "Client Libraries"
-description: "How to access rqlite via code"
+description: "Official and community rqlite client libraries for Go, Python, Java, Rust, JavaScript, C#, PHP, and more. Connect to your distributed SQLite cluster."
 weight: 40
 date: 2017-01-05
 ---
