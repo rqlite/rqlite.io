@@ -13,6 +13,55 @@ description = "The lightweight, easy-to-use, distributed relational database bui
     margin: 0 auto;
     text-align: center;
 }
+
+  .rqlite-cluster {
+    display: block;
+    margin: 28px auto 0;
+    width: 100%;
+    max-width: 420px;
+    height: auto;
+    overflow: visible;
+  }
+
+  .cluster-ring {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: cluster-ring-pulse 2.6s ease-out infinite;
+    opacity: 0;
+  }
+  .cluster-ring--2 { animation-delay: 1.3s; }
+
+  @keyframes cluster-ring-pulse {
+    0%   { transform: scale(0.7); opacity: 0.7; }
+    100% { transform: scale(2.0); opacity: 0;   }
+  }
+
+  .cluster-packet {
+    animation-duration: 2.2s;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-in-out;
+    opacity: 0;
+  }
+  .cluster-packet--left  { animation-name: cluster-packet-left;  }
+  .cluster-packet--right { animation-name: cluster-packet-right; animation-delay: 1.1s; }
+
+  @keyframes cluster-packet-left {
+    0%   { transform: translate(0, 0);      opacity: 0; }
+    15%  { opacity: 1; }
+    85%  { opacity: 1; }
+    100% { transform: translate(-140px, 0); opacity: 0; }
+  }
+  @keyframes cluster-packet-right {
+    0%   { transform: translate(0, 0);     opacity: 0; }
+    15%  { opacity: 1; }
+    85%  { opacity: 1; }
+    100% { transform: translate(140px, 0); opacity: 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cluster-ring,
+    .cluster-packet { animation: none; opacity: 0; }
+  }
 </style>
 
 {{< blocks/cover image_anchor="top" height="short" color="primary" class="pb-2">}}
@@ -33,6 +82,25 @@ description = "The lightweight, easy-to-use, distributed relational database bui
 		Want to talk? <i class="fa-solid fa-circle-question"<i class="fa-solid fa-circle-question" style="color: #FFFFFF;"></i>
 	</a>
 </div>
+
+<svg class="rqlite-cluster" viewBox="0 0 400 110" role="img" aria-label="rqlite cluster: leader replicating to two followers" xmlns="http://www.w3.org/2000/svg">
+	<line x1="60"  y1="55" x2="200" y2="55" stroke="rgba(255,255,255,0.35)" stroke-width="2" stroke-dasharray="4 4" stroke-linecap="round"/>
+	<line x1="200" y1="55" x2="340" y2="55" stroke="rgba(255,255,255,0.35)" stroke-width="2" stroke-dasharray="4 4" stroke-linecap="round"/>
+
+	<circle class="cluster-ring"                 cx="200" cy="55" r="22" fill="none" stroke="#fff" stroke-width="2"/>
+	<circle class="cluster-ring cluster-ring--2" cx="200" cy="55" r="22" fill="none" stroke="#fff" stroke-width="2"/>
+
+	<circle cx="60"  cy="55" r="13" fill="rgba(255,255,255,0.85)"/>
+	<circle cx="340" cy="55" r="13" fill="rgba(255,255,255,0.85)"/>
+	<circle cx="200" cy="55" r="17" fill="#fff"/>
+
+	<circle class="cluster-packet cluster-packet--left"  cx="200" cy="55" r="4" fill="#ffe066"/>
+	<circle class="cluster-packet cluster-packet--right" cx="200" cy="55" r="4" fill="#ffe066"/>
+
+	<text x="60"  y="88" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="11" font-family="sans-serif">follower</text>
+	<text x="200" y="92" text-anchor="middle" fill="#fff"                  font-size="12" font-weight="bold" font-family="sans-serif">leader</text>
+	<text x="340" y="88" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="11" font-family="sans-serif">follower</text>
+</svg>
 {{< /blocks/cover >}}
 
 {{% blocks/lead color="primary" %}}
