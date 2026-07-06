@@ -27,12 +27,12 @@ rqlite does not scan every byte on disk on a continuous schedule while a node ru
 
 This division of responsibility matches SQLite's own design. SQLite's [atomic commit documentation](https://www.sqlite.org/atomiccommit.html) states that _SQLite assumes the detection and correction of bit errors — from cosmic rays, thermal noise, device driver bugs, or other causes — is the responsibility of the underlying hardware and operating system._ rqlite inherits that assumption and names it here so operators can make informed choices.
 
-The checks rqlite does perform — CRCs at startup, snapshot CRCs end-to-end, and `PRAGMA integrity_check` after reap — add negligible runtime cost over the lifetime of a node. Continuous on-disk scrubbing is the expensive piece, and it is the piece best handled by the storage layer.
+The checks rqlite does perform — CRCs at startup, snapshot CRCs end-to-end, and `PRAGMA quick_check` after reap — add negligible runtime cost over the lifetime of a node. Continuous on-disk scrubbing is the expensive piece, and it is the piece best handled by the storage layer.
 
 For continuous protection, deploy rqlite on a file system that performs its own checksumming and periodic scrubbing. [ZFS](https://en.wikipedia.org/wiki/ZFS) and [Btrfs](https://en.wikipedia.org/wiki/Btrfs), for example, do this natively. Most cloud block storage — AWS EBS, GCP Persistent Disk, Azure Managed Disk — handles this at the storage layer.
 
 ## Recovery from detected corruption
 
-When a node detects corruption -- at startup, on snapshot receive, or during `PRAGMA integrity_check`-- it refuses to use the bad data. To recover, stop the node, remove its data directory, and let it rejoin the cluster. Alternatively remove and deprovision the node, and add a new node to the cluster. In either case rqlite will replicate the current state from the Leader.
+When a node detects corruption -- at startup, on snapshot receive, or during `PRAGMA quick_check`-- it refuses to use the bad data. To recover, ensure the node is stopped, remove its data directory, restart and let it rejoin the cluster. Alternatively remove and deprovision the node, and add a new node to the cluster. In either case rqlite will replicate the current state from the Leader.
 
 This path depends on the cluster having quorum and at least one healthy peer with intact data. A correlated failure across nodes -- a firmware bug affecting every disk of the same model, or a shared-storage outage -- may force you to [perform an emergency recovery](/docs/clustering/general-guidelines/#dealing-with-failure). Operators running production clusters should also keep independent [backups](/docs/guides/backup/) against this case.
