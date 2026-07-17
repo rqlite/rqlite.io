@@ -12,8 +12,8 @@ weight: 7
 
 rqlite maintains data consistency and high availability by managing the SQLite database under the hood, and most applications should interact with rqlite exclusively through its [HTTP API](/docs/api/api/). However, there may be cases where you need to access the underlying SQLite database directly. As improper direct access can lead to data loss, this guide details the processes you must follow to avoid such risks.
 
-## Where does rqlite store its SQLite database?
-The SQLite database is stored in the data directory you pass to rqlite on startup. The filename is `db.sqlite`.
+## Where does rqlite store the SQLite database?
+rqlite stores the database file, named `db.sqlite`, inside the data directory you pass to the node at startup.
 
 ## Can I modify the SQLite database directly?
 **No, you must never modify the SQLite database directly**. All modifications of the database should occur through the rqlite [HTTP API](/docs/api/api/). If you alter the SQLite file directly, including changing its journaling mode or checkpointing the [Write-Ahead Log (WAL)](https://www.sqlite.org/draft/wal.html), the behavior of rqlite becomes undefined. In other words you'll probably break rqlite, and may lose data.
