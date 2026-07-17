@@ -18,8 +18,8 @@ Clusters of 3, 5, 7, or 9, nodes are most practical Clusters of those sizes can 
 
 Clusters with a larger number of nodes start to become unwieldy, due to the number of nodes that must be contacted before a database change can take place. There is no intrinsic limit to the number of nodes comprising a cluster, but the operational overload may increase with little benefit.
 
-### Read-only nodes
-It is possible to run larger clusters if you just need nodes [from which you only need to read](/docs/clustering/read-only-nodes/). When it comes to the Raft protocol, these nodes do not count towards `N`, since they do not [vote](https://raft.github.io/).
+### Read replicas
+It is possible to run much larger clusters if the extra nodes are [read replicas](/docs/clustering/read-replicas/). When it comes to the Raft protocol, these nodes do not count towards `N`, since they do not [vote](https://raft.github.io/).
 
 ## Creating a cluster
 _This section describes manually creating a cluster. If you wish rqlite nodes to automatically find other, and form a cluster, check out [auto-clustering](/docs/clustering/automatic-clustering/)._
@@ -94,16 +94,16 @@ If you cannot bring sufficient nodes back online such that the cluster can elect
 Sometimes it makes sense for a node to automatically remove itself when it gracefully shuts down. If you want this behaviour, pass `-raft-cluster-remove-shutdown=true` to rqlite at launch time. If the node is shut down **gracefully** (it receives `SIGTERM` for example) it will first contact the Leader and remove itself from the cluster, and then the rqlite process will terminate. As a result the Leader will not continue to contact the node after it shuts down. This removal operation also reduces the cluster quorum size.
 
 ### Automatically removing failed nodes
-rqlite supports automatically removing both voting (the default type) and non-voting (read-only) nodes that have been non-reachable for a configurable period of time. A non-reachable node is defined as a node that the Leader cannot heartbeat with. To enable reaping of voting nodes set `-raft-reap-node-timeout` to a non-zero time interval. Likewise, to enable reaping of non-voting (read-only) nodes set `-raft-reap-read-only-node-timeout`.
+rqlite supports automatically removing both voting nodes (the default type) and read replicas that have been non-reachable for a configurable period of time. A non-reachable node is defined as a node that the Leader cannot heartbeat with. To enable reaping of voting nodes set `-raft-reap-node-timeout` to a non-zero time interval. Likewise, to enable reaping of read replicas set `-raft-reap-read-only-node-timeout`.
 
 It is recommended that these values be set conservatively, especially for voting nodes. Setting them too low may mean you don't account for the normal kinds of network outages and tempoary failures that can affect distributed systems such as rqlite. Note that the timeout clock is reset if a cluster elects a new Leader.
 
 #### Example configuration
-Instruct rqlite to reap non-reachable voting nodes after 2 days, and non-reachable read-only nodes after 30 minutes:
+Instruct rqlite to reap non-reachable voting nodes after 2 days, and non-reachable read replicas after 30 minutes:
 ```bash
 rqlited -node-id 1 -raft-reap-node-timeout=48h -raft-reap-read-only-node-timeout=30m data
 ```
-For reaping to work consistently you **must** set these flags on **every** voting node in the cluster -- in otherwords, every node that could potentially become the Leader. You can also set the flags on read-only nodes, but they will simply be silently ignored.
+For reaping to work consistently you **must** set these flags on **every** voting node in the cluster -- in otherwords, every node that could potentially become the Leader. You can also set the flags on read replicas, but they will simply be silently ignored.
 
 ## Dealing with failure
 It is the nature of clustered systems that nodes can fail at anytime. Depending on the size of your cluster, it will tolerate various amounts of failure. With a 3-node cluster, it can tolerate the failure of a single node, including the Leader.
@@ -143,7 +143,7 @@ Below is an example, of bringing a 3-node cluster back online.
 ]
 ```
 
-`id` specifies the node ID of the server, which must not be changed from its previous value. The ID for a given node can be found in the logs when the node starts up if it was auto-generated. `address` specifies the desired Raft IP and port for the node, which does not need to be the same as previously. You can use hostnames instead of IP addresses if you prefer. `non_voter` controls whether the server is a read-only node. If omitted, it will default to false, which is typical for most rqlite nodes.
+`id` specifies the node ID of the server, which must not be changed from its previous value. The ID for a given node can be found in the logs when the node starts up if it was auto-generated. `address` specifies the desired Raft IP and port for the node, which does not need to be the same as previously. You can use hostnames instead of IP addresses if you prefer. `non_voter` controls whether the node is a [read replica](/docs/clustering/read-replicas/). If omitted, it will default to false, which is typical for most rqlite nodes.
 
 Next simply create entries for all the nodes you plan to bring up (in the example above that's 3 nodes). You must confirm that nodes you don't include here have indeed failed and will not later rejoin the cluster. Ensure that this file is the same across all remaining rqlite nodes. At this point, you can restart your rqlite cluster. In the example above, this means you'd start 3 nodes.
 

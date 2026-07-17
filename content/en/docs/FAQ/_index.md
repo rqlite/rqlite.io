@@ -75,18 +75,18 @@ It's important to understand, however, that "single-node" means a single-node *c
 You can't simply shut down all the nodes except one, and expect the single node to work normally, due to Raft quorum requirements -- but you do have options. One thing you can do is to [backup your cluster](/docs/guides/backup/), and then [boot a new single node](/docs/guides/backup/#booting-with-a-sqlite-database) using the backup. This is probably the simplest way to do it, and will be very fast. Alternatively you can explicitly force the configuration of your cluster to be single node, by following the [_Dealing with Failure_](/docs/clustering/general-guidelines/#recovering-a-cluster-that-has-permanently-lost-quorum) guide, and using a configuration file that only contains a single node.
 
 ## What is the maximum size of a cluster?
-There is no explicit maximum cluster size. However the [practical cluster size limit is probably about 11 _voting nodes_](/docs/clustering/). You can go bigger by adding [read-only nodes](/docs/clustering/read-only-nodes/).
+There is no explicit maximum cluster size. However the [practical cluster size limit is probably about 11 _voting nodes_](/docs/clustering/). You can go bigger by adding [read replicas](/docs/clustering/read-replicas/).
 
 ## Is rqlite a good match for a network of nodes that come and go -- perhaps thousands of them?
-Unlikely. While rqlite does support read-only nodes, allowing it to scale to many nodes, the consensus protocol at the core of rqlite works best when the **voting** nodes in the cluster don't continually come and go. While it won't break, it probably won't be practical.
+Unlikely. While rqlite does support read replicas, allowing it to scale to many nodes, the consensus protocol at the core of rqlite works best when the **voting** nodes in the cluster don't continually come and go. While it won't break, it probably won't be practical.
 
-However if the nodes that come and go only need to stay up-to-date with changes, and serve read requests, it might work. Learn about [read-only nodes](/docs/clustering/read-only-nodes/).
+However if the nodes that come and go only need to stay up-to-date with changes, and serve read requests, it might work. Learn about [read replicas](/docs/clustering/read-replicas/).
  
 ## Can I use rqlite to broadcast changes to lots of other nodes -- perhaps hundreds -- as long as those nodes don't write data?
-Yes, try out [read-only nodes](/docs/clustering/read-only-nodes/).
+Yes, try out [read replicas](/docs/clustering/read-replicas/).
 
-## What if read-only nodes -- or clients accessing read-only nodes -- want to write data after all?
-Then they must do it by sending write requests to the leader node. But if they can reach the leader node, it is an effective way for one node at the edge to send a message to all other nodes (well, at least other nodes that are connected to the cluster at that time).
+## Can clients write data via a read replica?
+Yes. If a client sends a write request to a [read replica](/docs/clustering/read-replicas/), the replica transparently forwards the request to the Leader -- the client doesn't need to know it isn't talking to the Leader. This also makes read replicas an effective messaging fabric: a client at the edge can write a change via its local replica, and that change will be replicated to every other node connected to the cluster.
 
 ## Does rqlite support transactions?
 It supports [a form of transactions](/docs/api/api/#transactions). You can wrap a bulk update in a transaction such that all the statements in the bulk request will succeed, or none of them will. However the behaviour of rqlite is undefined if you send explicit `BEGIN`, `COMMIT`, or `ROLLBACK` statements. This is not because they won't work -- they will -- but if your node (or cluster) fails while a transaction is in progress, the system may be left in a hard-to-use state. So until rqlite can offer strict guarantees about its behaviour if it fails during a transaction, using `BEGIN`, `COMMIT`, and `ROLLBACK` is officially unsupported. Unfortunately this does mean that rqlite may not be suitable for some applications.

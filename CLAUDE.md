@@ -48,7 +48,7 @@ Major doc sections under `content/en/docs/`:
 - `API/` — API endpoint documentation, consistency, queued writes, bulk operations
 - `Quick-start/` — Getting started guide
 - `Guides/` — Operational guides (backup, security, Kubernetes, performance, CDC, etc.)
-- `Clustering/` — Cluster setup, auto-clustering, read-only nodes
+- `Clustering/` — Cluster setup, auto-clustering, read replicas
 - `Design/` — Architecture and design philosophy
 - `install-rqlite/` — Installation and building from source
 - `cli/` — Command-line tool documentation

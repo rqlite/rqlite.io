@@ -254,7 +254,7 @@ th {
 	<tr>
 		<td><code>-raft-non-voter</code></td>
 		<td>Configure as non-voting node.
-		    <br><br>Adding non-voting (also known as read-only) nodes can help scale out query performance. Read-only nodes don&#39;t particpate in the Raft consensus system, but do receive the same stream of updates from the Leader as voting nodes do.
+		    <br><br>Adding non-voting nodes -- also known as read replicas -- can help scale out query performance. Read replicas don&#39;t participate in the Raft consensus system, but do receive the same stream of updates from the Leader as voting nodes do.
 </td>
 	</tr>
 	<tr>
@@ -329,8 +329,8 @@ th {
 	</tr>
 	<tr>
 		<td><code>-raft-reap-read-only-node-timeout</code></td>
-		<td>Time after which a non-reachable non-voting node will be reaped. If not set, no reaping takes place.
-		    <br><br>This can be useful if you have a deployment where non-voting nodes tend to come and go, and you want to avoid explicitly removing those nodes.
+		<td>Time after which a non-reachable read replica (non-voting node) will be reaped. If not set, no reaping takes place.
+		    <br><br>This can be useful if you have a deployment where read replicas tend to come and go, and you want to avoid explicitly removing those nodes.
 </td>
 	</tr>
 	<tr>
