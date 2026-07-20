@@ -59,7 +59,7 @@ rqlite, via the configuration file, also supports user-level permissions. Each u
 - _backup_: user may retrieve a backup via the endpoint `/db/backup`.
 - _execute_: user may access the execute endpoint at `/db/execute`.
 - _join_: user can join a cluster. In practice only a node joins a cluster, so it's the joining node that must supply the credentials.
-- _join-read-only_: user can join a cluster, but only as a read-only node.
+- _join-read-only_: user can join a cluster, but only as a [read replica](/docs/clustering/read-replicas/).
 - _leader-ops_: user can perform Leader-related operations via `/leader`.
 - _load_: user may load an SQLite dump file into a node via the `/db/load` or `/boot` endpoints.
 - _query_: user may access the query endpoint at `/db/query` and the SQL rewriting endpoint at `/db/sql`.
@@ -93,7 +93,7 @@ An example configuration file is shown below.
 ```
 This configuration file sets authentication for three usernames, _bob_, _mary_, and `*`. It sets a password for the first two.
 
-This configuration also sets permissions for all users. _bob_ has permission to perform all operations, but _mary_ can query the cluster, as well as backup and join the cluster. `*` is a special username, which indicates that all users -- even anonymous users (requests without any BasicAuth information) -- have permission to check the cluster status and readiness. All users can also join as a read-only node. This can be useful if you wish to leave certain operations open to all accesses.
+This configuration also sets permissions for all users. _bob_ has permission to perform all operations, but _mary_ can query the cluster, as well as backup and join the cluster. `*` is a special username, which indicates that all users -- even anonymous users (requests without any BasicAuth information) -- have permission to check the cluster status and readiness. All users can also join the cluster as a read replica. This can be useful if you wish to leave certain operations open to all accesses.
 
 ## Encrypting node-to-node communication
 _As part of clustering, rqlite nodes connect to other nodes. In the discussion below, the node receiving the connection is considered the server, and the node initiating it is considered the client._
