@@ -48,6 +48,38 @@ th {
 </td>
 	</tr>
 	<tr>
+		<td><code>-otlp-endpoint</code></td>
+		<td>Address of OpenTelemetry Collector for metrics. If not set, OTLP reporting not enabled.
+		    <br><br>If set, rqlite periodically pushes its metrics, in OTLP format over gRPC, to the OpenTelemetry Collector at the given address. The address must be in host:port form e.g. localhost:4317, and must not include a protocol scheme. The expvar metrics available via the HTTP API are unaffected by this setting.
+</td>
+	</tr>
+	<tr>
+		<td><code>-otlp-interval</code></td>
+		<td>Period between OTLP metric exports.</td>
+	</tr>
+	<tr>
+		<td><code>-otlp-insecure</code></td>
+		<td>Use plaintext gRPC when communicating with the OpenTelemetry Collector.</td>
+	</tr>
+	<tr>
+		<td><code>-otlp-no-verify</code></td>
+		<td>Skip verification of the OpenTelemetry Collector certificate.</td>
+	</tr>
+	<tr>
+		<td><code>-otlp-ca-cert</code></td>
+		<td>Path to X.509 CA certificate for verifying the OpenTelemetry Collector.
+		    <br><br>If not set, the operating system&#39;s CA certificates are used to verify the Collector&#39;s certificate.
+</td>
+	</tr>
+	<tr>
+		<td><code>-otlp-cert</code></td>
+		<td>Path to X.509 certificate for mutual TLS with the OpenTelemetry Collector.</td>
+	</tr>
+	<tr>
+		<td><code>-otlp-key</code></td>
+		<td>Path to X.509 private key for mutual TLS with the OpenTelemetry Collector.</td>
+	</tr>
+	<tr>
 		<td><code>-http-addr</code></td>
 		<td>HTTP server bind address. To enable HTTPS, set X.509 certificate and key.
 		    <br><br>This is the interface rqlite will listen on for API requests. 0.0.0.0 is an acceptable address and will mean that rqlite will listen on all interfaces. However if you do use 0.0.0.0 you must then set &lt;code&gt;-http-adv-addr&lt;/code&gt; to the actual network address (or hostname) the node can be reached on, as rqlite transmits its HTTP API address in certain circumstances.
@@ -254,7 +286,7 @@ th {
 	<tr>
 		<td><code>-raft-non-voter</code></td>
 		<td>Configure as non-voting node.
-		    <br><br>Adding non-voting nodes -- also known as read replicas -- can help scale out query performance. Read replicas don&#39;t participate in the Raft consensus system, but do receive the same stream of updates from the Leader as voting nodes do.
+		    <br><br>Adding non-voting (also known as read replica) nodes can help scale out query performance. Read-replica nodes don&#39;t particpate in the Raft consensus system, but do receive the same stream of updates from the Leader as voting nodes do. This can also service write requests, and will forward the requests to the Leader.
 </td>
 	</tr>
 	<tr>
@@ -329,8 +361,8 @@ th {
 	</tr>
 	<tr>
 		<td><code>-raft-reap-read-only-node-timeout</code></td>
-		<td>Time after which a non-reachable read replica (non-voting node) will be reaped. If not set, no reaping takes place.
-		    <br><br>This can be useful if you have a deployment where read replicas tend to come and go, and you want to avoid explicitly removing those nodes.
+		<td>Time after which a non-reachable read replica (non-voting) node will be reaped. If not set, no reaping takes place.
+		    <br><br>This can be useful if you have a deployment where read replica (non-voting) nodes tend to come and go, and you want to avoid explicitly removing those nodes.
 </td>
 	</tr>
 	<tr>
@@ -377,3 +409,4 @@ th {
 
 </body>
 </html>
+
