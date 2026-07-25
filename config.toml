@@ -121,8 +121,11 @@ github_branch= "master"
 # Enable Algolia DocSearch
 algolia_docsearch = false
 
-# Enable Lunr.js offline search
-offlineSearch = false
+# Enable Lunr.js offline search. Builds a search index at compile time and runs
+# entirely in the browser, so there's no third-party search service to sign up
+# for, pay for, or have go down.
+offlineSearch = true
+offlineSearchMaxResults = 12
 
 # Enable syntax highlighting and copy buttons on code blocks with Prism
 prism_syntax_highlighting = false
@@ -141,7 +144,9 @@ navbar_translucent_over_cover_disable = false
 sidebar_menu_compact = false
 sidebar_menu_foldable = false
 # Set to true to hide the sidebar search box (the top nav search box will still be displayed if search is enabled)
-sidebar_search_disable = true
+# The navbar search box is hidden below the lg breakpoint, so the sidebar box is
+# what mobile and tablet readers actually get.
+sidebar_search_disable = false
 
 # Adds a H2 section titled "Feedback" to the bottom of each doc. The responses are sent to Google Analytics as events.
 # This feature depends on [services.googleAnalytics] and will be disabled if "services.googleAnalytics.id" is not set.

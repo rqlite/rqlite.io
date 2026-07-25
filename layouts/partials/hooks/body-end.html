@@ -1,0 +1,13 @@
+{{/*
+  Overrides the theme's body-end hook (which only emits an Algolia placeholder
+  comment, unused here) to load the copy-to-clipboard behaviour for code blocks.
+*/ -}}
+{{ with resources.Get "js/rq-code.js" -}}
+  {{ $js := . -}}
+  {{ if hugo.IsProduction -}}
+    {{ $js = $js | minify | fingerprint -}}
+    <script defer src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" crossorigin="anonymous"></script>
+  {{ else -}}
+    <script defer src="{{ $js.RelPermalink }}"></script>
+  {{ end -}}
+{{ end -}}

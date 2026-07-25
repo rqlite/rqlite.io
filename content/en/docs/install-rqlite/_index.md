@@ -8,17 +8,47 @@ Prebuilt binaries are available for a variety of systems including **Linux**, **
 
 ## Platforms
 
+### Linux
+The quickest way to install rqlite on Linux is the install script, which downloads the latest release for your architecture and installs it:
+
+```bash
+curl -fsSL https://rqlite.io/install.sh | sh
+```
+
+By default this installs into `/usr/local/bin`. Two environment variables let you control it:
+
+| Variable | Description | Default |
+| --- | --- | --- |
+| `RQLITE_VERSION` | The version to install, for example `v9.4.1` | the latest release |
+| `INSTALL_DIR` | The directory to install the binaries into | `/usr/local/bin` |
+
+```bash
+RQLITE_VERSION=v9.4.1 INSTALL_DIR=$HOME/bin sh -c "$(curl -fsSL https://rqlite.io/install.sh)"
+```
+
+{{< note >}}
+The install script supports Linux only. On macOS use Homebrew, and on Windows download the release directly.
+{{< /note >}}
+
 ### Docker
-`docker run -p 4001:4001 rqlite/rqlite`
+
+```bash
+docker run -p 4001:4001 rqlite/rqlite
+```
 
 Check out the [rqlite Docker page](https://hub.docker.com/r/rqlite/rqlite/) for more details on running rqlite nodes via Docker.
 
 #### GitHub Container Registry
 
-`docker pull ghcr.io/rqlite/rqlite`
+```bash
+docker pull ghcr.io/rqlite/rqlite
+```
 
 ### Homebrew
-```brew install rqlite```
+
+```bash
+brew install rqlite
+```
 
 ### Windows
 You can download the Windows release on the [GitHub releases page](https://github.com/rqlite/rqlite/releases). Alternatively the latest top-of-tree build [is also available for download](https://ci.appveyor.com/api/projects/otoolep/rqlite/artifacts/rqlite-latest-win64.zip?branch=master) from AppVeyor.

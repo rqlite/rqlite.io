@@ -1,0 +1,1219 @@
+/*
+
+Project styles for rqlite.io.
+
+Imported last by Docsy's main.scss, so everything here wins over Bootstrap and
+the theme. Variables live in _variables_project.scss.
+
+Sections:
+  1.  Base typography
+  2.  Navbar
+  3.  Search
+  4.  Buttons
+  5.  Home page — hero
+  6.  Home page — sections
+  7.  Code blocks and copy-to-clipboard
+  8.  Docs — sidebar, table of contents, content
+  9.  Docs — section index cards
+  10. Footer
+  11. Lightbox
+  12. Page-meta suppression
+
+*/
+
+// ===========================================================================
+// 1. Base typography
+// ===========================================================================
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "cv05" 1, "cv08" 1, "tnum" 0;
+}
+
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+  letter-spacing: -0.018em;
+}
+
+.td-content {
+  h1 { letter-spacing: -0.028em; }
+
+  // Give headings room to breathe and a visible hierarchy. Docsy leaves h2 and
+  // h3 nearly the same weight, which makes long guides hard to skim.
+  h2 {
+    margin-top: 2.75rem;
+    padding-top: 0.5rem;
+    font-size: 1.75rem;
+  }
+
+  h3 {
+    margin-top: 2rem;
+    font-size: 1.3rem;
+  }
+
+  > p, > ul, > ol {
+    line-height: 1.7;
+  }
+
+  li { line-height: 1.65; }
+}
+
+// ===========================================================================
+// 2. Navbar
+// ===========================================================================
+
+.td-navbar {
+  background: $rq-ink;
+  box-shadow: inset 0 -1px 0 rgba($rq-ice, 0.16);
+
+  .navbar-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+
+    svg {
+      margin: 0;
+      height: 28px;
+      width: 28px;
+    }
+
+    // The wordmark is real text in the site font rather than baked into the
+    // logo file, so it stays crisp and renders identically on every platform.
+    &__name {
+      display: inline;
+      font-weight: 700;
+      font-size: 1.25rem;
+      letter-spacing: -0.03em;
+      color: #fff;
+    }
+  }
+
+  .nav-link {
+    font-weight: 500;
+    color: rgba(#fff, 0.78);
+    transition: color 0.15s ease;
+
+    &:hover, &:focus { color: #fff; }
+
+    &.active, .active {
+      color: #fff;
+      font-weight: 600;
+    }
+  }
+
+  // The GitHub star badge is an external image; keep it from looking pasted on.
+  .nav-link img {
+    height: 20px;
+    vertical-align: middle;
+    opacity: 0.92;
+    transition: opacity 0.15s ease;
+  }
+
+  .nav-link:hover img { opacity: 1; }
+}
+
+// Translucent over the home page cover, solid once scrolled.
+.navbar-bg-onscroll {
+  background: rgba($rq-ink, 0.92) !important;
+  // Progressive enhancement only. Two things stop the -webkit- form reaching
+  // production: there is no postcss.config.js, so Hugo's postCSS step runs with
+  // no plugins and autoprefixer never applies; and Hugo 0.104.3's minifier
+  // strips the prefixed declaration even when written by hand. Safari therefore
+  // gets no blur — it falls back to the 92%-opaque bar above, which is fine.
+  -webkit-backdrop-filter: saturate(160%) blur(10px);
+  backdrop-filter: saturate(160%) blur(10px);
+}
+
+@include media-breakpoint-up(md) {
+  .td-navbar-cover:not(.navbar-bg-onscroll) {
+    .nav-link { text-shadow: none; }
+  }
+}
+
+// ===========================================================================
+// 3. Search
+// ===========================================================================
+
+.td-search {
+  &__input {
+    background: rgba(#fff, 0.10) !important;
+    border: 1px solid rgba($rq-ice, 0.22) !important;
+    border-radius: 0.5rem;
+    color: #fff !important;
+    transition: background 0.15s ease, border-color 0.15s ease;
+
+    &::placeholder { color: rgba(#fff, 0.6); }
+
+    &:hover { background: rgba(#fff, 0.16) !important; }
+
+    &.form-control:focus {
+      background: rgba(#fff, 0.18) !important;
+      border-color: rgba($rq-ice, 0.55) !important;
+      box-shadow: 0 0 0 3px rgba($rq-bright, 0.28);
+      color: #fff !important;
+    }
+  }
+
+  .td-navbar & .td-search__icon { color: rgba(#fff, 0.7); }
+}
+
+// The sidebar search sits on a light surface, so it needs the inverse treatment.
+.td-sidebar__search .td-search__input {
+  background: #fff !important;
+  border: 1px solid $border-color !important;
+  color: $rq-ink !important;
+
+  &::placeholder { color: #7A8794; }
+
+  &.form-control:focus {
+    background: #fff !important;
+    border-color: $rq-blue !important;
+    box-shadow: 0 0 0 3px rgba($rq-blue, 0.15);
+  }
+}
+
+.td-sidebar__search .td-search__icon { color: #7A8794; }
+
+// Docsy 0.5.1 builds each result as a bare `div.mt-4` holding a `small` path, an
+// `a.d-block` title and a `p` excerpt — there is no .card markup to hook, despite
+// what the theme's own _search.scss suggests.
+.td-offline-search-results {
+  max-width: 34rem;
+  border: 1px solid $border-color;
+  border-radius: 0.75rem;
+  box-shadow: 0 18px 50px rgba($rq-ink, 0.20);
+
+  .popover-header { display: none; }
+
+  .popover-body {
+    padding: 1rem 1.1rem;
+    color: $rq-ink;
+  }
+
+  // Header row: the "Search results" label and its close button.
+  .popover-body > div > div:first-child {
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid $border-color;
+
+    span:first-child {
+      font-size: 0.72rem !important;
+      font-weight: 600 !important;
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+      color: #7A8794;
+    }
+  }
+
+  &__close-button {
+    cursor: pointer;
+    color: #9AA5B1;
+
+    &:hover { color: $rq-ink; }
+  }
+
+  // Individual results.
+  .mt-4 {
+    margin-top: 0 !important;
+    padding: 0.7rem 0.6rem;
+    border-radius: 0.45rem;
+    transition: background 0.12s ease;
+
+    &:hover { background: rgba($rq-blue, 0.07); }
+
+    small {
+      font-size: 0.72rem;
+      color: #93A0AD !important;
+    }
+
+    a {
+      margin: 0.1rem 0 0.15rem;
+      font-size: 0.98rem;
+      font-weight: 600;
+      color: $rq-navy;
+    }
+
+    p {
+      margin-bottom: 0;
+      font-size: 0.85rem;
+      line-height: 1.45;
+      color: #5A6675;
+    }
+  }
+}
+
+// ===========================================================================
+// 4. Buttons
+// ===========================================================================
+
+.btn {
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  border-radius: 0.5rem;
+  transition: transform 0.12s ease, box-shadow 0.15s ease,
+              background-color 0.15s ease, border-color 0.15s ease;
+
+  &-lg {
+    border-radius: 0.6rem;
+    padding: 0.7rem 1.5rem;
+    font-size: 1.05rem;
+  }
+
+  &:active { transform: translateY(1px); }
+}
+
+// Amber CTA. Bootstrap's contrast helper already picks dark text here; pin it
+// so it can't drift, because white on amber is only ~1.9:1.
+.rq-btn-primary {
+  background: $rq-amber;
+  border: 1px solid $rq-amber;
+  color: #2A1A00;
+  box-shadow: 0 6px 18px rgba($rq-amber, 0.32);
+
+  &:hover, &:focus {
+    background: lighten($rq-amber, 6%);
+    border-color: lighten($rq-amber, 6%);
+    color: #2A1A00;
+    box-shadow: 0 8px 24px rgba($rq-amber, 0.42);
+  }
+
+  &:focus { outline: 3px solid rgba($rq-amber, 0.45); outline-offset: 2px; }
+}
+
+// Outline button for dark surfaces.
+.rq-btn-ghost {
+  background: rgba(#fff, 0.06);
+  border: 1px solid rgba($rq-ice, 0.38);
+  color: #fff;
+
+  &:hover, &:focus {
+    background: rgba(#fff, 0.14);
+    border-color: rgba($rq-ice, 0.7);
+    color: #fff;
+  }
+
+  &:focus { outline: 3px solid rgba($rq-bright, 0.4); outline-offset: 2px; }
+}
+
+// ===========================================================================
+// 5. Home page — hero
+// ===========================================================================
+
+// Selector is deliberately as specific as the theme's
+// `.td-default main > section:first-of-type`, which would otherwise force 8rem
+// of top padding on the hero at md and up.
+.td-default main > .td-cover-block {
+  padding-top: 7rem;
+  padding-bottom: 4.5rem;
+  background: $rq-ink;
+  background-image:
+    radial-gradient(60rem 34rem at 50% -12%, rgba($rq-bright, 0.32), transparent 62%),
+    radial-gradient(44rem 28rem at 88% 12%, rgba($rq-navy, 0.75), transparent 60%),
+    linear-gradient(178deg, #05193C 0%, #041634 46%, #030F26 100%);
+
+  // Docsy's cover applies a dark scrim intended for photographic backgrounds.
+  &.td-overlay::after { background: none; }
+
+  @include media-breakpoint-down(sm) {
+    padding-top: 4.5rem;
+    padding-bottom: 3rem;
+  }
+}
+
+.rq-hero {
+  position: relative;
+  z-index: 1;
+  max-width: 46rem;
+  margin: 0 auto;
+  text-align: center;
+
+  &__mark {
+    width: 84px;
+    height: 84px;
+    filter: drop-shadow(0 10px 26px rgba(#000, 0.45));
+
+    @include media-breakpoint-down(sm) { width: 64px; height: 64px; }
+  }
+
+  &__title {
+    margin: 1rem 0 0;
+    font-size: 4.5rem;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.045em;
+    color: #fff;
+
+    @include media-breakpoint-down(sm) { font-size: 3rem; }
+  }
+
+  &__tagline {
+    margin: 1.1rem auto 0;
+    max-width: 34rem;
+    font-size: 1.3rem;
+    font-weight: 300;
+    line-height: 1.45;
+    color: rgba($rq-ice, 0.92);
+
+    strong { font-weight: 600; color: #fff; }
+
+    @include media-breakpoint-down(sm) { font-size: 1.1rem; }
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-top: 2rem;
+  }
+
+  &__platforms {
+    margin-top: 1.1rem;
+    font-size: 0.85rem;
+    color: rgba($rq-ice, 0.6);
+
+    code {
+      padding: 0.1em 0.35em;
+      border-radius: 0.25rem;
+      background: rgba(#fff, 0.09);
+      color: rgba($rq-ice, 0.9);
+      font-size: 0.95em;
+    }
+  }
+}
+
+// Install one-liner with a copy button.
+.rq-install {
+  display: flex;
+  align-items: stretch;
+  max-width: 30rem;
+  margin: 2.25rem auto 0;
+  background: rgba(#000, 0.32);
+  border: 1px solid rgba($rq-ice, 0.2);
+  border-radius: 0.6rem;
+  overflow: hidden;
+  text-align: left;
+
+  &__code {
+    flex: 1 1 auto;
+    padding: 0.7rem 0.9rem;
+    overflow-x: auto;
+    font-family: $font-family-monospace;
+    font-size: 0.86rem;
+    line-height: 1.5;
+    color: $rq-ice;
+    white-space: nowrap;
+
+    .rq-prompt { color: rgba($rq-ice, 0.45); user-select: none; }
+  }
+
+  &__copy {
+    flex: 0 0 auto;
+    padding: 0 0.95rem;
+    border: 0;
+    border-left: 1px solid rgba($rq-ice, 0.2);
+    background: rgba(#fff, 0.06);
+    color: rgba($rq-ice, 0.85);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+
+    &:hover { background: rgba(#fff, 0.14); color: #fff; }
+    &:focus { outline: 2px solid rgba($rq-bright, 0.6); outline-offset: -2px; }
+
+    &.is-copied { color: #5BD68B; }
+  }
+}
+
+// ===========================================================================
+// 6. Home page — sections
+// ===========================================================================
+
+.rq-section {
+  padding: 4.5rem 1.5rem;
+
+  // The home page content sits inside Bootstrap's .container-fluid, which adds
+  // a half-gutter each side. Cancel it so these bands run edge to edge, the way
+  // Docsy's own .td-box sections do (they get it free by also being .row).
+  margin-left: $grid-gutter-width * -0.5;
+  margin-right: $grid-gutter-width * -0.5;
+
+  &--tight { padding: 3rem 1.5rem; }
+
+  &--light { background: #F7FAFD; }
+
+  &--ink {
+    background: $rq-ink;
+    // Kept deliberately faint and pushed off-canvas: a strong radial here reads
+    // as a blotch rather than depth.
+    background-image:
+      radial-gradient(65rem 34rem at 15% -25%, rgba($rq-blue, 0.20), transparent 70%);
+    color: rgba($rq-ice, 0.86);
+  }
+
+  &__inner {
+    max-width: 68rem;
+    margin: 0 auto;
+  }
+
+  &__eyebrow {
+    margin: 0 0 0.6rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: $rq-blue;
+
+    .rq-section--ink & { color: $rq-bright; }
+  }
+
+  &__title {
+    margin: 0 0 0.9rem;
+    font-size: 2.1rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: $rq-ink;
+
+    .rq-section--ink & { color: #fff; }
+
+    @include media-breakpoint-down(sm) { font-size: 1.65rem; }
+  }
+
+  &__lede {
+    max-width: 44rem;
+    font-size: 1.1rem;
+    line-height: 1.65;
+    color: #445164;
+
+    .rq-section--ink & { color: rgba($rq-ice, 0.82); }
+  }
+
+  &--center {
+    text-align: center;
+
+    .rq-section__lede { margin-left: auto; margin-right: auto; }
+  }
+}
+
+// --- Feature cards ---------------------------------------------------------
+
+.rq-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+  gap: 1.5rem;
+  margin-top: 2.75rem;
+}
+
+.rq-card {
+  padding: 1.75rem;
+  background: #fff;
+  border: 1px solid $border-color;
+  border-radius: 0.9rem;
+  box-shadow: 0 1px 2px rgba($rq-ink, 0.04);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+
+  // These cards live inside a centred section, but centred bullet lists with
+  // left-hung markers look broken.
+  text-align: left;
+
+  &:hover {
+    transform: translateY(-3px);
+    border-color: rgba($rq-blue, 0.4);
+    box-shadow: 0 14px 32px rgba($rq-ink, 0.10);
+  }
+
+  &__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    margin-bottom: 1.1rem;
+    border-radius: 0.7rem;
+    background: linear-gradient(140deg, $rq-navy, $rq-bright);
+    color: #fff;
+    font-size: 1.15rem;
+  }
+
+  &__title {
+    margin: 0 0 0.6rem;
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: $rq-ink;
+  }
+
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  li {
+    position: relative;
+    padding-left: 1.4rem;
+    margin-bottom: 0.55rem;
+    font-size: 0.96rem;
+    line-height: 1.55;
+    color: #445164;
+
+    &::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.55em;
+      width: 0.42rem;
+      height: 0.42rem;
+      border-radius: 50%;
+      background: $rq-bright;
+    }
+
+    &:last-child { margin-bottom: 0; }
+  }
+
+  a { font-weight: 500; }
+}
+
+// --- Terminal showcase -----------------------------------------------------
+
+.rq-split {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(21rem, 1fr));
+  gap: 3rem;
+  align-items: center;
+}
+
+.rq-steps {
+  margin: 1.75rem 0 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: rq-step;
+
+  li {
+    position: relative;
+    padding-left: 2.6rem;
+    margin-bottom: 1.35rem;
+    counter-increment: rq-step;
+
+    &::before {
+      content: counter(rq-step);
+      position: absolute;
+      left: 0;
+      top: -0.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.8rem;
+      height: 1.8rem;
+      border-radius: 50%;
+      background: rgba($rq-bright, 0.16);
+      border: 1px solid rgba($rq-bright, 0.45);
+      color: $rq-bright;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+  }
+
+  strong {
+    display: block;
+    margin-bottom: 0.15rem;
+    color: #fff;
+    font-weight: 600;
+  }
+
+  span { color: rgba($rq-ice, 0.75); font-size: 0.96rem; line-height: 1.55; }
+}
+
+.rq-terminal {
+  border-radius: 0.8rem;
+  overflow: hidden;
+  background: #05122B;
+  border: 1px solid rgba($rq-ice, 0.18);
+  box-shadow: 0 24px 60px rgba(#000, 0.45);
+
+  &__bar {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.7rem 0.9rem;
+    background: rgba(#fff, 0.05);
+    border-bottom: 1px solid rgba($rq-ice, 0.14);
+  }
+
+  &__dot {
+    width: 0.65rem;
+    height: 0.65rem;
+    border-radius: 50%;
+    background: rgba($rq-ice, 0.25);
+  }
+
+  &__title {
+    margin-left: 0.5rem;
+    font-size: 0.78rem;
+    color: rgba($rq-ice, 0.5);
+    font-family: $font-family-monospace;
+  }
+
+  pre {
+    margin: 0;
+    padding: 1.1rem 1.2rem;
+    overflow-x: auto;
+    background: transparent;
+    font-family: $font-family-monospace;
+    font-size: 0.83rem;
+    line-height: 1.75;
+    color: #D6E6F7;
+    white-space: pre;
+  }
+
+  .rq-prompt  { color: #5FA8E8; user-select: none; }
+  .rq-cmd     { color: #fff; }
+  .rq-comment { color: rgba($rq-ice, 0.42); }
+  .rq-ok      { color: #5BD68B; }
+  .rq-dim     { color: rgba($rq-ice, 0.62); }
+}
+
+// --- Testimonials ----------------------------------------------------------
+
+.rq-quotes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+  gap: 1.5rem;
+  margin-top: 2.75rem;
+  text-align: left;
+}
+
+.rq-quote {
+  display: flex;
+  flex-direction: column;
+  padding: 1.9rem;
+  background: #fff;
+  border: 1px solid $border-color;
+  border-radius: 0.9rem;
+
+  &__mark {
+    font-size: 2.6rem;
+    line-height: 1;
+    color: rgba($rq-blue, 0.3);
+    font-weight: 700;
+  }
+
+  blockquote {
+    flex: 1 1 auto;
+    margin: 0.4rem 0 1.4rem;
+    font-size: 1.02rem;
+    line-height: 1.65;
+    color: #33404F;
+  }
+
+  &__attrib {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-top: 1.1rem;
+    border-top: 1px solid $border-color;
+  }
+
+  &__who {
+    font-size: 0.9rem;
+    line-height: 1.4;
+    color: #5A6675;
+
+    strong { display: block; color: $rq-ink; font-weight: 600; }
+  }
+
+  img { height: 30px; width: auto; flex: 0 0 auto; }
+}
+
+// --- Console screenshot ----------------------------------------------------
+
+.rq-shot {
+  position: relative;
+  max-width: 58rem;
+  margin: 2.5rem auto 0;
+  border-radius: 0.8rem;
+  overflow: hidden;
+  border: 1px solid rgba($rq-ice, 0.2);
+  box-shadow: 0 24px 60px rgba(#000, 0.4);
+  line-height: 0;
+
+  // console.png is a full-page capture; crop it to a preview so it doesn't
+  // dominate the page, and fade the cut so it doesn't look truncated.
+  img {
+    width: 100%;
+    height: auto;
+    max-height: 30rem;
+    object-fit: cover;
+    object-position: top center;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 5rem;
+    background: linear-gradient(to bottom, rgba($rq-ink, 0), rgba($rq-ink, 0.85));
+    pointer-events: none;
+  }
+}
+
+// --- Closing call to action ------------------------------------------------
+
+.rq-cta {
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-top: 2rem;
+  }
+}
+
+// ===========================================================================
+// 7. Code blocks and copy-to-clipboard
+// ===========================================================================
+
+.td-content {
+  // Docsy makes .highlight extend .card; tighten it up and let long lines
+  // scroll instead of being clipped at the right edge.
+  .highlight,
+  .rq-code {
+    position: relative;
+    margin: 1.6rem 0;
+    border: 1px solid $border-color;
+    border-radius: 0.6rem;
+    background: #FBFCFE;
+    box-shadow: none;
+    overflow: hidden;
+  }
+
+  .highlight pre,
+  .rq-code pre {
+    margin: 0;
+    padding: 1rem 1.1rem;
+    overflow-x: auto;
+    background: #FBFCFE !important;
+    font-size: 0.875rem;
+    line-height: 1.6;
+  }
+
+  // Inline code: distinguish it from body text without shouting.
+  p code, li > code, table code, dd code {
+    padding: 0.15em 0.4em;
+    font-size: 0.875em;
+    color: #0B3D82;
+    background-color: rgba($rq-blue, 0.09);
+    border-radius: 0.3rem;
+  }
+
+  a > code { color: inherit; }
+}
+
+// Copy button, injected by layouts/partials/hooks/body-end.html.
+.rq-copy {
+  position: absolute;
+  top: 0.45rem;
+  right: 0.45rem;
+  z-index: 2;
+  min-width: 2rem;
+  height: 2rem;
+  padding: 0 0.55rem;
+  border: 1px solid $border-color;
+  border-radius: 0.4rem;
+  background: #fff;
+  color: #64748B;
+  font-size: 0.78rem;
+  font-weight: 500;
+  line-height: 1;
+  cursor: pointer;
+  // Always present, just quiet. Hover-only copy buttons are undiscoverable, and
+  // this is a site people come to specifically to copy commands from.
+  opacity: 0.55;
+  transition: opacity 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+
+  &:hover { color: $rq-blue; border-color: rgba($rq-blue, 0.5); }
+
+  &:focus {
+    opacity: 1;
+    outline: 2px solid rgba($rq-blue, 0.5);
+    outline-offset: 1px;
+  }
+
+  &.is-copied { opacity: 1; color: #1B9E5F; border-color: rgba(#1B9E5F, 0.5); }
+}
+
+.highlight:hover .rq-copy,
+.rq-code:hover .rq-copy { opacity: 1; }
+
+// ===========================================================================
+// 8. Docs — sidebar, table of contents, content
+// ===========================================================================
+
+.td-sidebar {
+  background: $td-sidebar-bg-color;
+  border-right: 1px solid $border-color;
+
+  // Docsy sets padding-top: 4rem here to clear the fixed navbar. Keep that
+  // clearance — overriding it unscoped hides the search box behind the navbar.
+  @include media-breakpoint-up(md) {
+    padding-top: 4.5rem;
+  }
+
+  &__inner { padding-right: 0.5rem; }
+
+  &__search { padding-bottom: 1.25rem; }
+}
+
+.td-sidebar-nav {
+  &__section-title {
+    font-weight: 600;
+
+    .active { font-weight: 700; }
+
+    a { color: $rq-ink; }
+  }
+
+  .td-sidebar-link {
+    display: block;
+    padding: 0.28rem 0.6rem;
+    margin-bottom: 0.05rem;
+    border-radius: 0.35rem;
+    font-weight: 400;
+    color: #46536A;
+    transition: background 0.12s ease, color 0.12s ease;
+
+    &:hover {
+      background: rgba($rq-blue, 0.07);
+      color: $rq-blue;
+      text-decoration: none;
+    }
+
+    &__page { font-size: 0.95rem; }
+  }
+
+  .td-sidebar-nav-active-item,
+  .td-sidebar-link.active {
+    background: rgba($rq-blue, 0.11);
+    color: $rq-navy !important;
+    font-weight: 600;
+  }
+}
+
+// Right-hand table of contents. Docsy renders this in $gray-600 at font-weight
+// 300, which is close to unreadable on white.
+.td-toc {
+  font-size: 0.875rem;
+
+  #TableOfContents {
+    a {
+      padding: 0.3rem 0 0.3rem 0.75rem;
+      border-left: 2px solid $border-color;
+      font-weight: 400;
+      color: #4A5666;
+
+      &:hover {
+        border-left-color: $rq-blue;
+        color: $rq-blue;
+      }
+    }
+  }
+
+  > .h6, .td-toc__title {
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #7A8794;
+  }
+}
+
+.td-breadcrumbs {
+  .breadcrumb-item {
+    font-size: 0.85rem;
+
+    &.active { color: #6B7787; }
+  }
+}
+
+// Callout shortcodes.
+.td-content {
+  blockquote {
+    padding: 0.9rem 1.2rem;
+    border-left: 3px solid $rq-blue;
+    border-radius: 0 0.4rem 0.4rem 0;
+    background: rgba($rq-blue, 0.05);
+    color: #33404F;
+
+    > :last-child { margin-bottom: 0; }
+  }
+
+  table {
+    width: 100%;
+    margin-bottom: 1.5rem;
+    font-size: 0.94rem;
+
+    th {
+      background: #F2F6FB;
+      border-bottom: 2px solid $border-color !important;
+      font-weight: 600;
+    }
+
+    td, th { padding: 0.55rem 0.75rem; }
+  }
+
+  // Long tables should scroll rather than push the page sideways.
+  .td-table-wrapper { overflow-x: auto; }
+
+  img { max-width: 100%; height: auto; }
+}
+
+// ===========================================================================
+// 9. Docs — section index cards
+// ===========================================================================
+
+.section-index {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: 1rem;
+  margin-top: 1.75rem;
+
+  .panel-line { display: none; }
+
+  .entry {
+    padding: 1.15rem 1.25rem;
+    border: 1px solid $border-color;
+    border-radius: 0.7rem;
+    background: #fff;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      border-color: rgba($rq-blue, 0.45);
+      box-shadow: 0 10px 24px rgba($rq-ink, 0.08);
+    }
+  }
+
+  h5 {
+    margin-bottom: 0.3rem;
+    font-size: 1.02rem;
+
+    a {
+      font-weight: 600;
+      color: $rq-navy;
+
+      // Make the whole card clickable without extra markup.
+      &::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+      }
+    }
+  }
+
+  .entry { position: relative; }
+
+  p {
+    margin-bottom: 0;
+    font-size: 0.92rem;
+    line-height: 1.55;
+    color: #5A6675;
+  }
+}
+
+// ===========================================================================
+// 10. Footer
+// ===========================================================================
+
+// Docsy's footer partial renders <footer class="bg-dark py-5 row">, so there is
+// no .td-footer hook to target.
+footer.bg-dark {
+  background: $rq-ink !important;
+  color: rgba($rq-ice, 0.7);
+  border-top: 1px solid rgba($rq-ice, 0.12);
+
+  a { color: rgba($rq-ice, 0.8); transition: color 0.15s ease; }
+  a:hover { color: #fff; }
+
+  .list-inline-item.h3 { font-size: 1.35rem; }
+}
+
+// ===========================================================================
+// 10a. Community page banner
+//
+// Docsy's community layout paints its banner with the "paint by numbers" class
+// td-box--1, which resolves to $primary — much brighter than the ink treatment
+// used on the home page hero. This is the only page on the site using it.
+// ===========================================================================
+
+.td-box--1 {
+  background: $rq-ink;
+  background-image:
+    radial-gradient(60rem 30rem at 20% -20%, rgba($rq-blue, 0.24), transparent 70%);
+  color: rgba($rq-ice, 0.88);
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+
+  h1 {
+    color: #fff;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+  }
+
+  p {
+    max-width: 46rem;
+    margin: 1rem auto 0;
+    font-size: 1.05rem;
+    font-weight: 400;
+    line-height: 1.6;
+  }
+
+  // Keep the decorative arrow the same colour as the band it points out of.
+  .td-arrow-down::before { border-top-color: $rq-ink !important; }
+}
+
+// ===========================================================================
+// 10b. 404
+// ===========================================================================
+
+.rq-404 {
+  max-width: 44rem;
+  margin: 0 auto;
+  padding: 3rem 1rem 4rem;
+  text-align: center;
+
+  &__mark { width: 64px; height: 64px; }
+
+  &__code {
+    margin: 1.25rem 0 0;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    color: #93A0AD;
+  }
+
+  &__title {
+    margin: 0.35rem 0 0;
+    font-size: 2.25rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: $rq-ink;
+  }
+
+  &__lede {
+    max-width: 30rem;
+    margin: 0.9rem auto 0;
+    font-size: 1.05rem;
+    line-height: 1.6;
+    color: #5A6675;
+  }
+
+  &__links {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    gap: 0.85rem;
+    margin-top: 2.25rem;
+    text-align: left;
+
+    a {
+      display: block;
+      padding: 1rem 1.15rem;
+      border: 1px solid $border-color;
+      border-radius: 0.65rem;
+      background: #fff;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+
+      &:hover {
+        transform: translateY(-2px);
+        border-color: rgba($rq-blue, 0.45);
+        box-shadow: 0 10px 24px rgba($rq-ink, 0.08);
+        text-decoration: none;
+      }
+    }
+
+    strong {
+      display: block;
+      margin-bottom: 0.15rem;
+      color: $rq-navy;
+      font-weight: 600;
+    }
+
+    span { font-size: 0.9rem; color: #5A6675; }
+  }
+
+  &__foot {
+    margin-top: 2rem;
+    font-size: 0.95rem;
+    color: #5A6675;
+  }
+}
+
+// ===========================================================================
+// 11. Lightbox
+// ===========================================================================
+
+.lightbox-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 9999;
+  justify-content: center;
+  align-items: center;
+}
+
+.lightbox-overlay:target { display: flex; }
+
+.lightbox-overlay img {
+  max-width: 95%;
+  max-height: 95%;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+  position: relative;
+  z-index: 1;
+}
+
+.lightbox-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.lightbox-close {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  color: #fff;
+  font-size: 40px;
+  font-weight: bold;
+  text-decoration: none;
+  line-height: 1;
+  z-index: 2;
+}
+
+.lightbox-close:hover,
+.lightbox-close:focus {
+  color: #ccc;
+  text-decoration: none;
+}
+
+.lightbox-trigger { cursor: zoom-in; }
+
+// ===========================================================================
+// 12. Page-meta suppression
+// ===========================================================================
+
+.td-page-meta--view,
+.td-page-meta--edit,
+.td-page-meta--child,
+.td-page-meta--issue,
+.td-page-meta--project-issue {
+  display: none !important;
+}
