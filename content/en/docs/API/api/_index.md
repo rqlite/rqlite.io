@@ -11,7 +11,7 @@ Each rqlite node exposes an HTTP API allowing data to be inserted into, and read
 - `/db/query` which accepts **only** read requests (`SELECT`). Attempting to change the database via this endpoint will result in an error.
 - `/db/request` which accepts both read and write requests. This endpoint is known as the [_Unified Endpoint_](/docs/api/api/#unified-endpoint).
 
-You can send your read and writes requests to any node in your cluster. 
+You can send your read and write requests to any node in your cluster.
 
 **Which endpoint should you use?** If you know ahead of time whether you are doing reads or writes, you should choose the endpoint dedicated to that type of request (either `/db/execute` or `/db/query`), as you will know precisely what to expect when rqlite responds. This encourages the most robust interaction with rqlite.
 
@@ -20,7 +20,7 @@ In contrast the format of the response from `/db/request` will depend on whether
 The best way to understand the API is to work through the simple examples below. There are also [client libraries available](/docs/api/client-libraries/).
 
 ## Writing Data
-To write data successfully to the database, you must create at least 1 table. To do this perform a HTTP POST on the `/db/execute` endpoint on any rqlite node. Encapsulate the `CREATE TABLE` SQL command in a JSON array, and put it in the body of the request. An example via [curl](https://curl.haxx.se/):
+To write data successfully to the database, you must create at least one table. To do this perform an HTTP POST on the `/db/execute` endpoint on any rqlite node. Encapsulate the `CREATE TABLE` SQL command in a JSON array, and put it in the body of the request. An example via [curl](https://curl.haxx.se/):
 
 ```bash
 curl -XPOST 'localhost:4001/db/execute?pretty&timings' -H "Content-Type: application/json" -d '[
@@ -32,7 +32,7 @@ You can also perform a POST with the SQL command placed directly in the body:
 curl -XPOST 'localhost:4001/db/execute?pretty' -H "Content-Type: text/plain" -d \
     'CREATE TABLE foo (id INTEGER NOT NULL PRIMARY KEY, name TEXT, age INTEGER)'
 ```
->The `plain/text` format can be convenient for quick prototyping via `curl`, but it is recommended you use the JSON request format for production code, as a more structured approach minimizes the chance of error.
+>The `text/plain` format can be convenient for quick prototyping via `curl`, but it is recommended you use the JSON request format for production code, as a more structured approach minimizes the chance of error.
 
 To insert an entry into the database, execute a second SQL command:
 
@@ -97,7 +97,7 @@ The **default** response is of the form:
 ```
 Note that `types` contains the [declared type](https://www.sqlite.org/capi3ref.html#sqlite3_column_decltype) of the columns, not the [Storage Class](https://www.sqlite.org/datatype3.html).
 
-You can also query via a HTTP POST request, with both JSON and Plain Text supported as the request body:
+You can also query via an HTTP POST request, with both JSON and Plain Text supported as the request body:
 ```bash
 curl -XPOST 'localhost:4001/db/query?pretty&timings' -H "Content-Type: application/json" -d '[
     "SELECT * FROM foo"
@@ -107,7 +107,7 @@ curl -XPOST 'localhost:4001/db/query?pretty&timings' -H "Content-Type: applicati
 curl -XPOST 'localhost:4001/db/query?pretty&timings' -H "Content-Type: text/plain" -d 'SELECT * FROM foo'
 ```
 In both cases the response will be in the same form as when the query is made via HTTP GET.
->The `plain/text` format can be convenient for quick prototyping via `curl`, but it is recommended you use the JSON request format for production code.
+>The `text/plain` format can be convenient for quick prototyping via `curl`, but it is recommended you use the JSON request format for production code.
 
 ### Associative response form
 You can also request an _associative_ form of response, by adding `associative` as a query parameter:
@@ -135,7 +135,8 @@ This form will have a map per row returned, with each column name as a key. This
 ### Qualifying column names
 Sometimes two tables will have the same column names. If you're joining across such tables and need to disambiguate which columns correspond to which table, add `qualify_columns` as a query parameter. For example:
 ```bash
-curl -G 'localhost:4001/db/query?pretty&timings&qualify_columns' --data-urlencode 'q=SELECT * FROM foo'
+curl -G 'localhost:4001/db/query?pretty&timings&qualify_columns' \
+    --data-urlencode 'q=SELECT * FROM foo INNER JOIN bar ON foo.id = bar.id'
 ```
 
 ## Parameterized Statements
@@ -171,7 +172,7 @@ curl -XPOST 'localhost:4001/db/query?pretty&timings' -H "Content-Type: applicati
 ```
 **Example injection attack**
 
-In practise, values such as `fiona` are dynamically set by clients, but Parameterized Statements protect against something like the following:
+In practice, values such as `fiona` are set dynamically by clients, but Parameterized Statements protect against something like the following:
 ```bash
 curl -XPOST 'localhost:4001/db/query?pretty&timings' -H "Content-Type: application/json" -d '[
     ["SELECT * FROM foo WHERE name=?", "fiona; DROP TABLE foo"]
@@ -179,7 +180,7 @@ curl -XPOST 'localhost:4001/db/query?pretty&timings' -H "Content-Type: applicati
 ```
 
 ## Transactions
-A **form** of transactions are supported. To execute statements within a transaction, add `transaction` to the URL. An example of the above operation executed within a transaction is shown below.
+A **form** of transactions is supported. To execute statements within a transaction, add `transaction` to the URL. An example of the above operation executed within a transaction is shown below.
 
 ```bash
 curl -XPOST 'localhost:4001/db/execute?pretty&transaction' -H "Content-Type: application/json" -d "[
@@ -190,14 +191,14 @@ curl -XPOST 'localhost:4001/db/execute?pretty&transaction' -H "Content-Type: app
 
 When a transaction takes place either both statements will succeed, or neither. Performance is *much, much* better if multiple SQL INSERTs or UPDATEs are executed via a transaction. Note that processing of the request ceases the moment any single query results in an error.
 
-The behaviour of rqlite if you explicitly issue `BEGIN`, `COMMIT`, `ROLLBACK`, `SAVEPOINT`, and `RELEASE` to control your own transactions is **not defined**. This is because the behavior of a cluster if it fails while such a manually-controlled transaction is not yet defined. It is important to control transactions only through the query parameters shown above.
+The behavior of rqlite if you explicitly issue `BEGIN`, `COMMIT`, `ROLLBACK`, `SAVEPOINT`, and `RELEASE` to control your own transactions is **not defined**. This is because the behavior of a cluster that fails while such a manually-controlled transaction is in progress is not yet defined. It is important to control transactions only through the query parameters shown above.
 
 ## BLOB data
 Working with [BLOB](https://www.sqlite.org/datatype3.html) data may require specialized handling, depending on your use case. Examples of writing BLOB data, and reading it back, are shown below.
 
 **Writing BLOBs**
 
-A simple way to insert BLOB data is to use the `X''` syntax. These are string literals containing hexadecimal data and preceded by a single "x" or "X" character, for example: `x'53514C697465'`.
+A simple way to insert BLOB data is to use the `X''` syntax. This is a string literal containing hexadecimal data, preceded by a single "x" or "X" character, for example: `x'53514C697465'`.
 ```bash
 curl -XPOST 'localhost:4001/db/execute?pretty&timings' -H "Content-Type: application/json" -d '[
     "CREATE TABLE foo (data BLOB) STRICT"
@@ -242,7 +243,7 @@ curl -G 'localhost:4001/db/query?pretty' --data-urlencode 'q=SELECT * FROM foo'
     ]
 }
 ```
-Note that BLOB data is returned as [base64-encoded](https://en.wikipedia.org/wiki/Base64) strings. While this works well for many applications, it makes it difficult to know if the returned string represents an actual string that was inserted in the row, or an actual BLOB data[^1]. To instead have BLOB data returned as an array of byte values, add `blob_array` to your URL:
+Note that BLOB data is returned as [base64-encoded](https://en.wikipedia.org/wiki/Base64) strings. While this works well for many applications, it makes it difficult to know whether the returned string represents an actual string that was inserted in the row, or actual BLOB data[^1]. To instead have BLOB data returned as an array of byte values, add `blob_array` to your URL:
 ```bash
 curl -G 'localhost:4001/db/query?pretty&blob_array' --data-urlencode 'q=SELECT * FROM foo'
 {
@@ -289,7 +290,7 @@ curl -XPOST 'localhost:4001/db/execute?pretty&timings' -H "Content-Type: applica
 ```
 
 ## Query Timeouts
-By default, SQL queries do not timeout. You can set a timeout by setting the `db_timeout` URL parameter. This parameter allows you to specify the maximum amount of time to spend processing the query before it is interrupted and an error returned. Note that this timeout is applied per SQL statement, not the entire HTTP request. An example request with a 2 second timeout is shown below.
+By default, SQL queries do not time out. You can set a timeout by setting the `db_timeout` URL parameter. This parameter allows you to specify the maximum amount of time to spend processing the query before it is interrupted and an error returned. Note that this timeout is applied per SQL statement, not to the entire HTTP request. An example request with a 2-second timeout is shown below.
 ```bash
 curl -XPOST 'localhost:4001/db/execute?db_timeout=2s' -H "Content-Type: application/json" -d '[
     ["INSERT INTO foo(name, age) VALUES(?, ?)", "fiona", 20]
@@ -297,7 +298,7 @@ curl -XPOST 'localhost:4001/db/execute?db_timeout=2s' -H "Content-Type: applicat
 ```
 
 ## Unified Endpoint
-With the _Unified Endpoint_ you can send read and writes requests in one operation, to the same endpoint. Let's work through an example.
+With the _Unified Endpoint_ you can send read and write requests in one operation, to the same endpoint. Let's work through an example.
 
 >rqlite uses the SQLite function [sqlite3_stmt_readonly()](https://www.sqlite.org/c3ref/stmt_readonly.html) to determine if a SQL statement is a read or a write.
 
@@ -364,17 +365,17 @@ The _Unified Endpoint_ supports transactions, Associative responses, [Read Consi
 
 You can issue [`PRAGMA`](https://www.sqlite.org/pragma.html) directives to rqlite, and they will be passed to the underlying SQLite database. Certain `PRAGMA` directives, which alter the operation of the SQLite database, may not make sense in the context of rqlite -- and some `PRAGMA` directives may cause rqlite to fail. `PRAGMA` directives which just return information about the SQLite database, without changing its operation, are always safe.
 
-Certain `PRAGMA` directives will intefere with the proper operation of rqlite. They are:
+Certain `PRAGMA` directives will interfere with the proper operation of rqlite. They are:
 - `PRAGMA journal_mode` - rqlite **requires** the SQLite database to be in WAL mode at all times. Don't change the _journaling_ mode.
-- `PRAGMA wal_checkpoint` - rqlite **requires exlusive control over the WAL**. Don't checkpoint rqlite.
-- `PRAGMA wal_autocheckpoint=N` - rqlite **requires exlusive control over the WAL**. Don't modify WAL checkpointing.
+- `PRAGMA wal_checkpoint` - rqlite **requires exclusive control over the WAL**. Don't checkpoint rqlite.
+- `PRAGMA wal_autocheckpoint=N` - rqlite **requires exclusive control over the WAL**. Don't modify WAL checkpointing.
 - `PRAGMA synchronous=N` - Don't change how rqlite manages writes to disk.
 > rqlite checks all requests for the presence of prohibited `PRAGMA` statements. If it detects such a statement it will return an error.
-  
-If you have a question about a particular `PRAGMA` command, you should discuss it on the [rqlite Slack](https://rqlite.io/), or ask a question on [GitHub](https://github.com/rqlite/rqlite/).
+
+If you have a question about a particular `PRAGMA` command, you should discuss it on the [rqlite Slack](https://www.rqlite.io/join-slack), or ask a question on [GitHub](https://github.com/rqlite/rqlite/).
 
 ### Issuing a `PRAGMA` directive
-The rqlite CLI supports issuing many other `PRAGMA` directives. For example:
+The rqlite CLI supports issuing many `PRAGMA` directives. For example:
 ```
 127.0.0.1:4001> pragma compile_options
 +----------------------------+
@@ -406,21 +407,21 @@ The rqlite CLI supports issuing many other `PRAGMA` directives. For example:
 +----------------------------+
 ```
 
-`PRAGMA` directives may also be issued using the `/db/execute`, `/db/query`, or `/db/request`, endpoint. For example:
+`PRAGMA` directives may also be issued using the `/db/execute`, `/db/query`, or `/db/request` endpoint. For example:
 ```bash
-$ curl -G 'localhost:4001/db/query?pretty&timings' --data-urlencode 'q=PRAGMA foreign_keys'                                                                        
-{                                                                                                                                                                                                                        
-    "results": [                                                                                                                                                                                                         
-        {                                                                                                                                                                                                                
-            "columns": [                                                                                                                                                                                                 
-                "foreign_keys"                                                                                                                                                                                           
-            ],                                                                                                                                                                                                           
-            "types": [                                                                                                                                                                                                   
-                ""                                                                                                                                                                                                       
-            ],                                                                                                                                                                                                           
-            "values": [                                                                                                                                                                                                  
-                [                                                                                                                                                                                                        
-                    0                                                                                                                                                                                                    
+$ curl -G 'localhost:4001/db/query?pretty&timings' --data-urlencode 'q=PRAGMA foreign_keys'
+{
+    "results": [
+        {
+            "columns": [
+                "foreign_keys"
+            ],
+            "types": [
+                ""
+            ],
+            "values": [
+                [
+                    0
                 ]
             ],
             "time": 0.000070499
@@ -439,7 +440,7 @@ With any rqlite cluster, all write-requests must be serviced by the cluster Lead
 
 Queries, by default, are also serviced by the cluster Leader. Like write-requests, Followers will, by default, transparently forward queries to the Leader, and respond to the client after receiving the response from the Leader. However, depending on the [read-consistency](/docs/api/read-consistency/) specified with the request, if a Follower received the query request it may serve that request directly and not contact the Leader. Which read-consistency level makes sense depends on your application.
 
-> If one node, when trying to contact a second node, fails to contact that node, it will return an error to the user. You can you have the first node automatically retry the communication by setting the URL query parameter `retries` to the number of retries you wish the node to execute. For example `retries=2` will instruct the first node to retry 2 times.
+> If one node, when trying to contact a second node, fails to contact that node, it will return an error to the user. You can have the first node automatically retry the communication by setting the URL query parameter `retries` to the number of retries you wish the node to execute. For example `retries=2` will instruct the first node to retry 2 times.
 
 ### Data and the Raft log
 Any writes to the SQLite database go through the Raft log, ensuring only changes committed by a quorum of rqlite nodes are actually applied to the SQLite database. Queries do not __necessarily__ go through the Raft log, however, since they do not change the state of the database, and therefore do not need to be captured in the log. Only if _Strong_ read consistency is requested does a query go through the Raft log.
@@ -470,7 +471,7 @@ curl -XPOST 'localhost:4001/db/execute?timeout=2m' -H "Content-Type: application
 ```
 
 ### Disabling Request Forwarding
-If you do not wish a Follower to transparently forward a request to a Leader, add `redirect` to the URL as a query parameter. In that case if a Follower receives a request that can only be serviced by the Leader, the Follower will respond with [HTTP 301 Moved Permanently](https://en.wikipedia.org/wiki/HTTP_301) and include the address of the Leader as the `Location` header in the response. It is then up the clients to re-issue the command to the Leader.
+If you do not wish a Follower to transparently forward a request to a Leader, add `redirect` to the URL as a query parameter. In that case if a Follower receives a request that can only be serviced by the Leader, the Follower will respond with [HTTP 301 Moved Permanently](https://en.wikipedia.org/wiki/HTTP_301) and include the address of the Leader as the `Location` header in the response. It is then up to the client to re-issue the command to the Leader.
 
 This option was made available as it provides maximum visibility to the clients, should they prefer it. For example, if a Follower transparently forwarded a request to the Leader, and one of the nodes then crashed during processing, it may be difficult for the client to determine where in the chain of nodes the processing failed.
 
@@ -485,14 +486,14 @@ $ curl -v -G 'localhost:4003/db/query?pretty&timings&redirect' --data-urlencode 
 > Host: localhost:4003
 > User-Agent: curl/7.43.0
 > Accept: */*
-> 
+>
 < HTTP/1.1 301 Moved Permanently
 < Content-Type: application/json; charset=utf-8
 < Location: http://localhost:4001/db/query?pretty&timings&q=SELECT%20%2A%20FROM%20foo
 < X-Rqlite-Version: 4
 < Date: Mon, 07 Aug 2017 21:10:59 GMT
 < Content-Length: 116
-< 
+<
 <a href="http://localhost:4001/db/query?pretty&amp;timings&amp;q=SELECT%20%2A%20FROM%20foo">Moved Permanently</a>.
 
 * Connection #0 to host localhost left intact

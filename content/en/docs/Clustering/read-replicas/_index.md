@@ -14,19 +14,19 @@ This makes read replicas a lightweight way to scale your cluster: you can add as
 >An rqlite node can serve thousands of queries per second, assuming you use the default read consistency level. Don't add read replicas unless you are sure you need them.
 
 ## Read replicas accept write requests too
-The name _read replica_ describes the node's role in replication and consensus -- it does **not** mean the node rejects write requests. If a client sends a write request to a read replica, the replica transparently forwards that request to the Leader, waits for the Leader's response, and returns the response to the client. From your application's point of view, a read replica accepts exactly the same requests as any other rqlite node. What makes a read replica different is that read replicas can come ago without affecting cluster-availability.
+The name _read replica_ describes the node's role in replication and consensus -- it does **not** mean the node rejects write requests. If a client sends a write request to a read replica, the replica transparently forwards that request to the Leader, waits for the Leader's response, and returns the response to the client. From your application's point of view, a read replica accepts exactly the same requests as any other rqlite node. What makes a read replica different is that read replicas can come and go without affecting cluster availability.
 
 >Read replicas were previously known as _read-only nodes_ in this documentation. That name suggested to some users that these nodes would reject write requests, which was never true. Because read replicas do not vote in Raft elections, they are also known as _non-voting nodes_ -- which is why the command-line flag that enables this mode is named `-raft-non-voter`.
 
 ## Why use read replicas?
-- **Read scaling**: Every read replica holds a full copy of the database, so read-heavy workloads can be spread across many nodes. Because replicas don't participate in consensus, they cannot degrade cluster-availabilty.
+- **Read scaling**: Every read replica holds a full copy of the database, so read-heavy workloads can be spread across many nodes. Because replicas don't participate in consensus, they cannot degrade cluster availability.
 - **Data locality**: You can place read replicas close to your clients -- in other regions, remote offices, or at the network edge. If the link between the edge and the voting nodes is slow or unreliable, a read replica at the edge can continue serving queries locally, even during outages. The data may be stale, but this can be an acceptable trade-off for many applications.
-- **Large-scale fan-out**: The practical limit for voting nodes in a cluster is about 9-11 nodes, but there is no such limit on read replicas (though there will be practical limits, it probably won't scale to 100s of read replicas). If you need to broadcast changes to tens nodes, read replicas let you do it: every replica receives every change committed by the cluster.
+- **Large-scale fan-out**: The practical limit for voting nodes in a cluster is about 9-11 nodes, but no such limit applies to read replicas. There are still practical limits -- it probably won't scale to hundreds of replicas -- but if you need to broadcast changes to tens of nodes, read replicas let you do it: every replica receives every change committed by the cluster.
 
 ## Querying a read replica
 To have a read replica serve a query from its local copy of the database, the read request must use a [read consistency level](/docs/api/read-consistency/) of `none` or `auto`. If any other level is specified -- or if no level is set explicitly -- the replica will transparently forward the request to the Leader, negating the read-scaling benefits of the replica.
 
-To ensure a read replica hasn't become completely disconnected from the cluster, set the [`freshness` query parameter](/docs/api/read-consistency/#limiting-read-staleness) to limit data staleness. If you do not do this, you risk receiving significantly out-of-date i.e. _stale_ data.
+To ensure a read replica hasn't become completely disconnected from the cluster, set the [`freshness` query parameter](/docs/api/read-consistency/#limiting-read-staleness) to limit data staleness. If you do not do this, you risk receiving significantly out-of-date, i.e. _stale_, data.
 
 >`auto` is often the most convenient choice, as clients don't need to know ahead of time whether they are talking to a read replica or a voting node. A read replica receiving an `auto`-level query serves it locally using `none`; a voting node uses `weak`. See the [Read Consistency documentation](/docs/api/read-consistency/) for full details.
 
@@ -34,10 +34,10 @@ To ensure a read replica hasn't become completely disconnected from the cluster,
 Pass `-raft-non-voter=true` to `rqlited` to make a node a read replica.
 
 ## Read replica management
-Read replicas join a cluster in the [same manner as a voting node. They can also be removed using the same operations](/docs/clustering/).
+Read replicas join a cluster in the [same manner as a voting node](/docs/clustering/), and they can be removed using the same operations.
 
 ### Handling failure
-If a read replica becomes unreachable, the Leader will periodically attempt to reconnect to it until it becomes reachable again, unless the node is removed from the cluster. This is exactly the same behaviour as when a voting node fails. However, since read replicas do not vote, a failed read replica will not prevent the cluster from processing write requests.
+If a read replica becomes unreachable, the Leader will periodically attempt to reconnect to it until it becomes reachable again, unless the node is removed from the cluster. This is exactly the same behavior as when a voting node fails. However, since read replicas do not vote, a failed read replica will not prevent the cluster from processing write requests.
 
 ### Automatically reaping failed replicas
 If your deployment is one where read replicas come and go, you can have rqlite automatically remove replicas that have been unreachable for too long. Set `-raft-reap-read-only-node-timeout` on every voting node to enable this. See the [clustering guidelines](/docs/clustering/general-guidelines/#automatically-removing-failed-nodes) for full details.

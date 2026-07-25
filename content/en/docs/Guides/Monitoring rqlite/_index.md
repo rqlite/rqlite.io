@@ -15,7 +15,7 @@ The use of the URL param `pretty` is optional, and results in pretty-printed JSO
 
 You can also request the same status information via the rqlite shell:
 ```
-$ ./rqlite 
+$ ./rqlite
 Welcome to the rqlite CLI. Enter ".help" for usage hints.
 127.0.0.1:4001> .status
 build:
@@ -26,19 +26,19 @@ build:
 http:
   addr: 127.0.0.1:4001
   auth: disabled
-  redirect: 
+  redirect:
 node:
   start_time: 2019-12-23T22:34:46.215507011-05:00
   uptime: 16.963009139s
 runtime:
   num_goroutine: 9
   version: go1.13
- ```
+```
 
- ## Nodes API
- The _nodes_ API returns basic information for nodes in the cluster, as seen by the node receiving the _nodes_ request. The receiving node will also check whether it can actually connect to all other nodes in the cluster. This is an effective way to determine the cluster leader, and the leader's HTTP API address. It can also be used to check if the cluster is **basically** running -- if the other nodes are reachable, it probably is.
+## Nodes API
+The _nodes_ API returns basic information for nodes in the cluster, as seen by the node receiving the _nodes_ request. The receiving node will also check whether it can actually connect to all other nodes in the cluster. This is an effective way to determine the cluster Leader, and the Leader's HTTP API address. It can also be used to check if the cluster is **basically** running -- if the other nodes are reachable, it probably is.
 
- By default, the node only checks if _voting_ nodes are contactable.
+By default, the node only checks if _voting_ nodes are contactable.
 
 ```bash
 curl localhost:4001/nodes?pretty
@@ -49,7 +49,7 @@ curl localhost:4001/nodes?pretty&ver=2
 # Also check read replicas (non-voting nodes).
 curl localhost:4001/nodes?nonvoters&pretty
 
-# Give up if all nodes don't respond within 5 seconds. Default is 30 seconds.
+# Give up if the nodes don't all respond within 5 seconds. Default is 30 seconds.
 curl localhost:4001/nodes?timeout=5s
 ```
 
@@ -73,10 +73,10 @@ Welcome to the rqlite CLI. Enter ".help" for usage hints.
   addr: 127.0.0.1:4006
   reachable: true
   leader: false
- ```
+```
 
 ## Leader API
-You can determine the cluster leader directly via a call to the HTTP API.
+You can determine the cluster Leader directly via a call to the HTTP API.
 ```bash
 $ curl localhost:4001/leader?pretty
 {
@@ -100,40 +100,42 @@ or optionally explicitly specifying the new Leader:
 ```bash
 $ curl -XPOST http://localhost:4001/leader -H "Content-Type: application/json" -d '{"id": "node1"}'
 ```
-Alternatively issue `.stepdown` at the rqlite shell. 
+Alternatively issue `.stepdown` at the rqlite shell.
 
- ## Readiness checks
- rqlite nodes serve a "ready" status at `/readyz`. The endpoint will return `HTTP 200 OK` if the node is ready to respond to database requests and cluster management operations. An example access is shown below.
+## Readiness checks
+rqlite nodes serve a "ready" status at `/readyz`. The endpoint will return `HTTP 200 OK` if the node is ready to respond to database requests and cluster management operations. An example access is shown below.
 
- ```bash
- $ curl localhost:4001/readyz
+```bash
+$ curl localhost:4001/readyz
 [+]node ok
 [+]leader ok
 [+]store ok
 ```
 If you wish to check if the node is running, and responding to HTTP requests, regardless of Leader status, add `noleader` to the URL. This form may be more useful for automated deployments, which simply need to know if the node is responsive.
- ```bash
- $ curl localhost:4001/readyz?noleader
+```bash
+$ curl localhost:4001/readyz?noleader
 [+]node ok
 ```
-> Strictly speaking `readyz` indicates that the database is ready to respond to all write requests, and all read requests with _Weak_ or _Strong_ Read Consistency. A rqlite node can **always** respond to read requests with _None_ consistency, assuming the local database is accessible. Of course, the results you get back from a _None_ request may be quite a bit different than what the rest of the cluster considers _committed_.
+> Strictly speaking `readyz` indicates that the database is ready to respond to all write requests, and all read requests with _Weak_, _Linearizable_, or _Strong_ Read Consistency. An rqlite node can **always** respond to read requests with _None_ consistency, assuming the local database is accessible. Of course, the results you get back from a _None_ request may be quite a bit different from what the rest of the cluster considers _committed_.
+
 ### sync flag
-You can tell `/readyz` to block until the node has received the log entry equal to Leader's Commit Index _as it was set by the latest Heartbeat received from the Leader_. This allows you to check that a node is "caught up" with the Leader. To enable this check add `sync` to the URL. For example:
- ```bash
- $ curl localhost:4001/readyz?sync&timeout=5s
+You can tell `/readyz` to block until the node has received the log entry equal to the Leader's Commit Index _as it was set by the latest Heartbeat received from the Leader_. This allows you to check that a node is "caught up" with the Leader. To enable this check add `sync` to the URL. For example:
+```bash
+$ curl localhost:4001/readyz?sync&timeout=5s
 [+]node ok
 [+]leader ok
 [+]store ok
 [+]sync ok
 ```
 In the example above `/readyz` will block, for at most 5 seconds, until the receiving node is in sync with the Leader's Commit Index. The timeout, if not explicitly set, is 30 seconds. If the node receiving such a request is itself the Leader, this flag has no effect as the Leader is always caught up with itself.
+
 ## expvar support
-rqlite also exports [expvar](https://pkg.go.dev/expvar) information, which are mostly counters of various rqlite activity. The standard expvar information, as well as some custom information, is exposed. This data can be retrieved like so (assuming the node is started in its default configuration):
+rqlite also exports [expvar](https://pkg.go.dev/expvar) information, which is mostly counters of various rqlite activity. The standard expvar information, as well as some custom information, is exposed. This data can be retrieved like so (assuming the node is started in its default configuration):
 
 ```bash
 curl localhost:4001/debug/vars
 ```
-You can optionally set the query parmameter `key` if you wish to retrieve just a subsection of the expvar output e.g. the URL `localhost:4001/debug/vars?key=http` will return just HTTP information.
+You can optionally set the query parameter `key` if you wish to retrieve just a subsection of the expvar output e.g. the URL `localhost:4001/debug/vars?key=http` will return just HTTP information.
 
 You can also request the same expvar information via the CLI:
 ```
@@ -155,7 +157,7 @@ memstats:
   HeapSys: 2.588672e+06
   StackInuse: 557056
   LastGC: 0...
- ```
+```
 Similar to the `status` output, the output of this endpoint could be periodically written to a monitoring system, allowing the performance of rqlite to be tracked over time.
 
 ## pprof support

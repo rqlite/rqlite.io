@@ -1,10 +1,10 @@
 ---
 title: "Security"
 linkTitle: "Security"
-"description": "How to secure your rqlite deployment"
+description: "How to secure your rqlite deployment"
 weight: 20
 ---
-rqlite can be secured in various way, and with different levels of control.
+rqlite can be secured in various ways, and with different levels of control.
 
 ## SQLite security
 SQLite has some [documentation on security](https://www.sqlite.org/security.html), which is worth reviewing. Much of it can be applied to rqlite, though implementing some of the practices would need you to [recompile rqlite](/docs/install-rqlite/building-from-source/).
@@ -20,7 +20,7 @@ Each rqlite node listens on 2 TCP ports -- one for the HTTP API, and the other f
 
 So, if possible, configure the network such that the Raft port on each node is only accessible from other nodes in the cluster. Alternatively run the Raft connections on a physically, or logically, different network from the network the HTTP API is connected to. There is no need for the Raft port to be accessible by rqlite clients, which only need to use the HTTP API.
 
-If the IP addresses (or subnets) of rqlite clients is also known, it may also be possible to limit access to the HTTP API from those addresses only.
+If the IP addresses (or subnets) of rqlite clients are also known, it may also be possible to limit access to the HTTP API from those addresses only.
 
 AWS EC2 [Security Groups](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-network-security.html), for example, support all this functionality. So if running rqlite in the AWS EC2 cloud you can implement this level of security at the network level.
 
@@ -40,7 +40,7 @@ To configure HTTPS, you set the following command-line options when launching rq
 ```
   -http-ca-cert string
       Path to X.509 CA certificate for HTTPS.
-      If not set, then the host systems CA certificate(s) will be used.
+      If not set, then the host system's CA certificate(s) will be used.
       This certificate must be set however if using mutual TLS.
   -http-cert string
       Path to HTTPS X.509 certificate
@@ -63,7 +63,7 @@ rqlite, via the configuration file, also supports user-level permissions. Each u
 - _leader-ops_: user can perform Leader-related operations via `/leader`.
 - _load_: user may load an SQLite dump file into a node via the `/db/load` or `/boot` endpoints.
 - _query_: user may access the query endpoint at `/db/query` and the SQL rewriting endpoint at `/db/sql`.
-- _ready_: user can retrieve node readiness via `/readyz`
+- _ready_: user can retrieve node readiness via `/readyz`.
 - _remove_: user can remove a node from a cluster. If a node performs an auto-remove on shutdown, then the `-join-as` user must have this permission.
 - _snapshot_: user may initiate a Raft Snapshot via the endpoint `/snapshot`.
 - _status_: user can retrieve node status and Go runtime information.
@@ -93,22 +93,22 @@ An example configuration file is shown below.
 ```
 This configuration file sets authentication for three usernames, _bob_, _mary_, and `*`. It sets a password for the first two.
 
-This configuration also sets permissions for all users. _bob_ has permission to perform all operations, but _mary_ can query the cluster, as well as backup and join the cluster. `*` is a special username, which indicates that all users -- even anonymous users (requests without any BasicAuth information) -- have permission to check the cluster status and readiness. All users can also join the cluster as a read replica. This can be useful if you wish to leave certain operations open to all accesses.
+This configuration also sets permissions for all users. _bob_ has permission to perform all operations, while _mary_ can query the cluster, as well as back up and join the cluster. `*` is a special username, which indicates that all users -- even anonymous users (requests without any BasicAuth information) -- have permission to check the cluster status and readiness. All users can also join the cluster as a read replica. This can be useful if you wish to leave certain operations open to everyone.
 
 ## Encrypting node-to-node communication
 _As part of clustering, rqlite nodes connect to other nodes. In the discussion below, the node receiving the connection is considered the server, and the node initiating it is considered the client._
 
-rqlite supports encryption of all inter-node traffic using TLS. Mutual TLS is also supported so you can restrict nodes to only accept connections from other nodes that present a valid certificate. To use TLS each node must be supplied with the relevant SSL certificate and corresponding private key, in X.509 format. Note that every node in a cluster must operate with inter-node encryption enabled, or none at all.
+rqlite supports encryption of all inter-node traffic using TLS. Mutual TLS is also supported so you can restrict nodes to only accept connections from other nodes that present a valid certificate. To use TLS each node must be supplied with the relevant TLS certificate and corresponding private key, in X.509 format. Note that every node in a cluster must operate with inter-node encryption enabled, or none at all.
 ```bash
   -node-ca-cert string
       Path to X.509 CA certificate for node-to-node encryption.
-      If not set, then the host systems CA certificate(s) will be used
+      If not set, then the host system's CA certificate(s) will be used
       when verifying server certificates. This certificate is also required
       for verifying client certificates, if mutual TLS is enabled
   -node-cert string
       Path to X.509 certificate for node-to-node communication
   -node-key string
-      Path to X.509 private key for node-to-node communicate
+      Path to X.509 private key for node-to-node communication
   -node-no-verify
       Skip verification of any node-node certificates in each direction.
       Mostly used for testing.
@@ -119,7 +119,7 @@ rqlite supports encryption of all inter-node traffic using TLS. Mutual TLS is al
 >rqlite continuously monitors the node-to-node certificate and key files, automatically reloading them when changes are detected. This allows you to rotate these files without restarting the node. However, changes to the CA certificate are not detected automatically; you must restart the node to apply a new CA certificate.
 
 ## Secure cluster example
-Starting a node with HTTPS enabled, node-to-node encryption, mutual TLS disabled, and with the above configuration file. It is assumed the HTTPS X.509 certificate and key are at the paths `server.crt` and `key.pem` respectively, and the node-to-node certificate and key are at `node.crt` and `node-key.pem`
+The example below starts a node with HTTPS enabled, node-to-node encryption enabled, mutual TLS disabled, and the configuration file shown above. It assumes the HTTPS X.509 certificate and key are at the paths `server.crt` and `key.pem` respectively, and that the node-to-node certificate and key are at `node.crt` and `node-key.pem`.
 ```bash
 rqlited -auth config.json -http-cert server.crt -http-key key.pem \
 -node-cert node.crt -node-key node-key.pem ~/node.1
@@ -127,7 +127,7 @@ rqlited -auth config.json -http-cert server.crt -http-key key.pem \
 Bringing up a second node on the same host, joining it to the first node, using _bob's_ credentials.
 ```bash
 rqlited -auth config.json -http-addr localhost:4003 -http-cert server.crt \
--http-key key.pem -raft-addr :4004 -join localhost:4002 -join-as bob
+-http-key key.pem -raft-addr :4004 -join localhost:4002 -join-as bob \
 -node-cert node.crt -node-key node-key.pem ~/node.2
 ```
 Querying the node, as user _mary_.

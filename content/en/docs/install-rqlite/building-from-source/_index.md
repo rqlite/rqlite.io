@@ -22,7 +22,7 @@ cd rqlite
 go install ./...
 $GOPATH/bin/rqlited ~/node.1
 ```
-This starts a rqlite server listening on localhost, port 4001. This single node automatically becomes the Leader.
+This starts an rqlite server listening on localhost, port 4001. This single node automatically becomes the Leader.
 
 To rebuild and run, perhaps after making some changes to the source, do something like the following:
 ```bash
@@ -32,10 +32,10 @@ $GOPATH/bin/rqlited ~/node.1
 ```
 
 ### Compilation errors locating SQLite functions
-If, during compilation, you experience [errors](https://github.com/rqlite/rqlite/issues/1763) about undefined SQLite functions, [your C compilation step is probably not configured correctly](https://github.com/mattn/go-sqlite3?tab=readme-ov-file#compilation). Check that you have a C compiler installed and that the environment variable `CGO_ENABLED` must be set to 1. You can [explicitly set the C compiler](https://pkg.go.dev/cmd/cgo) using the CC environment variable.
+If, during compilation, you experience [errors](https://github.com/rqlite/rqlite/issues/1763) about undefined SQLite functions, [your C compilation step is probably not configured correctly](https://github.com/mattn/go-sqlite3?tab=readme-ov-file#compilation). Check that you have a C compiler installed and that the environment variable `CGO_ENABLED` is set to 1. You can [explicitly set the C compiler](https://pkg.go.dev/cmd/cgo) using the `CC` environment variable.
 
 ### Code generation
-_This step is not necessary unless you are making changes to Protobuf defintions or command-line flags._
+_This step is not necessary unless you are making changes to Protobuf definitions or command-line flags._
 
 ```bash
 go install google.golang.org/protobuf/cmd/protoc-gen-go
@@ -46,14 +46,14 @@ go generate ./...
 ```
 
 ### Speeding up the build process
-It can be rather slow to rebuild rqlite, due to the repeated compilation of the SQLite source code. You can compile and install the SQLite libary once, so subsequent builds are much faster. To do so, execute the following commands:
+It can be rather slow to rebuild rqlite, due to the repeated compilation of the SQLite source code. You can compile and install the SQLite library once, so subsequent builds are much faster. To do so, execute the following commands:
 ```bash
 cd $GOPATH/src/github.com/rqlite/rqlite
 go install github.com/rqlite/go-sqlite3
 ```
 
 ## Cloning a fork
-If you wish to work with fork of rqlite, your own fork for example, you must still follow the directory structure above. But instead of cloning the main repo, instead clone your fork. You must fork the project if you want to contribute upstream.
+If you wish to work with a fork of rqlite, your own fork for example, you must still follow the directory structure above. But instead of cloning the main repo, clone your fork. You must fork the project if you want to contribute upstream.
 
 Follow the steps below to work with a fork:
 
@@ -61,7 +61,7 @@ Follow the steps below to work with a fork:
 export GOPATH=$HOME/rqlite
 mkdir -p $GOPATH/src/github.com/rqlite
 cd $GOPATH/src/github.com/rqlite
-git clone git@github.com:<your Github username>/rqlite
+git clone git@github.com:<your GitHub username>/rqlite
 ```
 
 Retaining the directory structure `$GOPATH/src/github.com/rqlite` is necessary so that Go imports work correctly.
@@ -81,8 +81,8 @@ ok      github.com/rqlite/rqlite/store 6.117s
 ok      github.com/rqlite/rqlite/system_test   7.853s
 ```
 ## Release process
-A rqlite release is [generated automatically using GitHub Actions](https://github.com/rqlite/rqlite/blob/master/.github/workflows/build-release-binaries.yml) anytime a new GitHub release is created and tagged.
->While SQLite functionality is compiled into rqlite (so you do not need SQLite to be installed on the host machine) [libc](https://www.gnu.org/software/libc/) is dynamically linked -- in other words, libc must be available on the host machine. This shouldn't be an issue in practise and maximises compatibility with whatever host machine you run rqlite on. Note that when running an official release on Linux rqlite currently requires glibc 2.32 or later.
+An rqlite release is [generated automatically using GitHub Actions](https://github.com/rqlite/rqlite/blob/master/.github/workflows/build-release-binaries.yml) any time a new GitHub release is created and tagged.
+>While SQLite functionality is compiled into rqlite (so you do not need SQLite to be installed on the host machine) [libc](https://www.gnu.org/software/libc/) is dynamically linked -- in other words, libc must be available on the host machine. This shouldn't be an issue in practice and maximizes compatibility with whatever host machine you run rqlite on. Note that when running an official release on Linux rqlite currently requires glibc 2.32 or later.
 
 ### Backporting fixes
 Generally speaking fixes are not backported to earlier major releases, though if the issue is very serious it may be. For the record, the backport-and-release process is as follows:
@@ -97,5 +97,5 @@ Generally speaking fixes are not backported to earlier major releases, though if
 If you open a pull request, please ensure the commit history is clean. Squash the commits into logical blocks, perhaps a single commit if that makes sense. What you want to avoid is commits such as "WIP" and "fix test" in the history. This is so we keep history on master clean and straightforward.
 
 ### Third-party libraries
-Please avoid using libaries other than those available in the standard library, unless necessary. This requirement is relaxed somewhat for software other than rqlite node software itself. To understand why this approach is taken, check out this [post](https://blog.gopheracademy.com/advent-2014/case-against-3pl/).
+Please avoid using libraries other than those available in the standard library, unless necessary. This requirement is relaxed somewhat for software other than rqlite node software itself. To understand why this approach is taken, check out this [post](https://blog.gopheracademy.com/advent-2014/case-against-3pl/).
 

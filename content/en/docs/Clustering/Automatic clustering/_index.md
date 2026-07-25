@@ -15,10 +15,11 @@ An important aspect to note is that all the autoclustering methods described bel
 
 This approach ensures a more flexible and error-tolerant approach to cluster management, making it easier to deploy and scale your rqlite deployment.
 
->In the examples below, each rqlite node is assumed to use the same network addresses for listening and for being contacted by other nodes. If this is not the case — for example, when using Bridge Networks — those addresses may differ. In such cases, set `-http-adv-addr` and `-raft-adv-addr` to specify the addresses other nodes should use.
+>In the examples below, each rqlite node is assumed to use the same network addresses for listening and for being contacted by other nodes. If this is not the case -- for example, when using Bridge Networks -- those addresses may differ. In such cases, set `-http-adv-addr` and `-raft-adv-addr` to specify the addresses other nodes should use.
 
 ## Automatic Bootstrapping
-_Automatic Bootstrapping_, allows you to start all the nodes at once, and in a very similar manner. **You just need to know the network addresses of the nodes ahead of time**. 
+_Automatic Bootstrapping_ allows you to start all the nodes at once, and in a very similar manner. **You just need to know the network addresses of the nodes ahead of time**.
+
 For simplicity, let's assume you want to run a 3-node rqlite cluster. The network addresses of the nodes are `$HOST1`, `$HOST2`, and `$HOST3`. To bootstrap the cluster, use the `-bootstrap-expect` option like so:
 
 Node 1:
@@ -51,7 +52,7 @@ where `$HOST[1-3]` are the expected network addresses of the containers.
 __________________________
 
 ## Using DNS for Bootstrapping
-You can also use the Domain Name System (DNS) to bootstrap a cluster. This is similar to automatic clustering, but doesn't require you to pass the network addresses of other nodes at the command line via `-join`. Each each rqlite node instead learns the IP addresses it should join with by resolving a hostname using DNS.
+You can also use the Domain Name System (DNS) to bootstrap a cluster. This is similar to automatic clustering, but doesn't require you to pass the network addresses of other nodes at the command line via `-join`. Each rqlite node instead learns the IP addresses it should join with by resolving a hostname using DNS.
 
 To use this feature you create a DNS record for the host `rqlite.cluster` (or whatever hostname you prefer), and create an [A Record](https://www.cloudflare.com/learning/dns/dns-records/dns-a-record/) for each rqlite node IP address. For example, if you're creating a 3-node rqlite cluster, you would create 3 A Records for `rqlite.cluster`. Each rqlite node would then use the returned IP addresses to find the other nodes on the network, then form a cluster. Of course, one of the returned IP addresses will be the node itself, but rqlite is designed to handle that.
 
@@ -77,13 +78,13 @@ DNS is then configured such that resolving `rqlite.cluster` would return 3 IP ad
 ### DNS SRV
 Using [DNS SRV](https://www.cloudflare.com/learning/dns/dns-records/dns-srv-record/) gives you more control over the rqlite node address details returned by DNS, including the Raft port each node is listening on (which is the port used for _Join_ operations). This means that unlike using just simple DNS records, each rqlite node can be listening on a different Raft port. Simple DNS records are probably good enough for most situations, however.
 
-To launch a node using DNS SRV boostrap, execute the following (example) command:
+To launch a node using DNS SRV bootstrap, execute the following (example) command:
 ```bash
 rqlited -node-id $ID  -http-addr=$HOST:4001 -raft-addr=$HOST:4002 \
 -disco-mode=dns-srv -disco-config='{"name":"rqlite.local","service":"rqlite-raft"}' \
 -bootstrap-expect 3 data
 ```
-You would launch other nodes similarly, setting `$ID` and `$HOST` as required for each node. You would launch other nodes similarly. In the example above rqlite will lookup SRV records at `_rqlite-raft._tcp.rqlite.local`
+You would launch other nodes similarly, setting `$ID` and `$HOST` as required for each node. In the example above rqlite will look up SRV records at `_rqlite-raft._tcp.rqlite.local`.
 __________________________
 
 ## Kubernetes
@@ -91,7 +92,7 @@ DNS-based approaches can be quite useful for many deployment scenarios, in parti
 __________________________
 
 ## Consul
-Another approach uses [Consul](https://www.consul.io/) to coordinate clustering. Like DNS-based autoclustering, nodes do not need to know the network addresses of other nodes ahead of time. Instead as nodes comes up they use Consul to share networking information, allowing the nodes to find each other automatically on the network.
+Another approach uses [Consul](https://www.consul.io/) to coordinate clustering. Like DNS-based autoclustering, nodes do not need to know the network addresses of other nodes ahead of time. Instead as nodes come up they use Consul to share networking information, allowing the nodes to find each other automatically on the network.
 
 Let's assume your Consul cluster is running at `http://example.com:8500`. Let's also assume that you are going to run 3 rqlite nodes, each node on a different machine. Launch your rqlite nodes as follows:
 
@@ -111,7 +112,7 @@ rqlited -node-id $ID3 -http-addr=$HOST3:4001 -raft-addr=$HOST3:4002 \
 -disco-key=rqlite1 -disco-mode=consul-kv -disco-config='{"address":"example.com:8500"}' data
 ```
 
-These three nodes will automatically find each other, and cluster. You can start the nodes in any order, and at anytime. Furthermore, the cluster Leader will continually update Consul with its address. This means other nodes can be launched later and automatically join the cluster, even if the Leader changes. `-disco-key` is optional, but using it allows you use a single Consul system to bootstrap multiple rqlite clusters -- simply use a different key for each cluster. Refer to the [_Next Steps_](#next-steps) documentation below for further details on Consul configuration.
+These three nodes will automatically find each other, and cluster. You can start the nodes in any order, and at any time. Furthermore, the cluster Leader will continually update Consul with its address. This means other nodes can be launched later and automatically join the cluster, even if the Leader changes. `-disco-key` is optional, but using it allows you to use a single Consul system to bootstrap multiple rqlite clusters -- simply use a different key for each cluster. Refer to the [_Next Steps_](#next-steps) documentation below for further details on Consul configuration.
 
 ### Docker
 It's even easier with Docker, as you can launch every node almost identically:
@@ -140,18 +141,18 @@ Node 3:
 rqlited -node-id=$ID3 -http-addr=$HOST3:4001 -raft-addr=$HOST3:4002 \
 -disco-key=rqlite1 -disco-mode=etcd-kv -disco-config='{"endpoints":["example.com:2379"]}' data
 ```
- Like with Consul autoclustering, the cluster Leader will continually report its address to etcd. Again `-disco-key` is optional, but using it allows you use a single etcd system to bootstrap multiple rqlite clusters -- simply use a different key for each cluster. Refer to the [_Next Steps_](#next-steps) documentation below for further details on etcd configuration.
+Like with Consul autoclustering, the cluster Leader will continually report its address to etcd. Again `-disco-key` is optional, but using it allows you to use a single etcd system to bootstrap multiple rqlite clusters -- simply use a different key for each cluster. Refer to the [_Next Steps_](#next-steps) documentation below for further details on etcd configuration.
 
- ### Docker
+### Docker
 ```bash
 docker run rqlite/rqlite -disco-mode=etcd-kv -disco-config='{"endpoints":["example.com:2379"]}'
 ```
 
 ## Next Steps
 ### Customizing your configuration
-For detailed control over Discovery configuration `-disco-confg` can either be an actual JSON string, or a path to a file containing a JSON-formatted configuration. The former option may be more convenient if the configuration you need to supply is very short, as in the examples above. The Discovery configuration also supports _Enviroment Variable_ expansion, so any variable starting with `$` will be replaced with that value from the environment.
+For detailed control over Discovery configuration `-disco-config` can either be an actual JSON string, or a path to a file containing a JSON-formatted configuration. The former option may be more convenient if the configuration you need to supply is very short, as in the examples above. The Discovery configuration also supports _Environment Variable_ expansion, so any variable starting with `$` will be replaced with that value from the environment.
 
-The examples above demonstrates simple configurations, and most real deployments may require more detailed configuration. For example, your Consul system might be reachable only over HTTPS. To more fully configure rqlite for Discovery, consult the relevant configuration specification below. You must create a JSON-formatted configuration which matches that described in the source code.
+The examples above demonstrate simple configurations, but most real deployments will require more detailed configuration. For example, your Consul system might be reachable only over HTTPS. To more fully configure rqlite for Discovery, consult the relevant configuration specification below. You must create a JSON-formatted configuration which matches that described in the source code.
 
 - [Full Consul configuration description](https://github.com/rqlite/rqlite-disco-clients/blob/main/consul/config.go)
 - [Full etcd configuration description](https://github.com/rqlite/rqlite-disco-clients/blob/main/etcd/config.go)

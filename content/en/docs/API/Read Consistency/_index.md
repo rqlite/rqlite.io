@@ -2,19 +2,19 @@
 ---
 title: "Read Consistency"
 linkTitle: "Read Consistency"
-description: "rqlite support various levels of Read Consistency"
+description: "rqlite supports various levels of Read Consistency"
 weight: 20
 date: 2017-01-05
 ---
 
 _You do not need to know the information on this page to use rqlite well, it's mostly for advanced users. rqlite has also been run through Jepsen-style testing. You can read about that [here](https://github.com/wildarch/jepsen.rqlite/blob/main/doc/blog.md)._
 
-Even though serving queries does not require Raft consensus (because the database is not changed), [queries should generally be served by the cluster Leader](https://github.com/rqlite/rqlite/issues/5). Why is this? Because, without this check, queries on a node could return results that are out-of-date i.e. _stale_.  This could happen for one, or both, of the following two reasons:
+Even though serving queries does not require Raft consensus (because the database is not changed), [queries should generally be served by the cluster Leader](https://github.com/rqlite/rqlite/issues/5). Why is this? Because, without this check, queries on a node could return results that are out-of-date i.e. _stale_. This could happen for one, or both, of the following two reasons:
 
- * The node that received your request , while still part of the cluster, has fallen behind the Leader in terms of updates to its underlying database.
+ * The node that received your request, while still part of the cluster, has fallen behind the Leader in terms of updates to its underlying database.
  * The node is no longer part of the cluster, and has stopped receiving Raft log updates.
 
-This is why rqlite offers selectable read consistency levels of _weak_ (the default), _linearizable_, _strong_, and _none_. Each is explained below, and examples of each are shown at the end of this page.
+This is why rqlite offers selectable read consistency levels of _Weak_ (the default), _Linearizable_, _Strong_, and _None_. Each is explained below, and examples of each are shown at the end of this page.
 
 ## Weak
 >_Weak_ consistency is used if you don't specify any level, or if an unrecognized level is specified -- and it's almost certainly the right choice for your application.
@@ -23,85 +23,85 @@ _Weak_ instructs the node receiving the read request to check that it is the Lea
 
 _Weak_ reads are usually very fast, but have some potential shortcomings, which are described below.
 
-A node checks if it's the Leader by checking state local to the node, so this check is very fast. However there is a small window of time (less than a second by default) during which a node may think it's the Leader, but has actually been deposed, a new Leader elected, and other writes have taken place on the cluster. If this happens the node may not be quite up-to-date with the rest of cluster, and stale data may be returned. Technically this means that _weak_ reads are not [_Linearizable_](https://aphyr.com/posts/313-strong-consistency-models).
+A node checks if it's the Leader by checking state local to the node, so this check is very fast. However there is a small window of time (less than a second by default) during which a node may think it's the Leader, but has actually been deposed, a new Leader elected, and other writes have taken place on the cluster. If this happens the node may not be quite up-to-date with the rest of the cluster, and stale data may be returned. Technically this means that _Weak_ reads are not [_Linearizable_](https://aphyr.com/posts/313-strong-consistency-models).
 
-In practise this type of inconsistency is unlikely to happen, which is why _Weak_ is the right choice for most applications.
+In practice this type of inconsistency is unlikely to happen, which is why _Weak_ is the right choice for most applications.
 
 ## Linearizable
 > Linearizable reads implement the process described in section 6.4 of the [Raft dissertation](https://raw.githubusercontent.com/ongardie/dissertation/refs/heads/master/online.pdf) titled _Processing read-only queries more efficiently_.
 
-To avoid the issues associated with _weak_ consistency, rqlite also offers _linearizable_.
+To avoid the issues associated with _Weak_ consistency, rqlite also offers _Linearizable_.
 
- This type of read is, as the name suggests, linearizable because these types of reads reflect a state of the system sometime after the read was initiated; each read will at least return the results of the latest committed write[^1]. _Linearizable_ reads are reasonably fast, though measurably slower than _weak_.
+This type of read is, as the name suggests, linearizable: such reads reflect a state of the system at some point after the read was initiated, and each read will at least return the results of the latest committed write[^1]. _Linearizable_ reads are reasonably fast, though measurably slower than _Weak_.
 
-How does the node guarantee linearizable reads? It does this as follows: when the node receives the read request it records the Raft _Commit Index_, and as well as checking **local** state to see if it is the Leader. Next the node heartbeats with the Followers, and waits until it receives a quorum of responses. Finally -- and this is critical -- the Leader waits until at least the write request contained in the previously recorded commit index is applied to the SQLite database. Once this happens it then performs the read.
+How does the node guarantee linearizable reads? It does this as follows: when the node receives the read request it records the Raft _Commit Index_, as well as checking **local** state to see if it is the Leader. Next the node heartbeats with the Followers, and waits until it receives a quorum of responses. Finally -- and this is critical -- the Leader waits until the write request at the previously recorded commit index has been applied to the SQLite database. Once this happens it then performs the read.
 
-Linearizable reads means the Leader contacts at least a quorum of nodes, and will therefore increase query response times. But since the Raft log is not actually involved, read performance is only dependant on the network performance between the nodes.
+Linearizable reads mean the Leader contacts at least a quorum of nodes, and will therefore increase query response times. But since the Raft log is not actually involved, read performance is only dependent on the network performance between the nodes.
 
 ## None
-With _none_, the node receiving your read request simply queries its local SQLite database, and does not perform any Leadership or other cluster-contact checks -- in fact, the node could be completely disconnected from the rest of the cluster, but the query will still be successful. This offers the absolute fastest query response, but suffers from the potential issues outlined above, whereby there is a chance of _Stale Reads_ if the Leader changes during the query, or if the node has become disconnected from the cluster.
-> _none_ consistency is required if a node restarts and, for whatever reason, can't contact the cluster Leader. Using _none_ will instruct the node to query the database as it finds it after restarting. If you select any other consistency level the node will return an error. While the query results may be stale, this may be acceptable depending on your application.
+With _None_, the node receiving your read request simply queries its local SQLite database, and does not perform any Leadership or other cluster-contact checks -- in fact, the node could be completely disconnected from the rest of the cluster, but the query will still be successful. This offers the absolute fastest query response, but suffers from the potential issues outlined above, whereby there is a chance of _Stale Reads_ if the Leader changes during the query, or if the node has become disconnected from the cluster.
+> _None_ consistency is required if a node restarts and, for whatever reason, can't contact the cluster Leader. Using _None_ will instruct the node to query the database as it finds it after restarting. If you select any other consistency level the node will return an error. While the query results may be stale, this may be acceptable depending on your application.
 
 ### Limiting read staleness
-You can tell the node which receives the read rquest not to return results if the node has been disconnected from the cluster for longer than a specified duration. If a read request sets the query parameter `freshness` to a [Go duration string](https://golang.org/pkg/time/#Duration), the node serving the read will check that less time has passed since it was last in contact with the Leader, than that specified via freshness. If more time has passed the node will return an error. This approach can be useful if you want to maximize successful query operations, but are willing to tolerate occassional, short-lived networking issues between nodes.
+You can tell the node which receives the read request not to return results if the node has been disconnected from the cluster for longer than a specified duration. If a read request sets the query parameter `freshness` to a [Go duration string](https://golang.org/pkg/time/#Duration), the node serving the read will check that less time has passed since it was last in contact with the Leader, than that specified via freshness. If more time has passed the node will return an error. This approach can be useful if you want to maximize successful query operations, but are willing to tolerate occasional, short-lived networking issues between nodes.
 
-It's important to note that the `freshness` **does not guarantee** that the node is caught up with the Leader, only that it is contact with the Leader. But if a node is in contact with the Leader, it's usually caught up with all changes that have taken place on the cluster. To check if node is actually caught up with Leader, use `freshness_strict` in addition to the `freshness` query parameter.
+It's important to note that the `freshness` **does not guarantee** that the node is caught up with the Leader, only that it is in contact with the Leader. But if a node is in contact with the Leader, it's usually caught up with all changes that have taken place on the cluster. To check if the node is actually caught up with the Leader, use `freshness_strict` in addition to the `freshness` query parameter.
 
-> **The `freshness` parameter is always ignored if the node serving the query is the Leader**. Any read, when served by the Leader, is always going to be within any possible freshness bound.  `freshness` is also ignored for all consistency levels except `none`, and is also ignored if set to zero. 
+> **The `freshness` parameter is always ignored if the node serving the query is the Leader**. Any read, when served by the Leader, is always going to be within any possible freshness bound. `freshness` is also ignored for all consistency levels except `none`, and is also ignored if set to zero.
 
-If you decide to deploy [read replicas](/docs/clustering/read-replicas/) however, _none_ combined with `freshness` can be particularly effective at adding read scalability to your system. You can use lots of read replicas, yet be sure that a given node serving a request has not been disconnected from the cluster for too long.
+If you decide to deploy [read replicas](/docs/clustering/read-replicas/) however, _None_ combined with `freshness` can be particularly effective at adding read scalability to your system. You can use lots of read replicas, yet be sure that a given node serving a request has not been disconnected from the cluster for too long.
 
 #### freshness_strict
-As explained above `freshness` just checks that that the node has been in contact with the Leader within the specified time. If you also want the node to check that the data it last received is not out-of-date by (at most) the `freshness` interval, you should also add the `freshness_strict` flag as a query parameter. **Note that this check works by comparing timestamps generated by the Leader to those generated by the node receiving the read request**. Any clock skew between the nodes may therefore affect the correctness of the data returned by the node. You are responsible for controlling the amount of clock skew across your rqlite cluster.
+As explained above `freshness` just checks that the node has been in contact with the Leader within the specified time. If you also want the node to check that the data it last received is not out-of-date by (at most) the `freshness` interval, you should also add the `freshness_strict` flag as a query parameter. **Note that this check works by comparing timestamps generated by the Leader to those generated by the node receiving the read request**. Any clock skew between the nodes may therefore affect the correctness of the data returned by the node. You are responsible for controlling the amount of clock skew across your rqlite cluster.
 
- See the examples at the end of this page to learn how to control _freshness_.
+See the examples at the end of this page to learn how to control _freshness_.
 
 ## Auto
-_Auto_ is not an actual Read Consistency level. Instead if a client selects this level during a read request, the receiving node will automatically select the level which is (usually) most sensible for the node's type. In the case of a read replica `None` is chosen as the level. In all other cases `Weak` is the chosen as the level.
+_Auto_ is not an actual Read Consistency level. Instead if a client selects this level during a read request, the receiving node will automatically select the level which is (usually) most sensible for the node's type. In the case of a read replica _None_ is chosen as the level. In all other cases _Weak_ is chosen as the level.
 
 Using `auto` can simplify clients as clients do not need to know ahead of time whether they will be talking to a read replica or a voting node. A client can just select `auto`.
 
 ## Strong
 >_Strong_ consistency has little use in production systems, as the reads are costly, consume disk space, and do not offer any benefit over _Linearizable_ reads. **Don't use _Strong_ in production code**. _Strong_ reads can be useful in certain testing scenarios however.
 
-rqlite also offers a consistency level known as _strong_. In this mode, the node receiving the request ensures that all committed entries in the Raft log have also been applied to the SQLite database at the time the query is executed. _Strong_ reads accomplish this by sending the query through the actual Raft log. This will, of course, involve the Leader contacting at least a quorum of nodes, some disk IO, and will therefore increase query response times. _Strong_ reads are linearizable.
+rqlite also offers a consistency level known as _Strong_. In this mode, the node receiving the request ensures that all committed entries in the Raft log have also been applied to the SQLite database at the time the query is executed. _Strong_ reads accomplish this by sending the query through the actual Raft log. This will, of course, involve the Leader contacting at least a quorum of nodes, some disk I/O, and will therefore increase query response times. _Strong_ reads are linearizable.
 
-If a query request is sent to a Follower, and _strong_ consistency is specified, the Follower will transparently forward the request to the Leader. The Follower waits for the response from the Leader, and then returns that response to the client.
+If a query request is sent to a Follower, and _Strong_ consistency is specified, the Follower will transparently forward the request to the Leader. The Follower waits for the response from the Leader, and then returns that response to the client.
 
 ## Which should I use?
-_Weak_ is usually the right choice for your application, and is the default read consistency level. Unless your cluster Leader is continually changing while you're actually executing writes there will be never be any difference between _weak_ and _linearizable_ -- but using _linearizable_ will result in slower queries, which is not what most people want. However _linearizable_ has its uses, and you may need it depending on your application requirements.
+_Weak_ is usually the right choice for your application, and is the default read consistency level. Unless your cluster Leader is continually changing while you're actually executing writes there will never be any difference between _Weak_ and _Linearizable_ -- but using _Linearizable_ will result in slower queries, which is not what most people want. However _Linearizable_ has its uses, and you may need it depending on your application requirements.
 
-One exception to the rule above is if you're querying read replicas. In that case you probably want to specify _None_, possibly setting the `freshness` controls too. If you set a read consistency level other than `None` when querying a read replica then the replica will simply forward the request to the Leader (which negates the read-scaling benefits of the replica).
->If you are running a cluster which has some read replicas, and you want to implement the Read Consistency policy describe above in an easy manner, check out `auto` Read Consistency.
+One exception to the rule above is if you're querying read replicas. In that case you probably want to specify _None_, possibly setting the `freshness` controls too. If you set a read consistency level other than _None_ when querying a read replica then the replica will simply forward the request to the Leader (which negates the read-scaling benefits of the replica).
+>If you are running a cluster which has some read replicas, and you want to implement the Read Consistency policy described above in an easy manner, check out `auto` Read Consistency.
 
-**_Strong_ is unsuitable for production systems**. Use _linearizable_ instead. _Strong_ is slow, and puts measurable load on the cluster. However, it can be quite useful in very specific testing scenarios, as it removes any uncertainty regarding the difference between _committed_ changes and _applied_ changes. Specifically when you use _Strong_ all currently committed entries in the Raft log have also been applied to the SQLite database at the time the read request is executed. 
+**_Strong_ is unsuitable for production systems**. Use _Linearizable_ instead. _Strong_ is slow, and puts measurable load on the cluster. However, it can be quite useful in very specific testing scenarios, as it removes any uncertainty regarding the difference between _committed_ changes and _applied_ changes. Specifically when you use _Strong_ all currently committed entries in the Raft log have also been applied to the SQLite database at the time the read request is executed.
 
 ## How do I specify read consistency?
-To explicitly select consistency, set the query param `level` to the desired level. However, you should use _none_ with read replicas, unless you want those nodes to actually forward the query to the Leader.
+To explicitly select consistency, set the query param `level` to the desired level. However, you should use _None_ with read replicas, unless you want those nodes to actually forward the query to the Leader.
 
 ### Example queries
-Examples of enabling each read consistency level for a simple query is shown below.
+Examples of enabling each read consistency level for a simple query are shown below.
 
 ```bash
 # Default query options. The read request will be served by the node if it believes
-# it is the leader, otherwise it transparently forwards the request to the Leader, and
+# it is the Leader, otherwise it transparently forwards the request to the Leader, and
 # waits for a response from the Leader. Same as weak.
 curl -G 'localhost:4001/db/query' --data-urlencode 'q=SELECT * FROM foo'
 
 # The read request will be served by the node if it believes it is the Leader,
-# otherwise it wil forward the request to the Leader. This is the default if
+# otherwise it will forward the request to the Leader. This is the default if
 # no read consistency is specified.
 curl -G 'localhost:4001/db/query?level=weak' --data-urlencode 'q=SELECT * FROM foo'
 
 # The read request will be served by the node if it is the Leader, and if it
 # remained the Leader throughout the processing of the read. If the node
-# receiving the query is not the the Leader, the request will be transparently
+# receiving the query is not the Leader, the request will be transparently
 # forwarded to the Leader.
 curl -G 'localhost:4001/db/query?level=linearizable' --data-urlencode 'q=SELECT * FROM foo'
 
 # The read request will be served by the node if it is the Leader, and if it
 # remained the Leader throughout the processing of the read. If the node
-# receiving the query is not the the Leader, the request will be transparently
+# receiving the query is not the Leader, the request will be transparently
 # forwarded to the Leader. If a linearizable read is not available within 1
 # second of receiving the read request, an error will be returned.
 curl -G 'localhost:4001/db/query?level=linearizable&linearizable_timeout=1s' --data-urlencode 'q=SELECT * FROM foo'
@@ -121,14 +121,14 @@ curl -G 'localhost:4001/db/query?level=none&freshness=1s' --data-urlencode 'q=SE
 # Query the node, telling it simply to read the SQLite database directly.
 # The read request will be successful only if the node last heard from the
 # Leader no more than 1 second ago, and if the most recently received data
-# was appended by the Leader to the log within 1 second ago, relative to the
-# node's local clock.
+# was appended to the log by the Leader no more than 1 second ago, relative
+# to the node's local clock.
 curl -G 'localhost:4001/db/query?level=none&freshness=1s&freshness_strict' --data-urlencode 'q=SELECT * FROM foo'
 
 # The read request will be processed by the Leader and will be successful
 # only if the Leader maintained leadership during the entirety of query
 # processing. Zero chance of stale reads but query processing will be
-# relatively slow. If the node receiving the query is not the the Leader,
+# relatively slow. If the node receiving the query is not the Leader,
 # the request will be transparently forwarded to the Leader.
 curl -G 'localhost:4001/db/query?level=strong' --data-urlencode 'q=SELECT * FROM foo'
 

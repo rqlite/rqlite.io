@@ -6,10 +6,10 @@ description: "Queued Writes allow you to trade durability for performance"
 weight: 10
 date: 2017-01-05
 ---
-Normally rqlite waits until a write request has been safely committed to a majority of SQLite databases before returning a response to the client. _Queued Writes_ is an option that allows write requests to complete much more quickly, but there are some trade offs (which are described later).
+Normally rqlite waits until a write request has been safely committed to a majority of SQLite databases before returning a response to the client. _Queued Writes_ is an option that allows write requests to complete much more quickly, but there are some trade-offs (which are described later).
 
 ## Usage
-Queued Writes are enabled via a special API flag, which will instruct rqlite to queue up write-requests and execute them asynchronously. This allows clients to send multiple distinct requests to a rqlite node, and have rqlite automatically do the batching and bulk insert for the client, without the client doing any extra work. The net result is as if the client wrote a single Bulk request containing all the queued statements. For the same reason that using the [Bulk API](/docs/api/bulk-api/) results in much higher write performance, **using the _Queued Writes_ API will also result in much higher write performance**.
+Queued Writes are enabled via a special API flag, which will instruct rqlite to queue up write-requests and execute them asynchronously. This allows clients to send multiple distinct requests to an rqlite node, and have rqlite automatically do the batching and bulk insert for the client, without the client doing any extra work. The net result is as if the client wrote a single Bulk request containing all the queued statements. For the same reason that using the [Bulk API](/docs/api/bulk-api/) results in much higher write performance, **using the _Queued Writes_ API will also result in much higher write performance**.
 
 This functionality is best illustrated by an example, showing two requests being queued.
 ```bash
@@ -30,9 +30,9 @@ $ curl -XPOST 'localhost:4001/db/execute?queue' -H "Content-Type: application/js
 }
 $
 ```
-Setting the URL query parameter `queue` enables queuing mode, adding the request data to an internal queue whch rqlite manages for you. Once the request has been queued, the response is returned to the client.
+Setting the URL query parameter `queue` enables queuing mode, adding the request data to an internal queue which rqlite manages for you. Once the request has been queued, the response is returned to the client.
 
-rqlite will later merge queued requests, once a batch-size of them has been queued on the node (or a configurable timeout expires), and execute them as though they had been both contained in a single request. 
+rqlite will later merge queued requests, once a batch-size of them has been queued on the node (or a configurable timeout expires), and execute them as though they had all been contained in a single request.
 
 Each response includes a monotonically-increasing `sequence_number`, which allows you to track when this request is actually persisted to the Raft log. The `/status` [diagnostics](/docs/guides/monitoring-rqlite) endpoint includes the sequence number of the latest request successfully written to Raft.
 
@@ -45,15 +45,15 @@ $ curl -XPOST 'localhost:4001/db/execute?queue&wait&timeout=10s' -H "Content-Typ
     ["INSERT INTO foo(name) VALUES(?)", "bob"]
 ]'
 ```
-This example also shows setting a timeout. If the queue has not emptied after this time, the request will return with an error. If not set, the time out is set to 30 seconds.
+This example also shows setting a timeout. If the queue has not emptied after this time, the request will return with an error. If not set, the timeout is 30 seconds.
 
-### Configuring queue behaviour
-The behaviour of the queue rqlite uses to batch the requests is configurable at rqlite launch time. You can change the minimum number of requests that must be present in the queue before they are written, as well as the timeout after which whatever is in the queue will be written regardless of queue size. Pass `-h` to `rqlited` to see the queue defaults, and list all command-line options.
+### Configuring queue behavior
+The behavior of the queue rqlite uses to batch the requests is configurable at rqlite launch time. You can change the minimum number of requests that must be present in the queue before they are written, as well as the timeout after which whatever is in the queue will be written regardless of queue size. Pass `-h` to `rqlited` to see the queue defaults, and list all command-line options.
 
 ## Trade-offs
-Like most databases there is a trade-off to be made between write-performance and durability, but for some applications these trade-offs are worth it.
+As with most databases, there is a trade-off to be made between write-performance and durability, but for some applications these trade-offs are worth it.
 
-Because the API returns immediately after queuing the requests **but before the data is commited to the Raft log** there is a small risk of data loss in the event the node crashes before queued data is persisted. You can make this window arbitrarily small by adjusting the queuing parameters, at the cost of write performance.
+Because the API returns immediately after queuing the requests **but before the data is committed to the Raft log** there is a small risk of data loss in the event the node crashes before queued data is persisted. You can make this window arbitrarily small by adjusting the queuing parameters, at the cost of write performance.
 
 In addition, when the API returns `HTTP 200 OK`, that simply acknowledges that the data has been queued correctly. It does not indicate that the SQL statements will actually be applied successfully to the database. Be sure to check the node's logs and diagnostics if you have any concerns about failed queued writes.
 

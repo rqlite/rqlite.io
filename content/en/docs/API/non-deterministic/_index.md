@@ -7,7 +7,7 @@ date: 2017-01-05
 ---
 
 ## Understanding the problem
-rqlite peforms _statement-based replication_. This means that every SQL statement is usually stored in the Raft log exactly in the form it was received. Each rqlite node then reads the Raft log and applies the SQL statements it finds there to its own local copy of SQLite.
+rqlite performs _statement-based replication_. This means that every SQL statement is usually stored in the Raft log exactly in the form it was received. Each rqlite node then reads the Raft log and applies the SQL statements it finds there to its own local copy of SQLite.
 
 But if a SQL statement contains a [non-deterministic function](https://www.sqlite.org/deterministic.html), this type of replication can result in different SQLite data under each node -- which is not meant to happen. For example, the following statement could result in a different SQLite database under each node:
 ```
@@ -16,17 +16,18 @@ INSERT INTO foo (n) VALUES(random());
 This is because `RANDOM()` is evaluated by each node independently, and `RANDOM()` will almost certainly return a different value on each node.
 
 ## How rqlite solves this problem
-An rqlite node addresses this issue by _rewriting_ received SQL statements that contain certain non-deterministic functions, evaluating the non-determinstic factor, before writing the statement to the Raft log. The rewritten statement is then applied to the SQLite database as usual.
+An rqlite node addresses this issue by _rewriting_ received SQL statements that contain certain non-deterministic functions, evaluating the non-deterministic factor, before writing the statement to the Raft log. The rewritten statement is then applied to the SQLite database as usual.
 
 ## What does rqlite rewrite?
 
 ### `RANDOM()`
-Any SQL statement containing [`RANDOM()`](https://www.sqlite.org/lang_corefunc.html#random) is rewritten following these rules:
+A SQL statement containing [`RANDOM()`](https://www.sqlite.org/lang_corefunc.html#random) is rewritten if **either** of the following is true:
 - The statement is part of a write-request i.e. the request is sent to the `/db/execute` HTTP API.
-- The statement is part of a read-request i.e. the request is sent to the `/db/query` HTTP API **and** the read-request is made with _strong_ read consistency.
-- If `RANDOM()` is used as an `ORDER BY` qualifier it is not rewritten.
-  - This does mean that certain `INSERT` statements are not rewritten e.g. `INSERT INTO foo (x) SELECT x FROM bar ORDER BY RANDOM()`. Executing such a statement may result in different data under each node. 
-- The HTTP request containing the SQL statement does not have the query parameter `norwrandom` present.
+- The statement is part of a read-request i.e. the request is sent to the `/db/query` HTTP API **and** the read-request is made with _Strong_ read consistency.
+
+It is **not** rewritten if **either** of the following is true:
+- `RANDOM()` is used as an `ORDER BY` qualifier. This does mean that certain `INSERT` statements are not rewritten e.g. `INSERT INTO foo (x) SELECT x FROM bar ORDER BY RANDOM()`. Executing such a statement may result in different data under each node.
+- The HTTP request containing the SQL statement has the query parameter `norwrandom` present.
 
 `RANDOM()` is replaced with a random integer between -9223372036854775808 and +9223372036854775807 by the rqlite node that first receives the SQL statement.
 
@@ -46,7 +47,7 @@ curl -XPOST 'localhost:4001/db/execute' -H "Content-Type: application/json" -d '
 # RANDOM() rewriting explicitly disabled at request-time
 curl -XPOST 'localhost:4001/db/execute?norwrandom' -H "Content-Type: application/json" -d '[
     "INSERT INTO foo(id, age) VALUES(1234, RANDOM())"
-]' 
+]'
 
 # Not rewritten
 curl -G 'localhost:4001/db/query' --data-urlencode 'q=SELECT * FROM foo WHERE id = RANDOM()'
@@ -60,8 +61,8 @@ An example of a non-deterministic time function in SQLite is:
 
 `INSERT INTO datetime_text (d1) VALUES(datetime('now'))`
 
-This is non-deterministic because `now` is evaluated at the the moment of SQLite execution, and its value will change with each run. To ensure determinism, rqlite rewrites any statement containing [SQLite date and time functions](https://www.sqlite.org/lang_datefunc.html) before it is added to the Raft log. Specifically, it replaces occurrences of `now` with the current time at the moment the node receives the request containing the statement. This guarantees that the version stored in the Raft log remains constant.
->Like RANDOM, only write requests, and queries with _Strong_ read consistency, are rewritten.
+This is non-deterministic because `now` is evaluated at the moment of SQLite execution, and its value will change with each run. To ensure determinism, rqlite rewrites any statement containing [SQLite date and time functions](https://www.sqlite.org/lang_datefunc.html) before it is added to the Raft log. Specifically, it replaces occurrences of `now` with the current time at the moment the node receives the request containing the statement. This guarantees that the version stored in the Raft log remains constant.
+>Like `RANDOM()`, only write requests, and queries with _Strong_ read consistency, are rewritten.
 
 #### Examples
 ```bash
@@ -70,7 +71,7 @@ curl -XPOST 'localhost:4001/db/execute' -H "Content-Type: application/json" -d '
     "INSERT INTO datetime_text (d1) VALUES(unixepoch('now'))"
 ]'
 
-# Not rewritten, as rewriting is explicity disabled at request-time
+# Not rewritten, as rewriting is explicitly disabled at request-time
 curl -XPOST 'localhost:4001/db/execute?norwtime' -H "Content-Type: application/json" -d '[
     "INSERT INTO datetime_text (d1) VALUES(unixepoch('now'))"
 ]'
@@ -82,7 +83,7 @@ curl -XPOST 'localhost:4001/db/execute' -H "Content-Type: application/json" -d '
 ```
 
 #### CURRENT_TIME*
-Using `CURRENT_TIMESTAMP`, `CURRENT_TIME`, and `CURRENT_DATE` can also be problematic, depending on your use case. In particular using `CURRENT_TIMESTAMP` (for example) as a default value for a column will mean different values for the same row on different nodes, unless the column is explicitly set by system writing to rqlite. To avoid this you should avoid using default timestamps, and explicitly set them in the row data when writing to rqlite.
+Using `CURRENT_TIMESTAMP`, `CURRENT_TIME`, and `CURRENT_DATE` can also be problematic, depending on your use case. In particular using `CURRENT_TIMESTAMP` (for example) as a default value for a column will mean different values for the same row on different nodes, unless the column is explicitly set by the system writing to rqlite. To avoid this, do not rely on default timestamps -- set them explicitly in the row data when writing to rqlite.
 
 ## Try it out
 You can examine how rqlite rewrites SQL statements, but without making any changes to the database. Send any SQL statement to the special endpoint `/db/sql` and rqlite will return the rewritten statement. For example:

@@ -94,7 +94,7 @@ th {
 	<tr>
 		<td><code>-http-allow-origin</code></td>
 		<td>Value to set for Access-Control-Allow-Origin HTTP header.
-		    <br><br>You usually need to set this if if you&#39;re using a browser-based application to interact with rqlite. You should set it to the the website that is serving the browser-based application e.g. http-allow-origin=&#34;https://example.com&#34;.
+		    <br><br>You usually need to set this if you&#39;re using a browser-based application to interact with rqlite. You should set it to the website that is serving the browser-based application e.g. -http-allow-origin=&#34;https://example.com&#34;.
 </td>
 	</tr>
 	<tr>
@@ -142,7 +142,7 @@ th {
 	<tr>
 		<td><code>-node-ca-cert</code></td>
 		<td>Path to X.509 CA certificate for node-to-node encryption.
-		    <br><br>If this path is configured and nodes use TLS for Raft connections, then any certificate presented during connection setup must be signed by this Certificate Authority - whether it&#39;s the node&#39;s certificate in one-way TLS or both certificates in mutual TLS.
+		    <br><br>If this path is configured and nodes use TLS for Raft connections, then any certificate presented during connection setup must be signed by this Certificate Authority -- whether it&#39;s the node&#39;s certificate in one-way TLS or both certificates in mutual TLS.
 </td>
 	</tr>
 	<tr>
@@ -159,7 +159,7 @@ th {
 	</tr>
 	<tr>
 		<td><code>-node-no-verify</code></td>
-		<td>Skip verification of any presented certificate..
+		<td>Skip verification of any presented certificate.
 		    <br><br>Validity is defined as signed by an acceptable CA, is unexpired, and that the hostname in the certificate matches the hostname of the connecting node. This applies whether it&#39;s the node&#39;s certificate in one-way TLS or both certificates in mutual TLS.
 </td>
 	</tr>
@@ -224,7 +224,7 @@ th {
 	<tr>
 		<td><code>-join-as</code></td>
 		<td>Username in authentication file to join as. If not set, joins anonymously.
-		    <br><br>If joining a cluster requires credentials you can a tell a node to read those credentials from a credential file, for the specified user. By using this flag you can avoid setting credentials in the command line you pass to rqlite, which can expose those credentials if someone has access to the process table.
+		    <br><br>If joining a cluster requires credentials you can tell a node to read those credentials from a credential file, for the specified user. By using this flag you can avoid setting credentials in the command line you pass to rqlite, which can expose those credentials if someone has access to the process table.
 </td>
 	</tr>
 	<tr>
@@ -236,7 +236,7 @@ th {
 	<tr>
 		<td><code>-bootstrap-expect-timeout</code></td>
 		<td>Maximum time for bootstrap process.
-		    <br><br>If a bootstrap operation does not succeed with this time, cluster formation will abort.
+		    <br><br>If a bootstrap operation does not succeed within this time, cluster formation will abort.
 </td>
 	</tr>
 	<tr>
@@ -262,12 +262,12 @@ th {
 	<tr>
 		<td><code>-db-max-ro-conns</code></td>
 		<td>Maximum number of read-only connections to database.
-		    <br><br>This places a limit of the number of read queries the node can service concurrently. If this is not bounded query load could cause the node to hit the operating system&#39;s per-process thread limit and crash the node. Setting this to zero means there is no limit.
+		    <br><br>This places a limit on the number of read queries the node can service concurrently. If this is not bounded query load could cause the node to hit the operating system&#39;s per-process thread limit and crash the node. Setting this to zero means there is no limit.
 </td>
 	</tr>
 	<tr>
 		<td><code>-auto-vacuum-int</code></td>
-		<td>Period between automatic VACUUMs. It not set, not enabled.
+		<td>Period between automatic VACUUMs. If not set, not enabled.
 		    <br><br>If set to a non-zero interval rqlite will execute VACUUM on the specified interval. This can help reduce SQLite disk usage, but writes are blocked while a VACUUM takes place. See the SQLite documentation for more information.
 </td>
 	</tr>
@@ -286,19 +286,19 @@ th {
 	<tr>
 		<td><code>-raft-non-voter</code></td>
 		<td>Configure as non-voting node.
-		    <br><br>Adding non-voting (also known as read replica) nodes can help scale out query performance. Read-replica nodes don&#39;t particpate in the Raft consensus system, but do receive the same stream of updates from the Leader as voting nodes do. This can also service write requests, and will forward the requests to the Leader.
+		    <br><br>Adding non-voting (also known as read replica) nodes can help scale out query performance. Read-replica nodes don&#39;t participate in the Raft consensus system, but do receive the same stream of updates from the Leader as voting nodes do. They can also service write requests, forwarding those requests to the Leader.
 </td>
 	</tr>
 	<tr>
 		<td><code>-raft-snap</code></td>
 		<td>Number of outstanding log entries which triggers Raft snapshot.
-		    <br><br>Snapshotting is a critical part of the Raft subsystem, which involves storing a copy of the SQLite database and then truncating the Raft log. Writes are blocked during the Snapshot process, but more regular snapshotting can mean faster start-up times, as there will generally be fewer logs to apply when a node restarts.
+		    <br><br>Snapshotting is a critical part of the Raft subsystem, which involves storing a copy of the SQLite database and then truncating the Raft log. Writes are blocked during the Snapshot process, but more frequent snapshotting can mean faster start-up times, as there will generally be fewer logs to apply when a node restarts.
 </td>
 	</tr>
 	<tr>
 		<td><code>-raft-snap-wal-size</code></td>
 		<td>SQLite WAL file size in bytes which triggers Raft snapshot. Set to 0 to disable.
-		    <br><br>rqlite, by default, will also trigger a snapshot if the WAL gets larger than 4MB. Large SQLite WAL files can decrease query performance, and since snapshotting involves checkpointing the WAL file, snapshotting is an effective way to limit WAL size. However writes are blocked during the snapshotting process, so it&#39;s trade-off.
+		    <br><br>rqlite, by default, will also trigger a snapshot if the WAL gets larger than 4MB. Large SQLite WAL files can decrease query performance, and since snapshotting involves checkpointing the WAL file, snapshotting is an effective way to limit WAL size. However writes are blocked during the snapshotting process, so it&#39;s a trade-off.
 </td>
 	</tr>
 	<tr>
@@ -310,7 +310,7 @@ th {
 	<tr>
 		<td><code>-raft-leader-lease-timeout</code></td>
 		<td>Raft leader lease timeout. Use 0s for Raft default.
-		    <br><br>This is used to control how long the &#34;lease&#34; lasts for being the Leader without being able to contact a quorum If a Leader reaches this interval without contact, it will step down as Leader.
+		    <br><br>This is used to control how long the &#34;lease&#34; lasts for being the Leader without being able to contact a quorum. If a Leader reaches this interval without contact, it will step down as Leader.
 </td>
 	</tr>
 	<tr>
@@ -322,7 +322,7 @@ th {
 	<tr>
 		<td><code>-raft-commit-timeout</code></td>
 		<td>Raft commit timeout.
-		    <br><br>Specifies the time without an Apply operation before the leader sends an AppendEntry RPC to followers, to ensure a timely commit of log entries.
+		    <br><br>Specifies the time without an Apply operation before the Leader sends an AppendEntry RPC to Followers, to ensure a timely commit of log entries.
 </td>
 	</tr>
 	<tr>
@@ -338,7 +338,7 @@ th {
 	<tr>
 		<td><code>-raft-remove-shutdown</code></td>
 		<td>Shutdown Raft if node removed from cluster.
-		    <br><br>This ensures a node doesn&#39;t self-elect itself as Leader if it finds itself as the sole node in a single-node cluster.
+		    <br><br>This ensures a node doesn&#39;t elect itself as Leader if it finds itself as the sole node in a single-node cluster.
 </td>
 	</tr>
 	<tr>
@@ -350,7 +350,7 @@ th {
 	<tr>
 		<td><code>-raft-shutdown-stepdown</code></td>
 		<td>If leader, stepdown before shutting down. Enabled by default.
-		    <br><br>If a node is being shutdown, and it&#39;s the Leader, this helps minimize the time the cluster is without a Leader. The leader will stop accepting client requests, make sure a target node is up to date and starts the transfer with a _TimeoutNow_ message. This message has the same effect as if the election timeout on the target server fires.
+		    <br><br>If a node is being shut down, and it&#39;s the Leader, this helps minimize the time the cluster is without a Leader. The Leader will stop accepting client requests, make sure a target node is up to date, and start the transfer with a _TimeoutNow_ message. This message has the same effect as if the election timeout on the target server fires.
 </td>
 	</tr>
 	<tr>

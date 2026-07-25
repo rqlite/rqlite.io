@@ -3,7 +3,7 @@ title: "Directly accessing SQLite"
 linkTitle: "Directly accessing SQLite"
 description: "Directly accessing the SQLite database"
 weight: 7
---- 
+---
 
 <div style="border-left: 4px solid red; padding: 10px; background-color: #ffe6e6;">
 <strong>⚠️ Warning:</strong> If you do not follow these instructions carefully, you may lose data.
@@ -16,18 +16,18 @@ rqlite maintains data consistency and high availability by managing the SQLite d
 rqlite stores the database file, named `db.sqlite`, inside the data directory you pass to the node at startup.
 
 ## Can I modify the SQLite database directly?
-**No, you must never modify the SQLite database directly**. All modifications of the database should occur through the rqlite [HTTP API](/docs/api/api/). If you alter the SQLite file directly, including changing its journaling mode or checkpointing the [Write-Ahead Log (WAL)](https://www.sqlite.org/draft/wal.html), the behavior of rqlite becomes undefined. In other words you'll probably break rqlite, and may lose data.
+**No, you must never modify the SQLite database directly**. All modifications of the database should occur through the rqlite [HTTP API](/docs/api/api/). If you alter the SQLite file directly, including changing its journaling mode or checkpointing the [Write-Ahead Log (WAL)](https://www.sqlite.org/draft/wal.html), the behavior of rqlite becomes undefined. In other words, you'll probably break rqlite, and may lose data.
 
 ## Can I read the SQLite database?
 Yes, you may read the SQLite file directly, but **it is critical to follow certain guidelines when doing so**:
 
-- Operating System Protection: You must use operating system-level mechanisms to enforce read-only access to the directory containing the SQLite files[^1]. Configure the file permissions so that any user or process reading the SQLite database (apart from the rqlite software itself) cannot modify the SQLite files, even accidentally.
+- **Operating System protection**: You must use operating system-level mechanisms to enforce read-only access to the directory containing the SQLite files[^1]. Configure the file permissions so that any user or process reading the SQLite database (apart from the rqlite software itself) cannot modify the SQLite files, even accidentally.
 
-- Read-Only Access: Any client reading the SQLite database should open the database connection in [read-only mode](https://www.sqlite.org/c3ref/open.html).[^2]
+- **Read-only access**: Any client reading the SQLite database should open the database connection in [read-only mode](https://www.sqlite.org/c3ref/open.html).[^2]
 
-- Do not open connections to the database in [_EXCLUSIVE_ locking mode](https://sqlite.org/pragma.html#pragma_locking_mode). Doing so may block rqlite's access to the SQLite database.
+- **Locking mode**: Do not open connections to the database in [_EXCLUSIVE_ locking mode](https://sqlite.org/pragma.html#pragma_locking_mode). Doing so may block rqlite's access to the SQLite database.
 
-> Why are these guidelines important? A SQLite client, even if it wrote no data to the database, may checkpoint the WAL when closing its connection. Checkpointing the WAL will alter the state of the database and will break rqlite. It's also important to note that while direct reads in production are a known use case, it has not been extensively tested.
+> Why are these guidelines important? A SQLite client, even if it wrote no data to the database, may checkpoint the WAL when closing its connection. Checkpointing the WAL will alter the state of the database and will break rqlite. It's also important to note that while direct reads in production are a known use case, they have not been extensively tested.
 
 ## The impact of Long-Running Reads
 rqlite periodically snapshots the SQLite database as part of the Raft subsystem, a process that requires exclusive access to the database. Consequently, a long-running read transaction from another system (which involves holding a database lock) could interfere with snapshotting. If rqlite cannot complete a snapshot, it will retry later. However, if snapshotting is persistently blocked, it may lead to excessive disk usage or degraded query performance. Monitoring and log inspection are the best ways to detect this issue.

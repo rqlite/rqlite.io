@@ -5,24 +5,24 @@ description: "Backing up and restoring your rqlite system"
 weight: 40
 ---
 ## Backing up rqlite
-rqlite supports hot backing up a node. You can retrieve a copy of the underlying SQLite database via the [rqlite shell](/docs/cli/), or by directly accessing the API. Retrieving a full copy of the SQLite database is the recommended way to backup a rqlite system.
+rqlite supports hot backing up a node. You can retrieve a copy of the underlying SQLite database via the [rqlite shell](/docs/cli/), or by directly accessing the API. Retrieving a full copy of the SQLite database is the recommended way to back up an rqlite system.
 
-To backup to a file using the rqlite shell issue the following command:
+To back up to a file using the rqlite shell issue the following command:
 ```
 127.0.0.1:4001> .backup bak.sqlite3
 backup file written successfully
 ```
 This command will write the SQLite database file to `bak.sqlite3`.
 
-You can also access the rqlite API directly, via a HTTP `GET` request to the endpoint `/db/backup`. For example, using `curl`, and assuming the node is listening on `localhost:4001`, you could retrieve a backup as follows:
+You can also access the rqlite API directly, via an HTTP `GET` request to the endpoint `/db/backup`. For example, using `curl`, and assuming the node is listening on `localhost:4001`, you could retrieve a backup as follows:
 ```bash
 curl -s -XGET localhost:4001/db/backup -o bak.sqlite3
 ```
 >By default the backup copy returned by rqlite is in [WAL](https://www.sqlite.org/wal.html) mode. If you wish, you can request the backup copy to be in [DELETE mode](https://www.sqlite.org/pragma.html#pragma_journal_mode) by setting the query parameter `fmt=delete` e.g. `localhost:4001/db/backup?fmt=delete`. Requesting a DELETE mode backup involves making a copy of the SQLite database so ensure you have sufficient disk space or the backup may fail. Alternatively you can change the mode of the retrieved backup file to DELETE using the SQLite shell.
 
-Note that if the node is not the Leader, the node will transparently forward the request to Leader, wait for the backup data from the Leader, and return it to the client. If, instead, you want a backup of SQLite database of the actual node that receives the request, add `noleader` to the URL as a query parameter. 
+Note that if the node is not the Leader, the node will transparently forward the request to the Leader, wait for the backup data from the Leader, and return it to the client. If, instead, you want a backup of the SQLite database of the actual node that receives the request, add `noleader` to the URL as a query parameter.
 
-If you do not wish a Follower to transparently forward a backup request to a Leader, add `redirect` to the URL as a query parameter. In that case if a Follower receives a backup request the Follower will respond with [HTTP 301 Moved Permanently](https://en.wikipedia.org/wiki/HTTP_301) and include the address of the Leader as the `Location` header in the response. It is then up the clients to re-issue the command to the Leader. 
+If you do not wish a Follower to transparently forward a backup request to a Leader, add `redirect` to the URL as a query parameter. In that case if a Follower receives a backup request the Follower will respond with [HTTP 301 Moved Permanently](https://en.wikipedia.org/wiki/HTTP_301) and include the address of the Leader as the `Location` header in the response. It is then up to the client to re-issue the command to the Leader.
 
 > If you are backing up a large database (100MB or more), you may get much faster backups by requesting your backup directly from the Leader.
 
@@ -39,7 +39,7 @@ The API can also be accessed directly:
 curl -s -XGET localhost:4001/db/backup?fmt=sql -o bak.sql
 ```
 
-You can also limit the SQL text backup to specific tables via by setting `tables` as a query parameter. E.g. `localhost:4001/db/backup?fmt=sql&tables=users,customers`.
+You can also limit the SQL text backup to specific tables by setting `tables` as a query parameter. E.g. `localhost:4001/db/backup?fmt=sql&tables=users,customers`.
 
 ### Requesting a VACUUMed copy
 You can request that the backup copy of the SQLite database, served by the API, first be [vacuumed](https://www.sqlite.org/lang_vacuum.html). This can be done via the API like so:
@@ -164,7 +164,7 @@ To configure backups to the local file system, create a file with the following 
 
 ### Other configuration options
 - If you wish **to disable compression** of the backup add `no_compress: true` to the top-level section of the configuration file.
-- Uploaded backups can also **automatically prepend a timestamp to the last element of specified path** of the auto-uploaded backup, which will result in a new backup file being created each time. This can be useful for point-in-time recoveries. To enable timestamping add `timestamp: true` to the top-level section of the configuration file
+- Uploaded backups can also **automatically prepend a timestamp to the last element of the specified path** of the auto-uploaded backup, which will result in a new backup file being created each time. This can be useful for point-in-time recoveries. To enable timestamping add `timestamp: true` to the top-level section of the configuration file.
 - The configuration file also supports variable expansion -- this means any string starting with `$` will be replaced with that [value from Environment variables](https://pkg.go.dev/os#ExpandEnv) when it is loaded by rqlite.
 
 #### Example
@@ -192,7 +192,7 @@ rqlite supports initializing a node directly from SQLite data. This is useful fo
 ### Booting with a SQLite Database
 _Booting_ is a specialized process that enables rapid initialization of a node from a SQLite database image. This method is designed for **high-efficiency data loading, particularly suited for disaster recovery or initializing a large database quickly** though you can use it with any size of database. The only limiting factor is how fast your disks are, and loading multi-GB SQLite files is possible via _Booting_.
 
-There is an important limitation however: _Booting_  is designed **exclusively for single-node setups**. After a successful _boot_ however, the node is ready for normal operation and can be scaled to a multi-node cluster as needed. Just [join new nodes](/docs/clustering/) to the booted node (or increase the [replica count](/docs/guides/kubernetes/) if using Kubernetes).
+There is an important limitation however: _Booting_ is designed **exclusively for single-node setups**. After a successful _boot_, however, the node is ready for normal operation and can be scaled to a multi-node cluster as needed. Just [join new nodes](/docs/clustering/) to the booted node (or increase the [replica count](/docs/guides/kubernetes/) if using Kubernetes).
 
 #### Example
 To boot a standalone rqlite node listening on localhost use the `/boot` endpoint, as shown by the example below.
@@ -218,14 +218,14 @@ Once booted you may [convert this standalone node to a cluster](/docs/clustering
 ### Loading a node
 rqlite supports _Loading_ a node from two data source types. _Loading_ can take longer than _Booting_ but you can send a _Load_ request to a cluster. This can make it more convenient.
 
-- **An actual SQLite database file**. This is usually a fast way to initialize a rqlite system from an existing SQLite database, though can be particularly CPU-intensive and memory-intensive if the database file size is approaches 100MB. If you find that loading is not reliable, you may need to switch to the [_booting_](/docs/guides/backup/#booting-with-a-sqlite-database) process.
+- **An actual SQLite database file**. This is usually a fast way to initialize an rqlite system from an existing SQLite database, though can be particularly CPU-intensive and memory-intensive if the database file size approaches 100MB. If you find that loading is not reliable, you may need to switch to the [_booting_](/docs/guides/backup/#booting-with-a-sqlite-database) process.
 
-- **SQLite dump in text format**. This is another convenient manner to initialize a system from an existing SQLite database (or other database). The behavior of this type of load operation is **undefined** if there is already data loaded into your rqlite cluster.  **Note that this operation may be quite slow.** If you find the restore times to be too long, you should first load the SQL statements directly into a SQLite database, and then _boot_ or _load_ your rqlite system using the resulting SQLite database file.
+- **SQLite dump in text format**. This is another convenient way to initialize a system from an existing SQLite database (or other database). The behavior of this type of load operation is **undefined** if there is already data loaded into your rqlite cluster. **Note that this operation may be quite slow.** If you find the restore times to be too long, you should first load the SQL statements directly into a SQLite database, and then _boot_ or _load_ your rqlite system using the resulting SQLite database file.
 
-You can send _Load_ requests to any node in your cluster and that node will transparently forward the request to the Leader if necessary.  If you would prefer instead to be explicitly redirected to the Leader, add `redirect` as a URL query parameter.
+You can send _Load_ requests to any node in your cluster and that node will transparently forward the request to the Leader if necessary. If you would prefer instead to be explicitly redirected to the Leader, add `redirect` as a URL query parameter.
 
 #### Example
-The following examples show a trivial database being generated by `sqlite3` and then loaded into a rqlite node listening on localhost.
+The following examples show a trivial database being generated by `sqlite3` and then loaded into an rqlite node listening on localhost.
 
 ##### HTTP
  _Be sure to set the Content-type header as shown, depending on the format of the upload._
@@ -277,7 +277,7 @@ Database restored successfully
 ```
 
 #### Best Practices
-When restoring an rqlite system, it is recommended that the cluster be **freshly deployed, without any pre-existing data**. This is the easiest state to manage and monitor -- and if a _Restore_ operation should fail (which is quite unlikely) it is best to start again with a new cluster. However if you do decide to _Load_ or _Boot_ a system with a SQLite binary file any existing data will be replaced in its entirety by the operation.
+When restoring an rqlite system, it is recommended that the cluster be **freshly deployed, without any pre-existing data**. This is the easiest state to manage and monitor -- and if a _Restore_ operation should fail (which is quite unlikely) it is best to start again with a new cluster. However, if you do decide to _Load_ or _Boot_ a system with a SQLite binary file, any existing data will be replaced in its entirety by the operation.
 
 You should also ensure there is **no other write traffic being sent to your rqlite system** while you are restoring from a backup. Not doing so can lead to confusing results.
 
@@ -317,11 +317,11 @@ By default rqlite will exit with an error if it fails to download the backup fil
 The `sub` configuration examples for non-Amazon S3 storage from the *Automated Backups* section above apply equally well to *Automatic Restores*. This allows you to download a previously uploaded backup from, for example, Wasabi and MinIO.
 
 ### Google Cloud Storage
-To initiate an automatic restore from a backup in a [Google Cloud Storage](https://cloud.google.com/storage), create a file with the following (example) contents and supply the file path to rqlite using the command line option `-auto-restore`:
+To initiate an automatic restore from a backup in a [Google Cloud Storage](https://cloud.google.com/storage) bucket, create a file with the following (example) contents and supply the file path to rqlite using the command line option `-auto-restore`:
 ```json
 {
 	"version": 1,
-	"type": "s3",
+	"type": "gcs",
 	"timeout": "60s",
 	"continue_on_failure": true,
 	"sub": {
@@ -332,4 +332,4 @@ To initiate an automatic restore from a backup in a [Google Cloud Storage](https
 	}
 }
 ```
-Similar to Backup configure your `project_id`, `bucket`, and `name`. `credentials_path` is the path to the file containing the [Service Account key in JSON format](https://cloud.google.com/iam/docs/keys-create-delete).
+As with backups, configure your `project_id`, `bucket`, and `name`. `credentials_path` is the path to the file containing the [Service Account key in JSON format](https://cloud.google.com/iam/docs/keys-create-delete).

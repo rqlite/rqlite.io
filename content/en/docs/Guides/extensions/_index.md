@@ -4,12 +4,12 @@ linkTitle: "SQLite Extensions"
 description: "Loading and Managing SQLite Extensions in rqlite"
 weight: 5
 ---
-rqlite supports loading [SQLite Run-Time Loadable Extensions](https://www.sqlite.org/loadext.html). You can load multiple extensions into rqlite, and take advantage of the wide range of functionality availble via extensions. Whether you need advanced data types, custom functions, or new search capabilities, extensions enable you to tailor rqlite to your specific needs.
+rqlite supports loading [SQLite Run-Time Loadable Extensions](https://www.sqlite.org/loadext.html). You can load multiple extensions into rqlite, and take advantage of the wide range of functionality available via extensions. Whether you need advanced data types, custom functions, or new search capabilities, extensions enable you to tailor rqlite to your specific needs.
 
 ## Docker
-The [rqlite Docker image](https://hub.docker.com/r/rqlite/rqlite/) comes preloaded with some useful SQLite extensions -- you just need to enable them when you launch a rqlite container. There is no need to compile these extensions ahread of time -- they are immediately available for use once you pull the rqlite Docker image.
+The [rqlite Docker image](https://hub.docker.com/r/rqlite/rqlite/) comes preloaded with some useful SQLite extensions -- you just need to enable them when you launch an rqlite container. There is no need to compile these extensions ahead of time -- they are immediately available for use once you pull the rqlite Docker image.
 
-The current set of built-in extensions are shown in the table below.
+The current set of built-in extensions is shown in the table below.
 
 | Extension | Purpose | Key |
 |-----------------|-----------------|-----------------|
@@ -18,7 +18,7 @@ The current set of built-in extensions are shown in the table below.
 | [sqliteai-vector](https://github.com/sqliteai/sqlite-vector) | Vector search engine | `sqliteai-vector` |
 | [SQLite ICU](https://sqlite.org/src/dir/ext/icu) | Integration of the _International Components<br>for Unicode_ library with SQLite | `icu` |
 | [SQLite Misc](https://sqlite.org/src/dir/ext/misc) | A [subset](https://github.com/rqlite/rqlite-sqlite-ext/tree/master/misc) of the SQLite miscellaneous extensions | `misc` |
-  
+
 To enable an extension, set the environment variable `SQLITE_EXTENSIONS` so that it includes the _Key_ for the extension you wish to enable. For example, to enable both Sqlean and ICU extensions, launch your container as follows:
 ```bash
 docker run -e SQLITE_EXTENSIONS='sqlean,icu' -p4001:4001 rqlite/rqlite
@@ -33,9 +33,9 @@ Loading an extension is a two-step process:
 
 `-extensions-path` supports a comma-delimited set of paths. Each path may point to one of the following:
 - a single extension file
-- a directory containing all the extensions you want to load.
-- a Zip archive of those same extensions.
-- a Gzipped tarball of the extensions.
+- a directory containing all the extensions you want to load
+- a Zip archive of those same extensions
+- a Gzipped tarball of the extensions
 
 >In the case of the archive formats, only flat archives are supported. This means the decompressed content should consist of files at the root level without any directories.
 
@@ -45,7 +45,7 @@ _Check out [this blog post](https://www.philipotoole.com/rqlite-8-27-loadable-sq
 This tutorial will guide you through the process of compiling and loading an SQLite extension into rqlite, using the rot13 and carray extensions as examples. Both are available on the [SQLite website](https://www.sqlite.org/src/file/ext/misc).
 
 #### Compile the extensions
-Download the source code and compile it using `gcc`. Once compiled we add the object files to a new directory dedicated to extensions. We will also create zipfile containing both extensions, to demonstrate an alternative approach.
+Download the source code and compile it using `gcc`. Once compiled we add the object files to a new directory dedicated to extensions. We will also create a zipfile containing both extensions, to demonstrate an alternative approach.
 ```
 # Create a directory to store the compiled extensions
 mkdir ~/extensions
@@ -63,7 +63,7 @@ Run the following command on each rqlite node to load the extensions during star
 ```
 rqlited -extensions-path=~/extensions data
 ```
-At launch time rqlite will attempt to load every file it finds in the _Extensions Directory_ as an extension -- so only put actual extensions in this directory. If any extension fails to load rqlite will exit.
+At launch time rqlite will attempt to load every file it finds in the _Extensions Directory_ as an extension -- so only put actual extensions in this directory. If any extension fails to load, rqlite will exit.
 
 Another option is to pass the path of the zipfile to rqlite at launch time:
 ```
@@ -76,7 +76,7 @@ rqlited -extensions-path=~/extensions/rot13.so,~/extensions/carray.so data
 ```
 
 That's it! Your extensions are now available for use by rqlite.
->If you are using Docker you will need to make the compiled code available to your Docker container and pass the path to the Docker container at startup. Check out the [rqlite Docker page](https://hub.docker.com/r/rqlite/rqlite) for more information on launch rqlite Docker containers.
+>If you are using Docker you will need to make the compiled code available to your Docker container and pass the path to the Docker container at startup. Check out the [rqlite Docker page](https://hub.docker.com/r/rqlite/rqlite) for more information on launching rqlite Docker containers.
 
 #### Checking your work
 Below is an example of the _rot13_ extension being invoked at the rqlite shell:
@@ -96,9 +96,9 @@ rot13.so
 ```
 
 ## Extensions and clusters
-If you are running a multi-node rqlite cluster, it's **required** that the identical extension configuration be supplied to **every** node in that cluster. It's not sufficient to load extensions into only a subset of nodes. Doing so will result in undefined behaviour.
+If you are running a multi-node rqlite cluster, it's **required** that the identical extension configuration be supplied to **every** node in that cluster. It's not sufficient to load extensions into only a subset of nodes. Doing so will result in undefined behavior.
 
 ## Troubleshooting
-If you're having trouble getting rqlite to load an extension ensure the extension is compatible with your operating system and architecture. Once way to do this is to check if SQLite will load the extension. Sometimes your compilation step may not be correct, and ensuring SQLite can load the extension is a good first check.
+If you're having trouble getting rqlite to load an extension ensure the extension is compatible with your operating system and architecture. One way to do this is to check if SQLite will load the extension. Sometimes your compilation step may not be correct, and ensuring SQLite can load the extension is a good first check.
 
-If SQLite does load the extension, verify that the file permissions allow rqlite to read the extension. You can also check rqlite’s logs for any specific error messages related to extension loading. If all else fails [open an issue on GitHub](https://github.com/rqlite/rqlite/issues).
+If SQLite does load the extension, verify that the file permissions allow rqlite to read the extension. You can also check rqlite's logs for any specific error messages related to extension loading. If all else fails [open an issue on GitHub](https://github.com/rqlite/rqlite/issues).
