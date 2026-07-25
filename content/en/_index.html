@@ -3,85 +3,216 @@ title = "rqlite - the lightweight, fault-tolerant database built on SQLite"
 linkTitle = "rqlite"
 description = "The lightweight, easy-to-use, distributed relational database built on SQLite"
 +++
-<style>
-  .testimonial-text {
-    font-style: italic;
-    font-size: 15px;
-    line-height: 1.4;
-    margin-top: 10px;
-    max-width: 400px;
-    margin: 0 auto;
-    text-align: center;
-}
-</style>
 
-{{< blocks/cover image_anchor="top" height="short" color="primary" class="pb-2">}}
-<img src="logo-text-shadow.svg" class="site-logo" />
+{{< blocks/cover height="auto" color="dark" >}}
+<div class="rq-hero">
+  <img class="rq-hero__mark" src="/logo-mark.svg" alt="" width="84" height="84">
+  <h1 class="rq-hero__title">rqlite</h1>
+  <p class="rq-hero__tagline">
+    The fault-tolerant relational database built on <strong>SQLite</strong>.<br>
+    High availability, without the hassle.
+  </p>
 
-	<p><h3><i>The fault-tolerant relational database built on SQLite<br>High availability with zero hassle</i></h3></p>
+  <div class="rq-hero__actions">
+    <a class="btn btn-lg rq-btn-primary" href="{{< relref "/docs/quick-start" >}}">
+      Quick start <i class="fas fa-arrow-right ml-2"></i>
+    </a>
+    <a class="btn btn-lg rq-btn-ghost" href="https://github.com/rqlite/rqlite" target="_blank" rel="noopener">
+      <i class="fab fa-github mr-2"></i> View on GitHub
+    </a>
+  </div>
 
-<br>
+  <div class="rq-install">
+    <div class="rq-install__code"><span class="rq-prompt">$ </span><span class="rq-install__cmd">curl -fsSL https://rqlite.io/install.sh | sh</span></div>
+    <button type="button" class="rq-install__copy" aria-label="Copy install command to clipboard">
+      <i class="fas fa-copy"></i>
+    </button>
+  </div>
 
-<div class="mx-auto">
-	<a class="btn btn-lg btn-secondary mr-3 mb-2" href="{{< relref "/docs/quick-start" >}}">
-		Quick start <i class="fas fa-arrow-alt-circle-right ml-2"></i>
-	</a>
-	<a class="btn btn-lg btn-primary mr-3 mb-2" href="https://www.rqlite.io/join-slack">
-		Join our Slack <i class="fa-brands fa-slack"></i>
-	</a>
-	<a class="btn btn-lg btn-secondary mr-3 mb-2" href="https://rqlite.io/office-hours">
-		Want to talk? <i class="fa-solid fa-circle-question"<i class="fa-solid fa-circle-question" style="color: #FFFFFF;"></i>
-	</a>
+  <p class="rq-hero__platforms">
+    Linux &middot; macOS via <code>brew install rqlite</code> &middot; Windows, Docker &amp; Kubernetes
+  </p>
 </div>
 {{< /blocks/cover >}}
 
-{{% blocks/lead color="primary" %}}
-<h1 class="text-center">Why run rqlite?</h1>
-<p>
-	<br>
-	rqlite combines the simplicity of SQLite with a fault-tolerant, highly available system. Whether you're deploying <b>resilient services in the cloud</b> or <b>reliable applications at the edge</b>, rqlite provides a developer-friendly relational database that's exceptionally easy to operate.
-</p>
-<br>
-<div style="display: flex; justify-content: space-evenly; align-items: flex-start; flex-wrap: wrap; text-align: center; gap: 60px; margin-top: 40px; max-width: 100%; overflow-x: hidden;">
-<!-- Replicated Testimonial -->
-<div style="flex-shrink: 1; text-align: center;">
-<a href="https://replicated.com" target="_blank" style="text-decoration: none;">
-<img src="replicated-logo-red.png" style="width: 250px; height: auto;" alt="Replicated Logo">
-</a>
-<p class="testimonial-text">
-Replacing Postgres with rqlite has simplified the software we ship to customers. Its distributed architecture and clustering capabilities have reduced storage complexity, enabling lighter, more supportable Kubernetes clusters.<br><b>Marc Campbell, CTO, Replicated</b>
-</p>
-</div>
-<!-- Text Groove Testimonial -->
-<div style="flex-shrink: 1; text-align: center;">
-<a href="https://textgroove.com" target="_blank" style="text-decoration: none;">
-<img src="textgroove.png" style="width: 250px; height: auto;" alt="Text Groove Logo">
-</a>
-<p class="testimonial-text">
-rqlite serves as our read-heavy key-value store, updates in seconds, and helps us globally distribute our application with ease. I've yet to find a better open source tool for the job.<br><b>Steven Burgoyne, CTO, Text Groove</b>
-</p>
-</div>
-</div>
+<section class="rq-section rq-section--ink">
+  <div class="rq-section__inner">
+    <div class="rq-split">
+      <div>
+        <p class="rq-section__eyebrow">Up and running</p>
+        <h2 class="rq-section__title">From zero to a fault-tolerant cluster</h2>
+        <p class="rq-section__lede">
+          No external dependencies, no coordination service, no separate consensus layer to
+          operate. Drop the binary on a machine and run it.
+        </p>
+        <ol class="rq-steps">
+          <li>
+            <strong>Start a node</strong>
+            <span>One process, one data directory. You now have SQLite behind an HTTP API.</span>
+          </li>
+          <li>
+            <strong>Join two more</strong>
+            <span>Raft handles leader election and replication. Any node can fail without
+              taking the database offline.</span>
+          </li>
+          <li>
+            <strong>Query it from anywhere</strong>
+            <span>Plain HTTP and JSON, so there are no drivers to install &mdash; though
+              <a href="/docs/api/client-libraries/">client libraries</a> are available.</span>
+          </li>
+        </ol>
+      </div>
 
-{{% /blocks/lead %}}
+      <div class="rq-terminal">
+        <div class="rq-terminal__bar">
+          <span class="rq-terminal__dot"></span>
+          <span class="rq-terminal__dot"></span>
+          <span class="rq-terminal__dot"></span>
+          <span class="rq-terminal__title">rqlite</span>
+        </div>
+<pre><code><span class="rq-comment"># 1. Start a node</span>
+<span class="rq-prompt">$</span> <span class="rq-cmd">rqlited -node-id 1 data/</span>
 
-{{< blocks/section color="dark" >}}
-{{% blocks/feature icon="fa-lightbulb fa-2xl" title="Simple"%}}
-Deploy in seconds, no complex configurations
-<br>Easy-to-use HTTP API<br>
-Seamlessly integrates with Docker Compose and Kubernetes
-{{% /blocks/feature %}}
+<span class="rq-comment"># 2. Join two more, and a node can now fail with no downtime</span>
+<span class="rq-prompt">$</span> <span class="rq-cmd">rqlited -node-id 2 -http-addr localhost:4003 \
+      -raft-addr localhost:4004 -join localhost:4002 data2/</span>
+<span class="rq-prompt">$</span> <span class="rq-cmd">rqlited -node-id 3 -http-addr localhost:4005 \
+      -raft-addr localhost:4006 -join localhost:4002 data3/</span>
 
-{{% blocks/feature icon="fa-solid fa-database fa-2xl" title="Powerful"%}}
-Supports full-text search, Vector Search, and JSON documents<br>
-Stream database changes using built-in Change-Data-Capture<br>
-Built-in encryption and authentication for secure deployments
-{{% /blocks/feature %}}
+<span class="rq-comment"># 3. Query over HTTP, no driver required</span>
+<span class="rq-prompt">$</span> <span class="rq-cmd">curl -G 'localhost:4001/db/query' \
+      --data-urlencode 'q=SELECT * FROM foo'</span>
+<span class="rq-ok">{"results":[{"columns":["id","name"],
+  "types":["integer","text"],
+  "values":[[1,"fiona"]]}]}</span></code></pre>
+      </div>
+    </div>
+  </div>
+</section>
 
-{{% blocks/feature icon="fa-solid fa-circle-nodes fa-2xl" title="Reliable"%}}Built on SQLite, the world's most popular database<br>
-Clustering provides high-availability and fault-tolerance<br>
-Cloud-based Backup and Restore
-{{% /blocks/feature %}}
+<section class="rq-section rq-section--light rq-section--center">
+  <div class="rq-section__inner">
+    <p class="rq-section__eyebrow">Why rqlite</p>
+    <h2 class="rq-section__title">The simplicity of SQLite, made highly available</h2>
+    <p class="rq-section__lede">
+      Whether you are deploying resilient services in the cloud or reliable applications at
+      the edge, rqlite gives you a relational database that is genuinely easy to operate.
+    </p>
 
-{{< /blocks/section >}}
+    <div class="rq-cards">
+      <div class="rq-card">
+        <span class="rq-card__icon"><i class="fas fa-bolt"></i></span>
+        <h3 class="rq-card__title">Simple</h3>
+        <ul>
+          <li>A single self-contained binary &mdash; deploy in seconds</li>
+          <li>Easy-to-use <a href="/docs/api/api/">HTTP API</a>, no drivers needed</li>
+          <li>Runs on <a href="/docs/guides/docker-compose/">Docker Compose</a> and
+            <a href="/docs/guides/kubernetes/">Kubernetes</a></li>
+        </ul>
+      </div>
 
+      <div class="rq-card">
+        <span class="rq-card__icon"><i class="fas fa-database"></i></span>
+        <h3 class="rq-card__title">Powerful</h3>
+        <ul>
+          <li>Full SQL, full-text search and JSON documents</li>
+          <li>Load <a href="/docs/guides/extensions/">SQLite extensions</a> for vector search
+            and more</li>
+          <li>Stream changes with built-in
+            <a href="/docs/guides/cdc/">Change Data Capture</a></li>
+        </ul>
+      </div>
+
+      <div class="rq-card">
+        <span class="rq-card__icon"><i class="fas fa-circle-nodes"></i></span>
+        <h3 class="rq-card__title">Reliable</h3>
+        <ul>
+          <li>Raft consensus keeps every node fully replicated</li>
+          <li><a href="/docs/api/read-consistency/">Tunable read consistency</a>, from fast
+            to linearizable</li>
+          <li>Automated <a href="/docs/guides/backup/">backups</a> to S3, MinIO and Google
+            Cloud</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="rq-section rq-section--center">
+  <div class="rq-section__inner">
+    <p class="rq-section__eyebrow">In production</p>
+    <h2 class="rq-section__title">Teams are replacing heavier databases with rqlite</h2>
+
+    <div class="rq-quotes">
+      <figure class="rq-quote">
+        <span class="rq-quote__mark">&ldquo;</span>
+        <blockquote>
+          Replacing Postgres with rqlite has simplified the software we ship to customers.
+          Its distributed architecture and clustering capabilities have reduced storage
+          complexity, enabling lighter, more supportable Kubernetes clusters.
+        </blockquote>
+        <figcaption class="rq-quote__attrib">
+          <span class="rq-quote__who">
+            <strong>Marc Campbell</strong>
+            CTO, Replicated
+          </span>
+          <a href="https://replicated.com" target="_blank" rel="noopener">
+            <img src="/replicated-logo-red.png" alt="Replicated">
+          </a>
+        </figcaption>
+      </figure>
+
+      <figure class="rq-quote">
+        <span class="rq-quote__mark">&ldquo;</span>
+        <blockquote>
+          rqlite serves as our read-heavy key-value store, updates in seconds, and helps us
+          globally distribute our application with ease. I&rsquo;ve yet to find a better open
+          source tool for the job.
+        </blockquote>
+        <figcaption class="rq-quote__attrib">
+          <span class="rq-quote__who">
+            <strong>Steven Burgoyne</strong>
+            CTO, Text Groove
+          </span>
+          <a href="https://textgroove.com" target="_blank" rel="noopener">
+            <img src="/textgroove.png" alt="Text Groove">
+          </a>
+        </figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section class="rq-section rq-section--ink rq-section--center">
+  <div class="rq-section__inner">
+    <p class="rq-section__eyebrow">See your cluster</p>
+    <h2 class="rq-section__title">A status console, built in</h2>
+    <p class="rq-section__lede">
+      Inspect nodes, Raft state and the health of your cluster from the browser.
+      <a href="/docs/ui/">Read about the UI applications &rarr;</a>
+    </p>
+    <div class="rq-shot">
+      <a href="/docs/ui/"><img src="/console.png" alt="The rqlite status console showing cluster and node information"></a>
+    </div>
+  </div>
+</section>
+
+<section class="rq-section rq-section--light rq-section--center rq-cta">
+  <div class="rq-section__inner">
+    <h2 class="rq-section__title">Ready to try it?</h2>
+    <p class="rq-section__lede">
+      Get a node running in under a minute &mdash; or come and ask us anything.
+    </p>
+    <div class="rq-cta__actions">
+      <a class="btn btn-lg rq-btn-primary" href="{{< relref "/docs/quick-start" >}}">
+        Quick start <i class="fas fa-arrow-right ml-2"></i>
+      </a>
+      <a class="btn btn-lg btn-outline-primary" href="https://www.rqlite.io/join-slack">
+        <i class="fab fa-slack mr-2"></i> Join our Slack
+      </a>
+      <a class="btn btn-lg btn-outline-primary" href="https://rqlite.io/office-hours">
+        <i class="fas fa-circle-question mr-2"></i> Office hours
+      </a>
+    </div>
+  </div>
+</section>

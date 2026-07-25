@@ -12,13 +12,22 @@ $ rqlited -node-id=1 data/
 ```
 `data/` is the path to a directory rqlite will use for storage. Once launched rqlite will be listening on [http://localhost:4001](http://localhost:4001).
 
+### Linux
+```bash
+curl -fsSL https://rqlite.io/install.sh | sh
+```
+
 ### Docker
 _Docker images are available for a [variety of platforms](https://hub.docker.com/r/rqlite/rqlite) and are [mirrored to ghcr.io](https://github.com/rqlite/rqlite/pkgs/container/rqlite)._
 
-`docker run -p 4001:4001 rqlite/rqlite`
+```bash
+docker run -p 4001:4001 rqlite/rqlite
+```
 
 ### macOS
-`brew install rqlite`
+```bash
+brew install rqlite
+```
 
 ## Inserting records
 Let's insert some records using the [rqlite shell](/docs/cli), using standard SQLite commands. 

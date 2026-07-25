@@ -116,6 +116,12 @@ h1, h2, h3, h4, h5, h6,
 // Translucent over the home page cover, solid once scrolled.
 .navbar-bg-onscroll {
   background: rgba($rq-ink, 0.92) !important;
+  // Progressive enhancement only. Two things stop the -webkit- form reaching
+  // production: there is no postcss.config.js, so Hugo's postCSS step runs with
+  // no plugins and autoprefixer never applies; and Hugo 0.104.3's minifier
+  // strips the prefixed declaration even when written by hand. Safari therefore
+  // gets no blur — it falls back to the 92%-opaque bar above, which is fine.
+  -webkit-backdrop-filter: saturate(160%) blur(10px);
   backdrop-filter: saturate(160%) blur(10px);
 }
 

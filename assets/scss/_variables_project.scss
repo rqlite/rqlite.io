@@ -1,79 +1,82 @@
 /*
 
-Add styles or override variables from the theme here.
+Variable overrides for the Docsy theme.
+
+This file is imported BEFORE Bootstrap and before Docsy's own _variables.scss,
+so it may only contain variable declarations — Bootstrap would win over any CSS
+rules written here. Actual rules live in _styles_project.scss, which is imported
+last.
 
 */
 
-$green: #008000;
-$yellow: #FFFF00;
+// ---------------------------------------------------------------------------
+// Brand palette
+//
+// These four blues are sampled directly from the logo mark (assets/icons/logo.svg),
+// which is a dark-to-light sweep around an octagonal aperture. Using them here is
+// what ties the site to the mark instead of to Docsy's stock colours.
+// ---------------------------------------------------------------------------
 
-.td-navbar .navbar-brand__name {
-  display: none;
-}
+$rq-navy:   #013397; // darkest blade
+$rq-blue:   #0169C9; // mid blade  — 5.4:1 on white, safe for body links
+$rq-bright: #0197FD; // bright blade
+$rq-ice:    #B3DEFD; // lightest blade
 
-.td-page-meta--view { display: none !important; }
-.td-page-meta--edit { display: none !important; }
-.td-page-meta--child { display: none !important; }
-.td-page-meta--issue { display: none !important; }
-.td-page-meta--project-issue { display: none !important; }
+// Supporting shades, extended from the palette rather than invented.
+$rq-ink:      #041634; // near-black navy: dark sections, code surfaces
+$rq-ink-soft: #0C2B5E; // one step up from ink, for gradients and borders
+$rq-amber:    #FFA630; // the site's existing warm accent, kept for CTAs
 
-.td-navbar .nav-link img {
-  height: 20px;
-  vertical-align: middle;
-}
+// ---------------------------------------------------------------------------
+// Bootstrap / Docsy theme colours
+// ---------------------------------------------------------------------------
 
-.lightbox-overlay {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.85);
-  z-index: 9999;
-  justify-content: center;
-  align-items: center;
-}
+$primary:   $rq-blue;
+$secondary: $rq-amber;
+$dark:      $rq-ink;
+$info:      $rq-ice;
+$light:     #F1F7FE;
+$success:   #1B9E5F;
+$warning:   #ED6A5A;
+$danger:    #D64545;
 
-.lightbox-overlay:target {
-  display: flex;
-}
+$blue:   $rq-blue;
+$orange: $rq-amber;
 
-.lightbox-overlay img {
-  max-width: 95%;
-  max-height: 95%;
-  box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
-  position: relative;
-  z-index: 1;
-}
+// Links. Docsy derives these from $blue with a darken(); pin them instead so the
+// contrast ratio is a deliberate choice rather than a side effect.
+$link-color:       $rq-blue;
+$link-hover-color: $rq-navy;
 
-.lightbox-backdrop {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
-}
+// Flat surfaces read as more deliberate than Bootstrap's default gradients.
+$enable-gradients: false;
+$enable-shadows:   true;
+$enable-rounded:   true;
 
-.lightbox-close {
-  position: absolute;
-  top: 20px;
-  right: 30px;
-  color: #fff;
-  font-size: 40px;
-  font-weight: bold;
-  text-decoration: none;
-  line-height: 1;
-  z-index: 2;
-}
+// ---------------------------------------------------------------------------
+// Typography
+//
+// Inter over Open Sans: tighter, more even colour on screen, and a much better
+// figure set for a site that is mostly commands, ports and version numbers.
+// ---------------------------------------------------------------------------
 
-.lightbox-close:hover,
-.lightbox-close:focus {
-  color: #ccc;
-  text-decoration: none;
-}
+$google_font_name:   "Inter";
+$google_font_family: "Inter:300,400,500,600,700";
 
-.lightbox-trigger {
-  cursor: zoom-in;
-}
+// Prefer good monospace faces where they exist before falling back. Costs
+// nothing — no extra webfont request.
+$font-family-monospace: ui-monospace, "SFMono-Regular", "SF Mono", "JetBrains Mono",
+  "Fira Code", "Cascadia Mono", Menlo, Consolas, "Liberation Mono", monospace;
+
+$headings-font-weight: 700;
+$headings-line-height: 1.2;
+$lead-font-weight:     400;
+
+// ---------------------------------------------------------------------------
+// UI chrome
+// ---------------------------------------------------------------------------
+
+$border-color:               #DCE4EC;
+$td-sidebar-bg-color:        #FBFCFE;
+$td-sidebar-border-color:    $border-color;
+$td-sidebar-tree-root-color: $rq-navy;

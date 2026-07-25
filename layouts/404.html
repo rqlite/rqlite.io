@@ -1,10 +1,37 @@
-{{ define "main"}}
-    <main id="main">
-      <div>
-       <h1 id="title">Not found</h1>
-       <p>Oops! This page doesn't exist. Try going back to our <a href="{{ "/" | relURL }}">home page</a>.</p>
+{{ define "main" }}
+<main id="main">
+  <div class="rq-404">
+    <img class="rq-404__mark" src="{{ "logo-mark.svg" | relURL }}" alt="" width="64" height="64">
+    <p class="rq-404__code">404</p>
+    <h1 id="title" class="rq-404__title">Page not found</h1>
+    <p class="rq-404__lede">
+      That page doesn&rsquo;t exist, or it may have moved. Here are some places worth trying
+      instead.
+    </p>
 
-       <p>You can learn how to make a 404 page like this in <a href="https://gohugo.io/templates/404/">Custom 404 Pages</a>.</p>      
-      </div>
-    </main>
+    <div class="rq-404__links">
+      <a href="{{ "docs/quick-start/" | relURL }}">
+        <strong>Quick start</strong>
+        <span>Get a node running in under a minute</span>
+      </a>
+      <a href="{{ "docs/" | relURL }}">
+        <strong>Documentation</strong>
+        <span>Guides, API reference and clustering</span>
+      </a>
+      <a href="{{ "docs/api/api/" | relURL }}">
+        <strong>HTTP API</strong>
+        <span>Reading and writing data over HTTP</span>
+      </a>
+      <a href="https://github.com/rqlite/rqlite" target="_blank" rel="noopener">
+        <strong>GitHub</strong>
+        <span>Source, releases and issue tracker</span>
+      </a>
+    </div>
+
+    <p class="rq-404__foot">
+      Still stuck? <a href="https://www.rqlite.io/join-slack">Ask on Slack</a> or
+      <a href="{{ "/" | relURL }}">head back to the home page</a>.
+    </p>
+  </div>
+</main>
 {{ end }}
