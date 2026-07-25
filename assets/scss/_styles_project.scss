@@ -813,36 +813,59 @@ h1, h2, h3, h4, h5, h6,
 }
 
 // Copy button, injected by layouts/partials/hooks/body-end.html.
+// Icon-only, so it stays out of the way of the code itself. The accessible name
+// and the hover tooltip are set on the element by rq-code.js.
 .rq-copy {
   position: absolute;
-  top: 0.45rem;
-  right: 0.45rem;
+  top: 0.4rem;
+  right: 0.4rem;
   z-index: 2;
-  min-width: 2rem;
-  height: 2rem;
-  padding: 0 0.55rem;
-  border: 1px solid $border-color;
-  border-radius: 0.4rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.7rem;
+  height: 1.7rem;
+  padding: 0;
+  border: 1px solid #CBD5E1;
+  border-radius: 0.35rem;
   background: #fff;
-  color: #64748B;
-  font-size: 0.78rem;
-  font-weight: 500;
+  // Always present, never hover-only — this is a site people come to
+  // specifically to copy commands from.
+  //
+  // Contrast is set with an explicit colour rather than a blanket opacity: at
+  // opacity 0.5 this glyph rendered as #BAC2C9 on the #FBFCFE code surface,
+  // only 1.76:1, below the 3:1 WCAG minimum for UI components. #5A6675 at full
+  // opacity measures 5.7:1.
+  color: #5A6675;
+  font-size: 0.72rem;
   line-height: 1;
   cursor: pointer;
-  // Always present, just quiet. Hover-only copy buttons are undiscoverable, and
-  // this is a site people come to specifically to copy commands from.
-  opacity: 0.55;
-  transition: opacity 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  transition: color 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
 
-  &:hover { color: $rq-blue; border-color: rgba($rq-blue, 0.5); }
+  // Filled on hover: white on brand blue is 5.4:1, and the fill makes the
+  // target unmistakable.
+  &:hover {
+    color: #fff;
+    background: $rq-blue;
+    border-color: $rq-blue;
+  }
 
   &:focus {
-    opacity: 1;
-    outline: 2px solid rgba($rq-blue, 0.5);
+    outline: 2px solid rgba($rq-blue, 0.6);
     outline-offset: 1px;
   }
 
-  &.is-copied { opacity: 1; color: #1B9E5F; border-color: rgba(#1B9E5F, 0.5); }
+  &.is-copied {
+    color: #12794A;
+    border-color: rgba(#12794A, 0.55);
+    background: #fff;
+  }
+
+  &.is-failed {
+    color: #C0392B;
+    border-color: rgba(#C0392B, 0.55);
+    background: #fff;
+  }
 }
 
 .highlight:hover .rq-copy,

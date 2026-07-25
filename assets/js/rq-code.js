@@ -11,8 +11,9 @@
 (function () {
   "use strict";
 
-  var COPY = "Copy";
-  var DONE = "Copied";
+  var LABEL_IDLE = "Copy to clipboard";
+  var LABEL_DONE = "Copied to clipboard";
+  var LABEL_FAIL = "Copy failed";
 
   function legacyCopy(text) {
     return new Promise(function (resolve, reject) {
@@ -67,14 +68,34 @@
       .join("\n");
   }
 
-  function flash(button) {
-    button.textContent = DONE;
-    button.classList.add("is-copied");
-    button.setAttribute("aria-label", "Copied to clipboard");
-    window.setTimeout(function () {
-      button.textContent = COPY;
-      button.classList.remove("is-copied");
-      button.setAttribute("aria-label", "Copy code to clipboard");
+  /*
+   * Swap the icon glyph rather than writing text into the button: these are
+   * icon-only controls, so replacing the contents would resize them and lose the
+   * icon on restore. The accessible name lives on aria-label, and `title` gives
+   * sighted users a hover hint that an unlabelled icon otherwise lacks.
+   */
+  function setIconState(button, icon, state) {
+    var glyph = "fa-copy";
+    var label = LABEL_IDLE;
+    if (state === "done") {
+      glyph = "fa-check";
+      label = LABEL_DONE;
+    } else if (state === "failed") {
+      glyph = "fa-xmark";
+      label = LABEL_FAIL;
+    }
+    if (icon) icon.className = "fas " + glyph;
+    button.classList.toggle("is-copied", state === "done");
+    button.classList.toggle("is-failed", state === "failed");
+    button.setAttribute("aria-label", label);
+    button.setAttribute("title", label);
+  }
+
+  function flash(button, icon, ok) {
+    setIconState(button, icon, ok ? "done" : "failed");
+    window.clearTimeout(button.rqTimer);
+    button.rqTimer = window.setTimeout(function () {
+      setIconState(button, icon, "idle");
     }, 1600);
   }
 
@@ -83,18 +104,19 @@
     var button = document.createElement("button");
     button.type = "button";
     button.className = "rq-copy";
-    button.textContent = COPY;
-    button.setAttribute("aria-label", "Copy code to clipboard");
+
+    var icon = document.createElement("i");
+    icon.setAttribute("aria-hidden", "true");
+    button.appendChild(icon);
+    setIconState(button, icon, "idle");
+
     button.addEventListener("click", function () {
       copyText(stripPrompts(source.textContent)).then(
         function () {
-          flash(button);
+          flash(button, icon, true);
         },
         function () {
-          button.textContent = "Failed";
-          window.setTimeout(function () {
-            button.textContent = COPY;
-          }, 1600);
+          flash(button, icon, false);
         }
       );
     });
@@ -125,30 +147,17 @@
       var code = box.querySelector(".rq-install__cmd");
       if (!button || !code) return;
       var icon = button.querySelector("i");
-
-      // Swap the icon rather than replacing the button's contents: writing text
-      // into an icon-only button resizes it and loses the icon on restore.
-      var setState = function (ok) {
-        if (icon) icon.className = ok ? "fas fa-check" : "fas fa-xmark";
-        button.classList.toggle("is-copied", ok);
-        button.setAttribute("aria-label", ok ? "Copied to clipboard" : "Copy failed");
-        window.clearTimeout(button.rqTimer);
-        button.rqTimer = window.setTimeout(function () {
-          if (icon) icon.className = "fas fa-copy";
-          button.classList.remove("is-copied");
-          button.setAttribute("aria-label", "Copy install command to clipboard");
-        }, 1600);
-      };
+      setIconState(button, icon, "idle");
 
       button.addEventListener("click", function () {
         // Both arguments: a rejection here would otherwise surface as an
         // unhandled promise rejection and leave the button showing nothing.
         copyText(code.textContent.trim()).then(
           function () {
-            setState(true);
+            flash(button, icon, true);
           },
           function () {
-            setState(false);
+            flash(button, icon, false);
           }
         );
       });
