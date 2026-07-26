@@ -4,31 +4,14 @@ linkTitle: "Configuring rqlite"
 description: "How to configure rqlite"
 weight: 2
 ---
+
 This page explains each command-line flag for rqlite, and provides some usage guidelines.
 
-<!DOCTYPE html>
-<html>
-<head>
-<style>
-table {
-	width: 100%;
-	border-collapse: collapse;
-}
-th, td {
-	border: 1px solid #ddd;
-	padding: 8px;
-}
-th {
-	background-color: #f2f2f2;
-	text-align: left;
-}
-.col-cli { width: 30%; }
-.col-usage { width: 70%; }
-</style>
-</head>
-<body>
+Flags are grouped by topic below. Pass `-h` to `rqlited` to print the same information at the command line.
 
-<table>
+## General
+
+<table class="rq-flags">
 	<tr>
 		<th class="col-cli">Flag</th>
 		<th class="col-usage">Usage</th>
@@ -38,46 +21,19 @@ th {
 		<td>Show version information and exit.</td>
 	</tr>
 	<tr>
-		<td><code>-extensions-path</code></td>
-		<td>Comma-delimited list of paths to directories, zipfiles, or tar.gz files containing SQLite extensions.</td>
-	</tr>
-	<tr>
-		<td><code>-cdc-config</code></td>
-		<td>Set CDC HTTP endpoint, or path to CDC config file. If not set, CDC not enabled.
-		    <br><br>If the passed value is a valid URL then CDC events will be posted to that endpoint. Otherwise the value is interpreted as the path to the CDC configuration file.
+		<td><code>-node-id</code></td>
+		<td>Unique ID for node. If not set, set to advertised Raft address.
+		    <br><br>While not required, providing an explicit ID to a node makes cluster management simpler. Once set a node&#39;s ID cannot change. If you do change it your cluster will not operate correctly.
 </td>
 	</tr>
+</table>
+
+## HTTP API
+
+<table class="rq-flags">
 	<tr>
-		<td><code>-otlp-endpoint</code></td>
-		<td>Address of OpenTelemetry Collector for metrics. If not set, OTLP reporting not enabled.
-		    <br><br>If set, rqlite periodically pushes its metrics, in OTLP format over gRPC, to the OpenTelemetry Collector at the given address. The address must be in host:port form e.g. localhost:4317, and must not include a protocol scheme. The expvar metrics available via the HTTP API are unaffected by this setting.
-</td>
-	</tr>
-	<tr>
-		<td><code>-otlp-interval</code></td>
-		<td>Period between OTLP metric exports.</td>
-	</tr>
-	<tr>
-		<td><code>-otlp-insecure</code></td>
-		<td>Use plaintext gRPC when communicating with the OpenTelemetry Collector.</td>
-	</tr>
-	<tr>
-		<td><code>-otlp-no-verify</code></td>
-		<td>Skip verification of the OpenTelemetry Collector certificate.</td>
-	</tr>
-	<tr>
-		<td><code>-otlp-ca-cert</code></td>
-		<td>Path to X.509 CA certificate for verifying the OpenTelemetry Collector.
-		    <br><br>If not set, the operating system&#39;s CA certificates are used to verify the Collector&#39;s certificate.
-</td>
-	</tr>
-	<tr>
-		<td><code>-otlp-cert</code></td>
-		<td>Path to X.509 certificate for mutual TLS with the OpenTelemetry Collector.</td>
-	</tr>
-	<tr>
-		<td><code>-otlp-key</code></td>
-		<td>Path to X.509 private key for mutual TLS with the OpenTelemetry Collector.</td>
+		<th class="col-cli">Flag</th>
+		<th class="col-usage">Usage</th>
 	</tr>
 	<tr>
 		<td><code>-http-addr</code></td>
@@ -97,23 +53,14 @@ th {
 		    <br><br>You usually need to set this if you&#39;re using a browser-based application to interact with rqlite. You should set it to the website that is serving the browser-based application e.g. -http-allow-origin=&#34;https://example.com&#34;.
 </td>
 	</tr>
+</table>
+
+## HTTPS and client authentication
+
+<table class="rq-flags">
 	<tr>
-		<td><code>-auth</code></td>
-		<td>Path to authentication and authorization file. If not set, not enabled.</td>
-	</tr>
-	<tr>
-		<td><code>-auto-backup</code></td>
-		<td>Path to automatic backup configuration file. If not set, not enabled.</td>
-	</tr>
-	<tr>
-		<td><code>-auto-restore</code></td>
-		<td>Path to automatic restore configuration file. If not set, not enabled.</td>
-	</tr>
-	<tr>
-		<td><code>-http-ca-cert</code></td>
-		<td>Path to X.509 CA certificate for HTTPS.
-		    <br><br>If this value is set rqlite will use this CA certificate to validate any other X509 certificate presented to it, if the node needs to contact another node&#39;s HTTP API. It also uses this CA to verify any X509 certificates presented to it by clients connecting to its HTTPS API.
-</td>
+		<th class="col-cli">Flag</th>
+		<th class="col-usage">Usage</th>
 	</tr>
 	<tr>
 		<td><code>-http-cert</code></td>
@@ -125,6 +72,12 @@ th {
 		<td><code>-http-key</code></td>
 		<td>Path to HTTPS X.509 private key.
 		    <br><br>This is the private key corresponding to the X509 certificate.
+</td>
+	</tr>
+	<tr>
+		<td><code>-http-ca-cert</code></td>
+		<td>Path to X.509 CA certificate for HTTPS.
+		    <br><br>If this value is set rqlite will use this CA certificate to validate any other X509 certificate presented to it, if the node needs to contact another node&#39;s HTTP API. It also uses this CA to verify any X509 certificates presented to it by clients connecting to its HTTPS API.
 </td>
 	</tr>
 	<tr>
@@ -140,10 +93,17 @@ th {
 </td>
 	</tr>
 	<tr>
-		<td><code>-node-ca-cert</code></td>
-		<td>Path to X.509 CA certificate for node-to-node encryption.
-		    <br><br>If this path is configured and nodes use TLS for Raft connections, then any certificate presented during connection setup must be signed by this Certificate Authority -- whether it&#39;s the node&#39;s certificate in one-way TLS or both certificates in mutual TLS.
-</td>
+		<td><code>-auth</code></td>
+		<td>Path to authentication and authorization file. If not set, not enabled.</td>
+	</tr>
+</table>
+
+## Node-to-node encryption
+
+<table class="rq-flags">
+	<tr>
+		<th class="col-cli">Flag</th>
+		<th class="col-usage">Usage</th>
 	</tr>
 	<tr>
 		<td><code>-node-cert</code></td>
@@ -155,6 +115,12 @@ th {
 		<td><code>-node-key</code></td>
 		<td>Path to X.509 private key for node-to-node mutual authentication and encryption.
 		    <br><br>This is the private key corresponding to the node&#39;s X509 certificate, which it uses for encrypting inter-node communications.
+</td>
+	</tr>
+	<tr>
+		<td><code>-node-ca-cert</code></td>
+		<td>Path to X.509 CA certificate for node-to-node encryption.
+		    <br><br>If this path is configured and nodes use TLS for Raft connections, then any certificate presented during connection setup must be signed by this Certificate Authority -- whether it&#39;s the node&#39;s certificate in one-way TLS or both certificates in mutual TLS.
 </td>
 	</tr>
 	<tr>
@@ -181,17 +147,14 @@ th {
 		    <br><br>When set, the Common Name field of every peer&#39;s leaf certificate must match this string exactly during the TLS handshake performed by this node&#39;s mux. Outbound connections this node makes to peers continue to be validated against -node-verify-server-name. Requires -node-verify-client.
 </td>
 	</tr>
+</table>
+
+## Clustering
+
+<table class="rq-flags">
 	<tr>
-		<td><code>-node-id</code></td>
-		<td>Unique ID for node. If not set, set to advertised Raft address.
-		    <br><br>While not required, providing an explicit ID to a node makes cluster management simpler. Once set a node&#39;s ID cannot change. If you do change it your cluster will not operate correctly.
-</td>
-	</tr>
-	<tr>
-		<td><code>-compress-snap-transport</code></td>
-		<td>Enable compression when transferring snapshots between nodes.
-		    <br><br>By default rqlite does not compress snapshots when transferring them between nodes. For high bandwidth networks this is the correct choice. Setting this flag will enable zstd compression, which may improve transfer speed on lower-bandwidth networks. If you set this flag on any node in a cluster, you must set it to the same value on every node in the cluster.
-</td>
+		<th class="col-cli">Flag</th>
+		<th class="col-usage">Usage</th>
 	</tr>
 	<tr>
 		<td><code>-raft-addr</code></td>
@@ -240,6 +203,33 @@ th {
 </td>
 	</tr>
 	<tr>
+		<td><code>-raft-non-voter</code></td>
+		<td>Configure as non-voting node.
+		    <br><br>Adding non-voting (also known as read replica) nodes can help scale out query performance. Read-replica nodes don&#39;t participate in the Raft consensus system, but do receive the same stream of updates from the Leader as voting nodes do. They can also service write requests, forwarding those requests to the Leader.
+</td>
+	</tr>
+	<tr>
+		<td><code>-cluster-connect-timeout</code></td>
+		<td>Timeout for initial connection to other nodes.
+		    <br><br>This sets the maximum time a node will wait when attempting to connect to another node over the inter-node network connection.
+</td>
+	</tr>
+	<tr>
+		<td><code>-compress-snap-transport</code></td>
+		<td>Enable compression when transferring snapshots between nodes.
+		    <br><br>By default rqlite does not compress snapshots when transferring them between nodes. For high bandwidth networks this is the correct choice. Setting this flag will enable zstd compression, which may improve transfer speed on lower-bandwidth networks. If you set this flag on any node in a cluster, you must set it to the same value on every node in the cluster.
+</td>
+	</tr>
+</table>
+
+## Node discovery
+
+<table class="rq-flags">
+	<tr>
+		<th class="col-cli">Flag</th>
+		<th class="col-usage">Usage</th>
+	</tr>
+	<tr>
 		<td><code>-disco-mode</code></td>
 		<td>Choose clustering discovery mode. If not set, no node discovery is performed.</td>
 	</tr>
@@ -253,40 +243,19 @@ th {
 		<td><code>-disco-config</code></td>
 		<td>Set discovery config, or path to cluster discovery config file.</td>
 	</tr>
+</table>
+
+## Raft consensus tuning
+
+<table class="rq-flags">
 	<tr>
-		<td><code>-fk</code></td>
-		<td>Enable SQLite foreign key constraints.
-		    <br><br>SQLite doesn&#39;t enable foreign key constraints by default. If you&#39;d like rqlite to automatically do so then set this flag. This flag must be set on every node in your cluster.
-</td>
-	</tr>
-	<tr>
-		<td><code>-db-max-ro-conns</code></td>
-		<td>Maximum number of read-only connections to database.
-		    <br><br>This places a limit on the number of read queries the node can service concurrently. If this is not bounded query load could cause the node to hit the operating system&#39;s per-process thread limit and crash the node. Setting this to zero means there is no limit.
-</td>
-	</tr>
-	<tr>
-		<td><code>-auto-vacuum-int</code></td>
-		<td>Period between automatic VACUUMs. If not set, not enabled.
-		    <br><br>If set to a non-zero interval rqlite will execute VACUUM on the specified interval. This can help reduce SQLite disk usage, but writes are blocked while a VACUUM takes place. See the SQLite documentation for more information.
-</td>
-	</tr>
-	<tr>
-		<td><code>-auto-optimize-int</code></td>
-		<td>Period between automatic &#39;PRAGMA optimize&#39;. Set to 0h to disable.
-		    <br><br>If set to a non-zero interval rqlite will execute PRAGMA OPTIMIZE on the specified interval. This can help SQLite query performance. See the SQLite documentation for more information.
-</td>
+		<th class="col-cli">Flag</th>
+		<th class="col-usage">Usage</th>
 	</tr>
 	<tr>
 		<td><code>-raft-log-level</code></td>
 		<td>Minimum log level for Raft module.
 		    <br><br>Acceptable log levels are ERROR, WARN, INFO and DEBUG.
-</td>
-	</tr>
-	<tr>
-		<td><code>-raft-non-voter</code></td>
-		<td>Configure as non-voting node.
-		    <br><br>Adding non-voting (also known as read replica) nodes can help scale out query performance. Read-replica nodes don&#39;t participate in the Raft consensus system, but do receive the same stream of updates from the Leader as voting nodes do. They can also service write requests, forwarding those requests to the Leader.
 </td>
 	</tr>
 	<tr>
@@ -365,11 +334,51 @@ th {
 		    <br><br>This can be useful if you have a deployment where read replica (non-voting) nodes tend to come and go, and you want to avoid explicitly removing those nodes.
 </td>
 	</tr>
+</table>
+
+## SQLite database
+
+<table class="rq-flags">
 	<tr>
-		<td><code>-cluster-connect-timeout</code></td>
-		<td>Timeout for initial connection to other nodes.
-		    <br><br>This sets the maximum time a node will wait when attempting to connect to another node over the inter-node network connection.
+		<th class="col-cli">Flag</th>
+		<th class="col-usage">Usage</th>
+	</tr>
+	<tr>
+		<td><code>-fk</code></td>
+		<td>Enable SQLite foreign key constraints.
+		    <br><br>SQLite doesn&#39;t enable foreign key constraints by default. If you&#39;d like rqlite to automatically do so then set this flag. This flag must be set on every node in your cluster.
 </td>
+	</tr>
+	<tr>
+		<td><code>-db-max-ro-conns</code></td>
+		<td>Maximum number of read-only connections to database.
+		    <br><br>This places a limit on the number of read queries the node can service concurrently. If this is not bounded query load could cause the node to hit the operating system&#39;s per-process thread limit and crash the node. Setting this to zero means there is no limit.
+</td>
+	</tr>
+	<tr>
+		<td><code>-auto-vacuum-int</code></td>
+		<td>Period between automatic VACUUMs. If not set, not enabled.
+		    <br><br>If set to a non-zero interval rqlite will execute VACUUM on the specified interval. This can help reduce SQLite disk usage, but writes are blocked while a VACUUM takes place. See the SQLite documentation for more information.
+</td>
+	</tr>
+	<tr>
+		<td><code>-auto-optimize-int</code></td>
+		<td>Period between automatic &#39;PRAGMA optimize&#39;. Set to 0h to disable.
+		    <br><br>If set to a non-zero interval rqlite will execute PRAGMA OPTIMIZE on the specified interval. This can help SQLite query performance. See the SQLite documentation for more information.
+</td>
+	</tr>
+	<tr>
+		<td><code>-extensions-path</code></td>
+		<td>Comma-delimited list of paths to directories, zipfiles, or tar.gz files containing SQLite extensions.</td>
+	</tr>
+</table>
+
+## Queued Writes
+
+<table class="rq-flags">
+	<tr>
+		<th class="col-cli">Flag</th>
+		<th class="col-usage">Usage</th>
 	</tr>
 	<tr>
 		<td><code>-write-queue-capacity</code></td>
@@ -391,6 +400,79 @@ th {
 		<td><code>-write-queue-tx</code></td>
 		<td>Use a transaction when processing a queued write.</td>
 	</tr>
+</table>
+
+## Backup and restore
+
+<table class="rq-flags">
+	<tr>
+		<th class="col-cli">Flag</th>
+		<th class="col-usage">Usage</th>
+	</tr>
+	<tr>
+		<td><code>-auto-backup</code></td>
+		<td>Path to automatic backup configuration file. If not set, not enabled.</td>
+	</tr>
+	<tr>
+		<td><code>-auto-restore</code></td>
+		<td>Path to automatic restore configuration file. If not set, not enabled.</td>
+	</tr>
+</table>
+
+## Change Data Capture
+
+<table class="rq-flags">
+	<tr>
+		<th class="col-cli">Flag</th>
+		<th class="col-usage">Usage</th>
+	</tr>
+	<tr>
+		<td><code>-cdc-config</code></td>
+		<td>Set CDC HTTP endpoint, or path to CDC config file. If not set, CDC not enabled.
+		    <br><br>If the passed value is a valid URL then CDC events will be posted to that endpoint. Otherwise the value is interpreted as the path to the CDC configuration file.
+</td>
+	</tr>
+</table>
+
+## Observability and profiling
+
+<table class="rq-flags">
+	<tr>
+		<th class="col-cli">Flag</th>
+		<th class="col-usage">Usage</th>
+	</tr>
+	<tr>
+		<td><code>-otlp-endpoint</code></td>
+		<td>Address of OpenTelemetry Collector for metrics. If not set, OTLP reporting not enabled.
+		    <br><br>If set, rqlite periodically pushes its metrics, in OTLP format over gRPC, to the OpenTelemetry Collector at the given address. The address must be in host:port form e.g. localhost:4317, and must not include a protocol scheme. The expvar metrics available via the HTTP API are unaffected by this setting.
+</td>
+	</tr>
+	<tr>
+		<td><code>-otlp-interval</code></td>
+		<td>Period between OTLP metric exports.</td>
+	</tr>
+	<tr>
+		<td><code>-otlp-insecure</code></td>
+		<td>Use plaintext gRPC when communicating with the OpenTelemetry Collector.</td>
+	</tr>
+	<tr>
+		<td><code>-otlp-no-verify</code></td>
+		<td>Skip verification of the OpenTelemetry Collector certificate.</td>
+	</tr>
+	<tr>
+		<td><code>-otlp-ca-cert</code></td>
+		<td>Path to X.509 CA certificate for verifying the OpenTelemetry Collector.
+		    <br><br>If not set, the operating system&#39;s CA certificates are used to verify the Collector&#39;s certificate.
+</td>
+	</tr>
+	<tr>
+		<td><code>-otlp-cert</code></td>
+		<td>Path to X.509 certificate for mutual TLS with the OpenTelemetry Collector.</td>
+	</tr>
+	<tr>
+		<td><code>-otlp-key</code></td>
+		<td>Path to X.509 private key for mutual TLS with the OpenTelemetry Collector.</td>
+	</tr>
 	<tr>
 		<td><code>-cpu-profile</code></td>
 		<td>Path to file for CPU profiling information.</td>
@@ -406,7 +488,3 @@ th {
 		<td>Path to file for trace profiling information.</td>
 	</tr>
 </table>
-
-</body>
-</html>
-

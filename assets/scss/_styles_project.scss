@@ -987,6 +987,18 @@ h1, h2, h3, h4, h5, h6,
     td, th { padding: 0.55rem 0.75rem; }
   }
 
+  // The rqlited flag reference: a narrow column of flag names against a wide
+  // column of prose. Without this the flag column stretches to fit the longest
+  // name and the usage text is squeezed.
+  table.rq-flags {
+    table-layout: fixed;
+
+    .col-cli { width: 30%; }
+    .col-usage { width: 70%; }
+
+    td:first-child { word-break: break-word; }
+  }
+
   // Long tables should scroll rather than push the page sideways.
   .td-table-wrapper { overflow-x: auto; }
 
