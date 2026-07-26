@@ -85,14 +85,14 @@ description = "The lightweight, easy-to-use, distributed relational database bui
       'CREATE TABLE foo (name TEXT, age INTEGER)'</span>
 <span class="rq-prompt">$</span> <span class="rq-cmd">curl -v -XPOST 'localhost:4001/db/execute' \
       -H "Content-Type: text/plain" -d \
-      '"INSERT INTO foo(name, age) VALUES(\"fiona\", 20)"'</span>
+      'INSERT INTO foo(name, age) VALUES("fiona", 20)'</span>
 
 <span class="rq-comment"># 4. Query your data</span>
 <span class="rq-prompt">$</span> <span class="rq-cmd">curl -G 'localhost:4001/db/query' \
       --data-urlencode 'q=SELECT * FROM foo'</span>
 <span class="rq-ok">{"results":[{"columns":["name", "age"],
   "types":["integer","text"],
-  "values":[[1,"fiona"]]}]}</span></code></pre>
+  "values":[["fiona", 20]]}]}</span></code></pre>
       </div>
     </div>
   </div>
