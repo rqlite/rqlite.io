@@ -444,12 +444,14 @@ Flags are grouped by topic below. Pass `-h` to `rqlited` to print the same infor
 	<tr>
 		<td><code>-otlp-endpoint</code></td>
 		<td>Address of OpenTelemetry Collector for metrics. If not set, OTLP reporting not enabled.
-		    <br><br>If set, rqlite periodically pushes its metrics, in OTLP format over gRPC, to the OpenTelemetry Collector at the given address. The address must be in host:port form e.g. localhost:4317, and must not include a protocol scheme. The expvar metrics available via the HTTP API are unaffected by this setting.
+		    <br><br>If set, rqlite periodically pushes its metrics, in OTLP format over gRPC, to the OpenTelemetry Collector at the given address. The address must be in host:port form e.g. localhost:4317, and must not include a protocol scheme.
 </td>
 	</tr>
 	<tr>
-		<td><code>-otlp-interval</code></td>
-		<td>Period between OTLP metric exports.</td>
+		<td><code>-otlp-metrics-interval</code></td>
+		<td>Period between OTLP metric exports.
+		    <br><br>The interval at which rqlite periodically pushes its metrics, in OTLP format over gRPC, to the OpenTelemetry Collector. rqlite generates the metrics by walking all expvar metrics and emitting those values as the metrics.
+</td>
 	</tr>
 	<tr>
 		<td><code>-otlp-insecure</code></td>
