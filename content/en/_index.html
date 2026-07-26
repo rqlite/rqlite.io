@@ -82,7 +82,7 @@ description = "The lightweight, easy-to-use, distributed relational database bui
 <span class="rq-comment"># 3. Write over HTTP, no driver required</span>
 <span class="rq-prompt">$</span> <span class="rq-cmd">curl -v -XPOST 'localhost:4001/db/execute' \
       -H "Content-Type: text/plain" -d \
-      'CREATE TABLE foo (name TEXT, age INTEGER)'</span></code></pre>
+      'CREATE TABLE foo (name TEXT, age INTEGER)'</span>
 
 <span class="rq-comment"># 4. Query over HTTP</span>
 <span class="rq-prompt">$</span> <span class="rq-cmd">curl -G 'localhost:4001/db/query' \
