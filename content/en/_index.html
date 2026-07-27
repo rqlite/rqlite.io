@@ -80,10 +80,10 @@ description = "The lightweight, easy-to-use, distributed relational database bui
       -raft-addr localhost:4006 -join localhost:4002 data3/</span>
 
 <span class="rq-comment"># 3. Write over HTTP, no driver required</span>
-<span class="rq-prompt">$</span> <span class="rq-cmd">curl -XPOST 'localhost:4001/db/execute' \
+<span class="rq-prompt">$</span> <span class="rq-cmd">curl 'localhost:4001/db/execute' \
       -H "Content-Type: text/plain" -d \
       'CREATE TABLE foo (name TEXT, age INTEGER)'</span>
-<span class="rq-prompt">$</span> <span class="rq-cmd">curl -XPOST 'localhost:4001/db/execute' \
+<span class="rq-prompt">$</span> <span class="rq-cmd">curl 'localhost:4001/db/execute' \
       -H "Content-Type: text/plain" -d \
       'INSERT INTO foo(name, age) VALUES("fiona", 20)'</span>
 
