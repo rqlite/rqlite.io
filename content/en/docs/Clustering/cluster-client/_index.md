@@ -6,7 +6,7 @@ description: >-
      Strategies for connecting your application to an rqlite cluster.
 ---
 
-When running rqlite as a cluster, your application needs a strategy for connecting to the cluster's nodes. Since any rqlite node can accept both read and write requests, you have several options -- each with different trade-offs around simplicity, operational overhead, and resilience. This page describes four common approaches.
+Since any rqlite node can accept both read and write requests your application can connect to any node in your cluster. The key question is how to locate a node in the first place. You have several options -- each with different trade-offs around simplicity, operational overhead, and resilience. This page describes four common approaches.
 
 ## How rqlite handles client requests
 Before choosing a connection strategy, it's important to understand how rqlite routes requests internally. rqlite uses the [Raft consensus protocol](https://raft.github.io/), which means the cluster always has a single _Leader_ node and one or more _Follower_ nodes. All writes must be processed by the Leader, though read requests can be handled any node depending on the requested [consistency level](/docs/api/read-consistency/). By default read requests are also sent to the Leader.
