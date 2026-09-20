@@ -9,7 +9,7 @@ description: >-
 Since any rqlite node can accept both read and write requests your application can connect to any node in your cluster. The key question is how to locate a node in the first place. You have several options -- each with different trade-offs around simplicity, operational overhead, and resilience. This page describes four common approaches.
 
 ## How rqlite handles client requests
-Before choosing a connection strategy, it's important to understand how rqlite routes requests internally. rqlite uses the [Raft consensus protocol](https://raft.github.io/), which means the cluster always has a single _Leader_ node and one or more _Follower_ nodes. All writes must be processed by the Leader, though read requests can be handled any node depending on the requested [consistency level](/docs/api/read-consistency/). By default read requests are also sent to the Leader.
+Before choosing a connection strategy, it can help to understand how rqlite routes requests internally. rqlite uses the [Raft consensus protocol](https://raft.github.io/), which means the cluster always has a single _Leader_ node and one or more _Follower_ nodes. All writes must be processed by the Leader, though read requests can be handled any node depending on the requested [consistency level](/docs/api/read-consistency/). By default read requests are also sent to the Leader.
 
 However, **you don't need to know which node is the Leader**. If a Follower receives a write request, it transparently forwards the request to the Leader, waits for the response, and returns it to your client. From the client's perspective, every node behaves the same way.
 
