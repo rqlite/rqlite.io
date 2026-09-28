@@ -432,6 +432,12 @@ Flags are grouped by topic below. Pass `-h` to `rqlited` to print the same infor
 		    <br><br>If the passed value is a valid URL then CDC events will be posted to that endpoint. Otherwise the value is interpreted as the path to the CDC configuration file.
 </td>
 	</tr>
+	<tr>
+		<td><code>-cdc-as</code></td>
+		<td>Username in authentication file to perform internode CDC operations. If not set, performs CDC operations anonymously.
+		    <br><br>If communicating CDC updates to other nodes requires credentials you can tell a node to read those credentials from a credential file, for the specified user. By using this flag you can avoid setting credentials in the command line you pass to rqlite, which can expose those credentials if someone has access to the process table.
+</td>
+	</tr>
 </table>
 
 ## Observability and profiling
