@@ -434,8 +434,8 @@ Flags are grouped by topic below. Pass `-h` to `rqlited` to print the same infor
 	</tr>
 	<tr>
 		<td><code>-cdc-as</code></td>
-		<td>Username in authentication file to perform internode CDC operations. If not set, performs CDC operations anonymously.
-		    <br><br>If communicating CDC updates to other nodes requires credentials you can tell a node to read those credentials from a credential file, for the specified user. By using this flag you can avoid setting credentials in the command line you pass to rqlite, which can expose those credentials if someone has access to the process table.
+		<td>Username in authentication file to perform internode CDC operations with. If not set, performs CDC operations anonymously.
+		    <br><br>If communicating CDC updates to other nodes requires credentials you can tell a node to read those credentials from a credential file, for the specified user.
 </td>
 	</tr>
 </table>
