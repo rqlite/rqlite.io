@@ -67,6 +67,7 @@ rqlite, via the configuration file, also supports user-level permissions. Each u
 - _remove_: user can remove a node from a cluster. If a node performs an auto-remove on shutdown, then the `-join-as` user must have this permission.
 - _snapshot_: user may initiate a Raft Snapshot via the endpoint `/snapshot`.
 - _status_: user can retrieve node status and Go runtime information.
+- _cdc-hwm-update_: user can broadcast CDC high watermark updates. In practice only a node broadcasts such information, so it's the node that must supply the credentials.
 - _ui_: user can access the built-in management application at `/console`.
 
 Note that for a user to be able to access the [Unified Endpoint](/docs/api/api/#unified-endpoint), they must have **both** _execute_ and _query_ permissions.
