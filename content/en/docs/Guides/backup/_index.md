@@ -55,6 +55,14 @@ curl -s -XGET localhost:4001/db/backup?compress -o bak.sqlite3.gz
 ```
 You can combine `compress` with `vacuum` (`?compress&vacuum`) for the smallest possible download.
 
+### Checking for failed backups
+Because rqlite streams backups over HTTP, standard HTTP response codes e.g. `500 Internal Error` cannot be used to indicate failure. Instead **if** the stream is interrupted the node will set the [_Trailing_ HTTP header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Trailer) `X-STREAM-ERROR`. The value of this error will contain information on the error. An example `curl` session showing the header set:
+```bash
+$ curl -s --raw localhost:4001/db/backup 
+0
+X-Stream-Error: I/O timeout
+```
+
 ### Always test your backups
 rqlite's _Backup_ system is extensively tested. However you should periodically check your backups, and ensure they are valid SQLite files. One way to do this is to use SQLite itself to run an [integrity check](https://www.sqlite.org/pragma.html#pragma_integrity_check) on your backups.
 

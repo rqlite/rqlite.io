@@ -155,6 +155,10 @@ When `row_ids_only` is true, `before` and `after` are omitted.
 
 Consumers should track the highest processed **index**. Ignore any payload groups with `index` ≤ last processed. Alternatively, ensure downstream handlers are idempotent and can handle an occasional out-of-order CDC event.
 
+## Security
+
+If you enable role-based access controls you may need to pass credentials to the node such that it has the `cdc-hwm-update` permission. See the [Security Guide](/docs/guides/security/) for more information. 
+
 ## Operational guidance
 
 * Set a **table\_filter** early to avoid unnecessary load.
