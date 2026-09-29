@@ -991,6 +991,8 @@ h1, h2, h3, h4, h5, h6,
   // column of prose. Without this the flag column stretches to fit the longest
   // name and the usage text is squeezed.
   table.rq-flags {
+    // Override Docsy's display: block so fixed column widths take effect.
+    display: table;
     table-layout: fixed;
 
     .col-cli { width: 30%; }
