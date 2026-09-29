@@ -220,6 +220,12 @@ Flags are grouped by topic below. Pass `-h` to `rqlited` to print the same infor
 		    <br><br>By default rqlite does not compress snapshots when transferring them between nodes. For high bandwidth networks this is the correct choice. Setting this flag will enable zstd compression, which may improve transfer speed on lower-bandwidth networks. If you set this flag on any node in a cluster, you must set it to the same value on every node in the cluster.
 </td>
 	</tr>
+	<tr>
+		<td><code>-cdc-as</code></td>
+		<td>Username in authentication file to perform internode CDC operations. If not set, performs CDC operations anonymously.
+		    <br><br>If communicating CDC updates to other nodes requires credentials you can tell a node to read those credentials from a credential file, for the specified user.
+</td>
+	</tr>
 </table>
 
 ## Node discovery
@@ -400,6 +406,12 @@ Flags are grouped by topic below. Pass `-h` to `rqlited` to print the same infor
 		<td><code>-write-queue-tx</code></td>
 		<td>Use a transaction when processing a queued write.</td>
 	</tr>
+	<tr>
+		<td><code>-write-queue-retry</code></td>
+		<td>How many times to retry a queued write.
+		    <br><br>If a node fails to send to a queued write to the Leader it will retry the attempt this many times. Retrying queue writes can result in duplicated records if the Leader actually accepted the request and committed it to the log, but the response was never reached the sending node. This may be acceptable depending on your application needs. Set this value to zero if you do not want any risk of duplicate records.
+</td>
+	</tr>
 </table>
 
 ## Backup and restore
@@ -440,40 +452,6 @@ Flags are grouped by topic below. Pass `-h` to `rqlited` to print the same infor
 	<tr>
 		<th class="col-cli">Flag</th>
 		<th class="col-usage">Usage</th>
-	</tr>
-	<tr>
-		<td><code>-otlp-endpoint</code></td>
-		<td>Address of OpenTelemetry Collector for metrics. If not set, OTLP reporting not enabled.
-		    <br><br>If set, rqlite periodically pushes its metrics, in OTLP format over gRPC, to the OpenTelemetry Collector at the given address. The address must be in host:port form e.g. localhost:4317, and must not include a protocol scheme.
-</td>
-	</tr>
-	<tr>
-		<td><code>-otlp-metrics-interval</code></td>
-		<td>Period between OTLP metric exports.
-		    <br><br>The interval at which rqlite periodically pushes its metrics, in OTLP format over gRPC, to the OpenTelemetry Collector. rqlite generates the metrics by walking all expvar metrics and emitting those values as the metrics.
-</td>
-	</tr>
-	<tr>
-		<td><code>-otlp-insecure</code></td>
-		<td>Use plaintext gRPC when communicating with the OpenTelemetry Collector.</td>
-	</tr>
-	<tr>
-		<td><code>-otlp-no-verify</code></td>
-		<td>Skip verification of the OpenTelemetry Collector certificate.</td>
-	</tr>
-	<tr>
-		<td><code>-otlp-ca-cert</code></td>
-		<td>Path to X.509 CA certificate for verifying the OpenTelemetry Collector.
-		    <br><br>If not set, the operating system&#39;s CA certificates are used to verify the Collector&#39;s certificate.
-</td>
-	</tr>
-	<tr>
-		<td><code>-otlp-cert</code></td>
-		<td>Path to X.509 certificate for mutual TLS with the OpenTelemetry Collector.</td>
-	</tr>
-	<tr>
-		<td><code>-otlp-key</code></td>
-		<td>Path to X.509 private key for mutual TLS with the OpenTelemetry Collector.</td>
 	</tr>
 	<tr>
 		<td><code>-cpu-profile</code></td>
