@@ -377,6 +377,12 @@ Flags are grouped by topic below. Pass `-h` to `rqlited` to print the same infor
 		<td><code>-extensions-path</code></td>
 		<td>Comma-delimited list of paths to directories, zipfiles, or tar.gz files containing SQLite extensions.</td>
 	</tr>
+	<tr>
+		<td><code>-query-log</code></td>
+		<td>Set to &#39;stderr&#39; to log every SQL statement, or to path of query-log config file. If not set, query logging not enabled.
+		    <br><br>Query logging records each SQL statement executed by SQLite, along with its execution time. If the value is `stderr` then every statement is logged to standard error. Otherwise the value is interpreted as the path to a JSON configuration file. The file supports `min_duration`, the minimum execution time in nanoseconds a statement must take before it is logged (default 1 second, set to 0 to log every statement), and `no_expanded_sql`, which when true logs the SQL text as written rather than with bound parameter values filled in.
+</td>
+	</tr>
 </table>
 
 ## Queued Writes
@@ -442,12 +448,6 @@ Flags are grouped by topic below. Pass `-h` to `rqlited` to print the same infor
 		<td><code>-cdc-config</code></td>
 		<td>Set CDC HTTP endpoint, or path to CDC config file. If not set, CDC not enabled.
 		    <br><br>If the passed value is a valid URL then CDC events will be posted to that endpoint. Otherwise the value is interpreted as the path to the CDC configuration file.
-</td>
-	</tr>
-	<tr>
-		<td><code>-cdc-as</code></td>
-		<td>Username in authentication file to perform internode CDC operations with. If not set, performs CDC operations anonymously.
-		    <br><br>If communicating CDC updates to other nodes requires credentials you can tell a node to read those credentials from a credential file, for the specified user.
 </td>
 	</tr>
 </table>
