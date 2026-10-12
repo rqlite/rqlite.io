@@ -271,7 +271,7 @@ curl -G 'localhost:4001/db/query?pretty&blob_array' --data-urlencode 'q=SELECT *
 ```
 
 ## Handling Errors
-Errors are indicated in two ways. Some error conditions will be flagged via `4xx` or `5xx` HTTP status codes, so you should always check that first. However, even if rqlite responds with HTTP `200` you should check for any errors that occurred while processing the request, which usually indicates an error at the database-level. These will be indicated via the presence of an `error` key in the JSON response. For example:
+Errors are indicated in two ways. Some error conditions will be flagged via `4xx` or `5xx` HTTP status codes, so you should always check that first. However, even if rqlite responds with HTTP `200` you should check for any errors that occurred while processing the request, which usually indicates an error at the database-level. These will be indicated via the presence of an `error_v2` key in the JSON response. For example:
 
 ```bash
 curl -XPOST 'localhost:4001/db/execute?pretty&timings' -H "Content-Type: application/json" -d "[
@@ -282,12 +282,21 @@ curl -XPOST 'localhost:4001/db/execute?pretty&timings' -H "Content-Type: applica
 {
     "results": [
         {
-            "error": "near \"nonsense\": syntax error"
+            "error": "incomplete input",
+            "error_v2": {
+                "message": "incomplete input",
+                "sqlite": {
+                    "code": 1,
+                    "extended_code": 1
+                }
+            }
         }
     ],
-    "time": 2.478862
+    "time": 0.01004922
 }
 ```
+
+>The `error_V2` key was introduced in v10.6.0. If `sqlite` is present then the error is SQLite-specific and will contain [its documented error codes](https://www.sqlite.org/rescode.html). `error` is deprecated. If you wish to suppress the new error style, then add `errors=v1` to the URL as a query parameter. If you prefer only the new style add `errors=v2` to the URL.
 
 ## Query Timeouts
 By default, SQL queries do not time out. You can set a timeout by setting the `db_timeout` URL parameter. This parameter allows you to specify the maximum amount of time to spend processing the query before it is interrupted and an error returned. Note that this timeout is applied per SQL statement, not to the entire HTTP request. An example request with a 2-second timeout is shown below.
@@ -353,7 +362,15 @@ This time the response includes both results and rows from all those operations,
             "time": 0.000055248
         },
         {
-            "error": "no such table: bar"
+            "error": "no such table: bar",
+            "error_v2": {
+                "message": "no such table: bar",
+                "sqlite": {
+                    "code": 1,
+                    "extended_code": 1
+                }
+            }
+
         }
     ],
     "time": 0.010571084
