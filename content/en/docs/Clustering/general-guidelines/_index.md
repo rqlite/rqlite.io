@@ -74,6 +74,27 @@ It is possible to change a node's Raft address between restarts. Simply pass the
 
 > One result of this is that you can't change the network identifier of all nodes in a cluster **at the same time**. An example of when this might happen is if a node always comes up with a new network identifier at start-up, and you decide to restart your entire cluster at once. Since no node can contact any other node -- because all the network identifiers have changed -- then Raft can't operate, and Raft consensus is required when changing any node's network address. Another way of saying this is that you must only change a minority of node addresses at once.
 
+## Node Promotion and Demotion
+rqlite supports changing a node's role without removing it from the cluster. You can _promote_ a _[read replica](/docs/clustering/read-replicas/)_ to become a _voting_ node, and you can _demote_ a _voting_ node so that it becomes a _read replica_. Both of these operations will affect quorum requirements so should be used with caution.
+
+To promote a node execute the following command at the rqlite CLI:
+```
+127.0.0.1:4001> .promote <node ID>
+```
+
+To demote a node execute the following command at the rqlite CLI:
+```
+127.0.0.1:4001> .demote <node ID>
+```
+
+You can also perform both operations via direct calls to the HTTP API:
+```
+curl --XPOST http://host:4001/promote -d '{"id": "<node ID>"}'
+curl --XPOST http://host:4001/demote -d '{"id": "<node ID>"}'
+```
+
+>Promotion can make scaling your cluster safer. Joining a voting node to your cluster immediately increases the cluster’s quorum requirements; if the new node is unreachable, the cluster could lose availability. Instead, you can now join the node as a read replica, confirm it is reachable and healthy, and then promote it to a voter.
+
 ## Removing or replacing a node
 If a node fails completely and is not coming back, or if you shut down a node because you wish to deprovision it, its record should also be removed from the cluster (a node can be configured to do this automatically on shutdown if you prefer -- see later). To remove the record of a node from a cluster, execute the following command at the rqlite CLI:
 
