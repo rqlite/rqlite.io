@@ -62,6 +62,8 @@ An example of a non-deterministic time function in SQLite is:
 `INSERT INTO datetime_text (d1) VALUES(datetime('now'))`
 
 This is non-deterministic because `now` is evaluated at the moment of SQLite execution, and its value will change with each run. To ensure determinism, rqlite rewrites any statement containing [SQLite date and time functions](https://www.sqlite.org/lang_datefunc.html) before it is added to the Raft log. Specifically, it replaces occurrences of `now` with the current time at the moment the node receives the request containing the statement. This guarantees that the version stored in the Raft log remains constant.
+
+The keywords `CURRENT_TIMESTAMP`, `CURRENT_DATE` and `CURRENT_TIME` are SQLite shorthand for `datetime('now')`, `date('now')` and `time('now')`, and rqlite rewrites them in the same way. For example, `CURRENT_TIMESTAMP` is replaced with `datetime()` applied to the time the node received the request, so every node stores the same value.
 >Like `RANDOM()`, only write requests, and queries with _Strong_ read consistency, are rewritten.
 
 #### Examples
@@ -76,14 +78,28 @@ curl -XPOST 'localhost:4001/db/execute?norwtime' -H "Content-Type: application/j
     "INSERT INTO datetime_text (d1) VALUES(unixepoch('now'))"
 ]'
 
+# Will be rewritten, as CURRENT_TIMESTAMP is shorthand for datetime('now')
+curl -XPOST 'localhost:4001/db/execute' -H "Content-Type: application/json" -d '[
+    "INSERT INTO datetime_text (d1) VALUES(CURRENT_TIMESTAMP)"
+]'
+
 # Not rewritten, as it's a deterministic statement
 curl -XPOST 'localhost:4001/db/execute' -H "Content-Type: application/json" -d '[
     "INSERT INTO datetime_text (d1) VALUES(date('2020-01-01'))"
 ]'
 ```
 
-#### CURRENT_TIME*
-Using `CURRENT_TIMESTAMP`, `CURRENT_TIME`, and `CURRENT_DATE` can also be problematic, depending on your use case. In particular using `CURRENT_TIMESTAMP` (for example) as a default value for a column will mean different values for the same row on different nodes, unless the column is explicitly set by the system writing to rqlite. To avoid this, do not rely on default timestamps -- set them explicitly in the row data when writing to rqlite.
+## Think carefully before using these functions in DDL
+Rewriting only applies to expressions that are evaluated when the statement itself runs. Some expressions are instead stored in the schema by SQLite and evaluated later, every time they are needed. rqlite leaves these untouched, since rewriting them would freeze the value at the moment the schema was created. They are:
+- Column `DEFAULT` values
+- `CHECK` constraints and generated columns
+- Expressions in index definitions, including partial-index `WHERE` clauses
+- The bodies of triggers
+- View definitions
+
+**This makes non-deterministic functions in DDL a real problem.** Take a column defined as `DEFAULT CURRENT_TIMESTAMP` or `DEFAULT (datetime('now'))`. The `CREATE TABLE` statement replicates fine, but every time an `INSERT` leaves that column unset, each node evaluates the default independently, using its own clock, at the moment it applies the statement. The same row ends up with different values on different nodes, and nothing in rqlite can correct it. The same applies to `RANDOM()` in a default, and to time or random functions in a trigger body.
+
+So think carefully before putting `CURRENT_TIMESTAMP`, the date and time functions, or `RANDOM()` into DDL. If you need such a value, supply it in the DML instead -- write it explicitly in the `INSERT` or `UPDATE`, where rqlite will rewrite it to a single value that every node stores identically. Alternatively generate the value in your application and pass it in as a parameter.
 
 ## Try it out
 You can examine how rqlite rewrites SQL statements, but without making any changes to the database. Send any SQL statement to the special endpoint `/db/sql` and rqlite will return the rewritten statement. For example:
@@ -110,6 +126,16 @@ $ curl -G 'localhost:4001/db/sql?pretty' --data-urlencode 'q=INSERT INTO foo(t) 
     "results": [
         {
             "original": "INSERT INTO foo(t) VALUES(datetime(\"now\"))",
+            "rewritten": "INSERT INTO \"foo\" (\"t\") VALUES (datetime(2461077.945987))"
+        }
+    ]
+}
+
+$ curl -G 'localhost:4001/db/sql?pretty' --data-urlencode 'q=INSERT INTO foo(t) VALUES(CURRENT_TIMESTAMP)'
+{
+    "results": [
+        {
+            "original": "INSERT INTO foo(t) VALUES(CURRENT_TIMESTAMP)",
             "rewritten": "INSERT INTO \"foo\" (\"t\") VALUES (datetime(2461077.945987))"
         }
     ]
