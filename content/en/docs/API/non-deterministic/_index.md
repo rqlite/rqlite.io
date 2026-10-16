@@ -89,17 +89,17 @@ curl -XPOST 'localhost:4001/db/execute' -H "Content-Type: application/json" -d '
 ]'
 ```
 
-## Think carefully before using these functions in DDL
-Rewriting only applies to expressions that are evaluated when the statement itself runs. Some expressions are instead stored in the schema by SQLite and evaluated later, every time they are needed. rqlite leaves these untouched, since rewriting them would freeze the value at the moment the schema was created. They are:
-- Column `DEFAULT` values
-- `CHECK` constraints and generated columns
-- Expressions in index definitions, including partial-index `WHERE` clauses
-- The bodies of triggers
-- View definitions
+## What rqlite doesn't rewrite
+rqlite only rewrites functions that are evaluated when the statement itself runs. Some statements instead store an expression in the database schema, and SQLite evaluates that expression later. The most common example is a column default:
+```
+CREATE TABLE foo (id INTEGER PRIMARY KEY, created DATETIME DEFAULT CURRENT_TIMESTAMP);
+INSERT INTO foo (id) VALUES (1);
+```
+The `CREATE TABLE` statement is replicated exactly as written, which is what you want -- rewriting it would fix the default to the moment the table was created. But the `INSERT` doesn't mention `created`, so there is nothing for rqlite to rewrite. Instead each node fills in the default itself, using its own clock, when it executes the `INSERT`. As a result the value of `created` for that row may differ slightly from node to node.
 
-**This makes non-deterministic functions in DDL a real problem.** Take a column defined as `DEFAULT CURRENT_TIMESTAMP` or `DEFAULT (datetime('now'))`. The `CREATE TABLE` statement replicates fine, but every time an `INSERT` leaves that column unset, each node evaluates the default independently, using its own clock, at the moment it applies the statement. The same row ends up with different values on different nodes, and nothing in rqlite can correct it. The same applies to `RANDOM()` in a default, and to time or random functions in a trigger body.
+The same is true of `RANDOM()` and the date and time functions when they appear in `CHECK` constraints, generated columns, index expressions, triggers, and views.
 
-So think carefully before putting `CURRENT_TIMESTAMP`, the date and time functions, or `RANDOM()` into DDL. If you need such a value, supply it in the DML instead -- write it explicitly in the `INSERT` or `UPDATE`, where rqlite will rewrite it to a single value that every node stores identically. Alternatively generate the value in your application and pass it in as a parameter.
+Whether this matters depends on your application. If a timestamp that differs by a few milliseconds between nodes is acceptable to you, column defaults work fine. If you need exactly the same value on every node, set the column explicitly in your `INSERT`, where rqlite will rewrite it, or generate the value in your application and pass it in.
 
 ## Try it out
 You can examine how rqlite rewrites SQL statements, but without making any changes to the database. Send any SQL statement to the special endpoint `/db/sql` and rqlite will return the rewritten statement. For example:
