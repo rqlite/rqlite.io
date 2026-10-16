@@ -99,7 +99,11 @@ The `CREATE TABLE` statement is replicated exactly as written, which is what you
 
 The same is true of `RANDOM()` and the date and time functions when they appear in `CHECK` constraints, generated columns, index expressions, triggers, and views.
 
-Whether this matters depends on your application. If a timestamp that differs by a few milliseconds between nodes is acceptable to you, column defaults work fine. If you need exactly the same value on every node, set the column explicitly in your `INSERT`, where rqlite will rewrite it, or generate the value in your application and pass it in.
+Whether this matters depends on your application. If a timestamp that differs by a few milliseconds between nodes is acceptable to you, column defaults work fine. If you need exactly the same value on every node, set the column explicitly in your `INSERT`:
+```
+INSERT INTO foo (id, created) VALUES (1, datetime('now'));
+```
+rqlite rewrites `datetime('now')` before the statement is stored in the Raft log, so every node writes the same value. Alternatively, generate the value in your application and pass it in.
 
 ## Try it out
 You can examine how rqlite rewrites SQL statements, but without making any changes to the database. Send any SQL statement to the special endpoint `/db/sql` and rqlite will return the rewritten statement. For example:
