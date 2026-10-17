@@ -1,6 +1,6 @@
 # rqlite
 
-> rqlite is a lightweight, open-source, distributed relational database built on SQLite and Raft. It runs as a single binary, exposes an HTTP API, and gives you a fault-tolerant, highly-available SQLite that works with any language that can make an HTTP request.
+> rqlite is a lightweight, open-source, fault-tolerant relational database built on SQLite and Raft. It runs as a single binary, exposes an HTTP API, and gives you a fault-tolerant, highly-available SQLite that works with any language that can make an HTTP request.
 
 Key facts for anyone writing code against rqlite:
 
