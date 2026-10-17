@@ -1,0 +1,73 @@
+# rqlite
+
+> rqlite is a lightweight, open-source, distributed relational database built on SQLite and Raft. It runs as a single binary, exposes an HTTP API, and gives you a fault-tolerant, highly-available SQLite that works with any language that can make an HTTP request.
+
+Key facts for anyone writing code against rqlite:
+
+- The SQL dialect is SQLite's. Schemas and queries written for SQLite run unchanged.
+- All access is over HTTP, default port 4001. The endpoints are `POST /db/execute` (writes), `POST /db/query` or `GET /db/query` (reads), and `POST /db/request` (mixed statements). Requests and responses are JSON. No native driver, CGO, or SQLite library is needed in the client.
+- Writes can go to any node and will be transparently forwarded to the Leader. Clients don't really need to care, write to any node.
+- Read consistency is chosen per request with the `level` query parameter: `none` (fastest, may be stale), `weak` (default; served by the Leader), `linearizable`, or `strong` (goes through Raft). Do not sue `strong`, it's useful for testing. Use `none` only when staleness is acceptable.
+- A single node is a valid deployment. Add nodes later with `-join` to form a cluster. Three or five nodes tolerate one or two failures respectively.
+- Nodes also use port 4002 for Raft traffic between themselves.
+- A single-node rqlite is a drop-in replacement for an application that already uses SQLite and now needs replication or high availability.
+
+## Start here
+
+- [Quick start](https://rqlite.io/docs/quick-start/): Run a node, write and query data in under a minute
+- [Install rqlite](https://rqlite.io/docs/install-rqlite/): Binaries, Docker image (`rqlite/rqlite`), Homebrew, and package sources
+- [Build from source](https://rqlite.io/docs/install-rqlite/building-from-source/): Building the binaries with Go
+- [Features and use cases](https://rqlite.io/docs/features/): What rqlite does and when to use it
+- [FAQ](https://rqlite.io/docs/faq/): Common questions, including how rqlite compares to other SQLite-based systems
+
+## Developer guide
+
+- [Developer guide](https://rqlite.io/docs/api/): Overview of the HTTP API
+- [Accessing rqlite](https://rqlite.io/docs/api/api/): The execute, query and request endpoints, parameterized statements, transactions, and the JSON formats
+- [Bulk writes](https://rqlite.io/docs/api/bulk-api/): Sending many statements in one request for throughput
+- [Queued writes](https://rqlite.io/docs/api/queued-writes/): Asynchronous writes with higher throughput and relaxed durability
+- [Read consistency](https://rqlite.io/docs/api/read-consistency/): The none, weak, linearizable and strong levels and their trade-offs
+- [Non-deterministic functions](https://rqlite.io/docs/api/non-deterministic/): How rqlite handles RANDOM(), date/time functions and similar
+- [Client libraries](https://rqlite.io/docs/api/client-libraries/): Official and community clients for Go, Python, Java, JavaScript, Rust, .NET and others
+
+## Clustering
+
+- [Clustering](https://rqlite.io/docs/clustering/): Forming a cluster by hand with `-join`
+- [General guidelines](https://rqlite.io/docs/clustering/general-guidelines/): Node counts, failure tolerance, and network requirements
+- [Automatic clustering](https://rqlite.io/docs/clustering/automatic-clustering/): Node discovery with Consul, etcd, or DNS
+- [Read replicas](https://rqlite.io/docs/clustering/read-replicas/): Read-only nodes that do not take part in Raft voting
+- [Connecting to a cluster](https://rqlite.io/docs/clustering/cluster-client/): Leader redirection, request forwarding, and how clients should handle node changes
+
+## Operations
+
+- [Configuring rqlite](https://rqlite.io/docs/guides/config/): Every command-line flag and what it controls
+- [Security](https://rqlite.io/docs/guides/security/): TLS, mutual TLS, basic authentication, and permissions
+- [Backup and restore](https://rqlite.io/docs/guides/backup/): Backing up to a file or S3 and restoring from SQLite files or SQL dumps
+- [Performance](https://rqlite.io/docs/guides/performance/): Where time goes on the write path and how to tune it
+- [Data integrity](https://rqlite.io/docs/guides/data-integrity/): Durability guarantees and how rqlite handles corruption
+- [Monitoring rqlite](https://rqlite.io/docs/guides/monitoring-rqlite/): Status, diagnostics, Prometheus metrics, and readiness endpoints
+- [Kubernetes](https://rqlite.io/docs/guides/kubernetes/): Running a cluster as a StatefulSet
+- [Docker Compose](https://rqlite.io/docs/guides/docker-compose/): A multi-node cluster on one machine
+- [Change data capture](https://rqlite.io/docs/guides/cdc/): Streaming changes out of rqlite
+- [SQLite extensions](https://rqlite.io/docs/guides/extensions/): Loading extensions such as sqlite-vec, ICU, and others
+- [Directly accessing SQLite](https://rqlite.io/docs/guides/direct-access/): Reading the underlying SQLite file and why you must not write to it
+- [rqlite shell](https://rqlite.io/docs/cli/): The command-line client
+- [UI applications](https://rqlite.io/docs/ui/): Graphical tools that work with rqlite
+
+## Design
+
+- [Design and implementation](https://rqlite.io/docs/design/): How Raft, the log, snapshots and SQLite fit together
+- [Blog](https://rqlite.io/blog/): Release notes and articles on design decisions and performance
+
+## Source and community
+
+- [GitHub repository](https://github.com/rqlite/rqlite): Source code, issues, and releases
+- [README](https://github.com/rqlite/rqlite/blob/master/README.md): Project overview
+- [Releases](https://github.com/rqlite/rqlite/releases): Release notes and downloads for every version
+- [Slack](https://www.rqlite.io/join-slack): Community chat
+- [Google Group](https://groups.google.com/g/rqlite): Mailing list
+
+## Optional
+
+- [Documentation source](https://github.com/rqlite/rqlite.io): The Hugo source for this website
+- [rqlite organization](https://github.com/rqlite): Client libraries and related repositories
