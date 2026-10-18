@@ -49,6 +49,7 @@ docker pull ghcr.io/rqlite/rqlite
 [Chainguard](https://www.chainguard.dev/) provides security-hardened rqlite container images, including a FIPS variant for environments with strict security and compliance requirements.
 - [rqlite Chainguard image](https://images.chainguard.dev/directory/image/rqlite/overview)
 - [rqlite FIPS Chainguard image](https://images.chainguard.dev/directory/image/rqlite-fips/overview)
+  
 These images are maintained independently by Chainguard and require access to its container registry. The rqlite project is not involved in building them.
 
 ### Homebrew
