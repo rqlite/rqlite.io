@@ -7,13 +7,11 @@ weight: 10
 
 While [manually creating a cluster](/docs/clustering/) is straightforward, it requires starting one node first with distinct options to establish it as the _Leader_. However, rqlite clusters can also be formed automatically, streamlining the process significantly. This approach allows you to start all your nodes simultaneously, after which they communicate and self-organize into a cluster.
 
-An important aspect to note is that all the autoclustering methods described below are **idempotent**. This means that if a node is configured to autocluster but is already part of an existing cluster (including being a single-node system), then the autoclustering flags **are effectively ignored**. This feature greatly simplifies automation:
+All the autoclustering methods described below are **idempotent**. This means that if a node is configured to autocluster but is already part of an existing cluster (including being a single-node system), then the autoclustering flags **are effectively ignored**. This feature greatly simplifies automation:
 
 - **Ease of Deployment**: There's no need for complex logic to determine whether a node requires autoclustering. You can uniformly start nodes with autoclustering flags enabled, regardless of their current cluster membership status.
 - **Consistent Configuration**: It ensures a consistent startup configuration for all nodes, whether they are joining an existing cluster or forming a new one.
 - **Flexibility in Scaling**: Adding new nodes to an existing cluster or expanding the cluster becomes more straightforward, as the same configuration applies.
-
-This approach ensures a more flexible and error-tolerant approach to cluster management, making it easier to deploy and scale your rqlite deployment.
 
 >In the examples below, each rqlite node is assumed to use the same network addresses for listening and for being contacted by other nodes. If this is not the case -- for example, when using Bridge Networks -- those addresses may differ. In such cases, set `-http-adv-addr` and `-raft-adv-addr` to specify the addresses other nodes should use.
 
@@ -92,7 +90,7 @@ DNS-based approaches can be quite useful for many deployment scenarios, in parti
 __________________________
 
 ## Consul
-Another approach uses [Consul](https://www.consul.io/) to coordinate clustering. Like DNS-based autoclustering, nodes do not need to know the network addresses of other nodes ahead of time. Instead as nodes come up they use Consul to share networking information, allowing the nodes to find each other automatically on the network.
+Another approach uses [Consul](https://www.consul.io/) to coordinate clustering. Like DNS-based autoclustering, nodes do not need to know the network addresses of other nodes ahead of time. As nodes start, they use Consul to share networking information, allowing the nodes to find each other automatically on the network.
 
 Let's assume your Consul cluster is running at `http://example.com:8500`. Let's also assume that you are going to run 3 rqlite nodes, each node on a different machine. Launch your rqlite nodes as follows:
 
@@ -112,7 +110,7 @@ rqlited -node-id $ID3 -http-addr=$HOST3:4001 -raft-addr=$HOST3:4002 \
 -disco-key=rqlite1 -disco-mode=consul-kv -disco-config='{"address":"example.com:8500"}' data
 ```
 
-These three nodes will automatically find each other, and cluster. You can start the nodes in any order, and at any time. Furthermore, the cluster Leader will continually update Consul with its address. This means other nodes can be launched later and automatically join the cluster, even if the Leader changes. `-disco-key` is optional, but using it allows you to use a single Consul system to bootstrap multiple rqlite clusters -- simply use a different key for each cluster. Refer to the [_Next Steps_](#next-steps) documentation below for further details on Consul configuration.
+These three nodes will automatically find each other and form a cluster. You can start the nodes in any order, and at any time. Furthermore, the cluster Leader will continually update Consul with its address. This means other nodes can be launched later and automatically join the cluster, even if the Leader changes. `-disco-key` is optional, but using it allows you to use a single Consul system to bootstrap multiple rqlite clusters -- simply use a different key for each cluster. Refer to the [_Next Steps_](#next-steps) documentation below for further details on Consul configuration.
 
 ### Docker
 It's even easier with Docker, as you can launch every node almost identically:
@@ -122,7 +120,7 @@ docker run rqlite/rqlite -disco-mode=consul-kv -disco-config='{"address":"exampl
 __________________________
 
 ## etcd
-A third approach uses [etcd](https://www.etcd.io/) to coordinate clustering. Autoclustering with etcd is very similar to Consul. Like when you use Consul, the advantage of this approach is that you do not need to know the network addresses of all the nodes ahead of time.
+A third approach uses [etcd](https://www.etcd.io/) to coordinate clustering. Autoclustering with etcd is very similar to Consul. As with Consul, you do not need to know the network addresses of all the nodes ahead of time.
 
 Let's assume etcd is available at `example.com:2379`.
 
@@ -160,4 +158,4 @@ The examples above demonstrate simple configurations, but most real deployments 
 - [Full DNS SRV configuration description](https://github.com/rqlite/rqlite-disco-clients/blob/main/dnssrv/config.go)
 
 ### Running multiple different rqlite clusters
-If you wish a single Consul or etcd instance to support multiple rqlite clusters, then set the `-disco-key` command line argument to a different value for each cluster. To run multiple rqlite clusters with DNS, use a different domain name per cluster.
+If you wish a single Consul or etcd instance to support multiple rqlite clusters, then set the `-disco-key` command-line argument to a different value for each cluster. To run multiple rqlite clusters with DNS, use a different domain name per cluster.

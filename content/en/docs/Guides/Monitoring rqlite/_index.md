@@ -11,7 +11,7 @@ rqlite serves diagnostic and statistical information, as well as detailed inform
 curl localhost:4001/status?pretty
 ```
 
-The use of the URL param `pretty` is optional, and results in pretty-printed JSON responses. The output of this endpoint could be periodically written to a monitoring system, allowing the performance of rqlite to be tracked over time.
+The optional `pretty` query parameter formats the JSON response for readability. The output of this endpoint could be periodically written to a monitoring system, allowing the performance of rqlite to be tracked over time.
 
 You can also request the same status information via the rqlite shell:
 ```
@@ -103,7 +103,7 @@ $ curl -XPOST http://localhost:4001/leader -H "Content-Type: application/json" -
 Alternatively issue `.stepdown` at the rqlite shell.
 
 ## Readiness checks
-rqlite nodes serve a "ready" status at `/readyz`. The endpoint will return `HTTP 200 OK` if the node is ready to respond to database requests and cluster management operations. An example access is shown below.
+rqlite nodes serve a "ready" status at `/readyz`. The endpoint will return `HTTP 200 OK` if the node is ready to respond to database requests and cluster management operations. An example request is shown below.
 
 ```bash
 $ curl localhost:4001/readyz
@@ -130,7 +130,7 @@ $ curl localhost:4001/readyz?sync&timeout=5s
 In the example above `/readyz` will block, for at most 5 seconds, until the receiving node is in sync with the Leader's Commit Index. The timeout, if not explicitly set, is 30 seconds. If the node receiving such a request is itself the Leader, this flag has no effect as the Leader is always caught up with itself.
 
 ## expvar support
-rqlite also exports [expvar](https://pkg.go.dev/expvar) information, which is mostly counters of various rqlite activity. The standard expvar information, as well as some custom information, is exposed. This data can be retrieved like so (assuming the node is started in its default configuration):
+rqlite also exports [expvar](https://pkg.go.dev/expvar) information, which consists mostly of counters for various rqlite operations. The standard expvar information, as well as some custom information, is exposed. This data can be retrieved like so (assuming the node is started in its default configuration):
 
 ```bash
 curl localhost:4001/debug/vars

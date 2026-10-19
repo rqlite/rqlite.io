@@ -6,7 +6,7 @@ weight: 5
 ---
 
 ## Why run a cluster?
-**Firstly, you don't have to run a cluster to use rqlite**. A single-node rqlite system will work perfectly fine, and many people do that as they like having a SQLite database available over the network. You won't have a highly available system of course, and if that single node goes offline, you'll need to restart it.
+**You can use rqlite with a single node**. Many people do this to make a SQLite database available over the network. A single-node system does not provide high availability: if that node goes offline, the database is unavailable until it restarts.
 
 Running a cluster, however, provides **fault tolerance and high availability**. Even if some nodes fail, your rqlite system remains online. This means minimal downtime, greater reliability, and continuous access to your database, even during unexpected outages.
 
@@ -49,7 +49,7 @@ Once executed you now have a cluster of two nodes. But for fault tolerance you a
 # Run this on host 3:
 $ rqlited -node-id 3 -http-addr host3:4001 -raft-addr host3:4002 -join host1:4002 ~/node
 ```
-_When simply restarting a node, there is no further need to pass `-join`. However, if a node does attempt to join a cluster it is already a member of, and neither its node ID or Raft network address has changed, then the cluster Leader will ignore the join request as there is nothing to do -- the joining node is already a fully-configured member of the cluster. However, if either the node ID or Raft network address of the joining node has changed, the cluster Leader will first automatically remove the joining node from the cluster configuration before processing the join request. For most applications this is an implementation detail which can be safely ignored, and cluster-joins are basically idempotent._
+_When simply restarting a node, there is no further need to pass `-join`. However, if a node does attempt to join a cluster it is already a member of, and neither its node ID nor its Raft network address has changed, then the cluster Leader will ignore the join request as there is nothing to do -- the joining node is already a fully configured member of the cluster. However, if either the node ID or Raft network address of the joining node has changed, the cluster Leader will first automatically remove the joining node from the cluster configuration before processing the join request. For most applications this is an implementation detail which can be safely ignored, and cluster-joins are basically idempotent._
 
 You've now got a fault-tolerant, distributed, relational database. It can tolerate the failure of any node, even the Leader, and remain operational.
 
@@ -65,7 +65,7 @@ However you must then set `-http-adv-addr` and `-raft-adv-addr` to the actual ne
 On some networks, like AWS EC2 cloud, nodes may have an IP address that is not routable from outside the firewall. Instead these nodes are addressed using a different IP address. You can still form an rqlite cluster however -- check out [this tutorial](https://www.philipotoole.com/rqlite-v3-0-1-globally-replicating-sqlite/) for an example. The key thing is that you must set `-http-adv-addr` and `-raft-adv-addr` so a routable address is broadcast to other nodes.
 
 ## Growing a cluster
-You can grow a cluster, at any time, simply by starting up a new node (pick a never before used node ID) and having it explicitly join with the Leader as normal. The new node will automatically pick up all changes that have occurred on the cluster since the cluster first started. In other words, after joining successfully, the new node will have a full copy of the SQLite database, just like every other node in the cluster.
+You can grow a cluster, at any time, simply by starting up a new node (pick a node ID that has never been used) and having it explicitly join with the Leader as normal. The new node will automatically pick up all changes that have occurred on the cluster since the cluster first started. In other words, after joining successfully, the new node will have a full copy of the SQLite database, just like every other node in the cluster.
 
 ## Modifying a node's Raft network addresses
 It is possible to change a node's Raft address between restarts. Simply pass the new address on the command line. **You must also, however, explicitly tell the node to join the cluster again, by passing `-join` to the node**. In this case what the Leader actually does is remove the previous record of the node, before adding a new record of the node. You can also change the HTTP API address of a node between restarts, but an explicit re-join is not required if just the HTTP API address changes.
@@ -115,12 +115,12 @@ If you cannot bring sufficient nodes back online such that the cluster can elect
 Sometimes it makes sense for a node to automatically remove itself when it gracefully shuts down. If you want this behavior, pass `-raft-cluster-remove-shutdown=true` to rqlite at launch time. If the node is shut down **gracefully** (it receives `SIGTERM` for example) it will first contact the Leader and remove itself from the cluster, and then the rqlite process will terminate. As a result the Leader will not continue to contact the node after it shuts down. This removal operation also reduces the cluster quorum size.
 
 ### Automatically removing failed nodes
-rqlite supports automatically removing both voting nodes (the default type) and read replicas that have been non-reachable for a configurable period of time. A non-reachable node is defined as a node that the Leader cannot heartbeat with. To enable reaping of voting nodes set `-raft-reap-node-timeout` to a non-zero time interval. Likewise, to enable reaping of read replicas set `-raft-reap-read-only-node-timeout`.
+rqlite supports automatically removing both voting nodes (the default type) and read replicas that have been unreachable for a configurable period of time. A unreachable node is defined as a node that the Leader cannot heartbeat with. To enable reaping of voting nodes set `-raft-reap-node-timeout` to a non-zero time interval. Likewise, to enable reaping of read replicas set `-raft-reap-read-only-node-timeout`.
 
 It is recommended that these values be set conservatively, especially for voting nodes. Setting them too low may mean you don't account for the normal kinds of network outages and temporary failures that can affect distributed systems such as rqlite. Note that the timeout clock is reset if a cluster elects a new Leader.
 
 #### Example configuration
-Instruct rqlite to reap non-reachable voting nodes after 2 days, and non-reachable read replicas after 30 minutes:
+Instruct rqlite to reap unreachable voting nodes after 2 days, and unreachable read replicas after 30 minutes:
 ```bash
 rqlited -node-id 1 -raft-reap-node-timeout=48h -raft-reap-read-only-node-timeout=30m data
 ```
@@ -169,7 +169,7 @@ Below is an example of bringing a 3-node cluster back online.
 Next simply create entries for all the nodes you plan to bring up (in the example above that's 3 nodes). You must confirm that nodes you don't include here have indeed failed and will not later rejoin the cluster. Ensure that this file is the same across all remaining rqlite nodes. At this point, you can restart your rqlite cluster. In the example above, this means you'd start 3 nodes.
 
 Once recovery is completed, the `peers.json` file is renamed to `peers.info`. `peers.info` will not trigger further recoveries, and simply acts as a record for future reference. It may be deleted at any time.
-> Recovering a multi-node cluster in this manner may still fail, in certain rare situations. The most robust way to recover a cluster as part of Disaster-Recovery process is to recover a *single* node first, then join new nodes to that node. Alternatively recover a single node and then retrieve a backup, which will allow you to recreate a new cluster from that backup.
+> Recovering a multi-node cluster in this manner may still fail, in certain rare situations. The most robust way to recover a cluster as part of a disaster recovery process is to recover a *single* node first, then join new nodes to that node. Alternatively recover a single node and then retrieve a backup, which will allow you to recreate a new cluster from that backup.
 
 ## Clusters with an even number of nodes
 Running clusters with an even number of voting (i.e. _Raft_) nodes is often an inefficient setup, providing little practical value. Consider, for instance, a comparison between two clusters: one containing three nodes and another containing four nodes. The collective agreement -- or consensus -- within these clusters is crucial for successfully executing a database write operation. A majority, or _Quorum_, of nodes within the cluster must concur on a given change for this operation to be successful.

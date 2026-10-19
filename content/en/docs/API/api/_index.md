@@ -6,7 +6,7 @@ description: "How to write data and read it back"
 weight: 5
 date: 2017-01-05
 ---
-Each rqlite node exposes an HTTP API allowing data to be inserted into, and read back from, the database. Specifically there are three endpoints to know:
+Each rqlite node exposes an HTTP API allowing data to be inserted into, and read back from, the database. There are three main endpoints:
 - `/db/execute` which expects write requests (`INSERT`, `UPDATE`, `DELETE`).
 - `/db/query` which accepts **only** read requests (`SELECT`). Attempting to change the database via this endpoint will result in an error.
 - `/db/request` which accepts both read and write requests. This endpoint is known as the [_Unified Endpoint_](/docs/api/api/#unified-endpoint).
@@ -15,12 +15,12 @@ You can send your read and write requests to any node in your cluster.
 
 **Which endpoint should you use?** If you know ahead of time whether you are doing reads or writes, you should choose the endpoint dedicated to that type of request (either `/db/execute` or `/db/query`), as you will know precisely what to expect when rqlite responds. This encourages the most robust interaction with rqlite.
 
-In contrast the format of the response from `/db/request` will depend on whether you send read or write requests, and will require your code to inspect the response more closely before parsing it. But `/db/request` can be more convenient in some cases, as you don't need to worry about choosing a particular endpoint ahead of time -- just send all your requests to `/db/request`.
+The format of the response from `/db/request` will depend on whether you send read or write requests, and will require your code to inspect the response more closely before parsing it. But `/db/request` can be more convenient in some cases, as you don't need to worry about choosing a particular endpoint ahead of time -- just send all your requests to `/db/request`.
 
 The best way to understand the API is to work through the simple examples below. There are also [client libraries available](/docs/api/client-libraries/).
 
 ## Writing Data
-To write data successfully to the database, you must create at least one table. To do this perform an HTTP POST on the `/db/execute` endpoint on any rqlite node. Encapsulate the `CREATE TABLE` SQL command in a JSON array, and put it in the body of the request. An example via [curl](https://curl.haxx.se/):
+To write data successfully to the database, you must create at least one table. To do this, perform an HTTP POST on the `/db/execute` endpoint on any rqlite node. Encapsulate the `CREATE TABLE` SQL command in a JSON array, and put it in the body of the request. An example via [curl](https://curl.haxx.se/):
 
 ```bash
 curl -XPOST 'localhost:4001/db/execute?pretty&timings' -H "Content-Type: application/json" -d '[
@@ -57,10 +57,10 @@ The response is of the form:
 }
 ```
 
-The use of the URL param `pretty` is optional, and results in pretty-printed JSON responses. Time is measured in seconds. If you do not want timings, do not pass `timings` as a URL parameter.
+The optional `pretty` query parameter formats the JSON response for readability. Time is measured in seconds. If you do not want timings, do not pass `timings` as a URL parameter.
 
 ## Querying Data
-Querying data is easy. For a single query simply perform an HTTP GET on the `/db/query` endpoint, setting the query statement as the query parameter `q`:
+Querying data is easy. For a single query, perform an HTTP GET on the `/db/query` endpoint, setting the query statement as the query parameter `q`:
 
 ```bash
 curl -G 'localhost:4001/db/query?pretty&timings' --data-urlencode 'q=SELECT * FROM foo'
@@ -140,7 +140,7 @@ curl -G 'localhost:4001/db/query?pretty&timings&qualify_columns' \
 ```
 
 ## Parameterized Statements
-While the "raw" API described above can be convenient and simple to use, it is vulnerable to [SQL Injection attacks](https://owasp.org/www-community/attacks/SQL_Injection). To protect against this issue, rqlite also supports [SQLite parameterized statements](https://www.sqlite.org/lang_expr.html#varparam), for both read and writes. To use this feature, send the SQL statement and values as distinct elements within a new JSON array, as follows:
+While the "raw" API described above can be convenient and simple to use, it is vulnerable to [SQL Injection attacks](https://owasp.org/www-community/attacks/SQL_Injection). To protect against this issue, rqlite also supports [SQLite parameterized statements](https://www.sqlite.org/lang_expr.html#varparam), for both reads and writes. To use this feature, send the SQL statement and values as distinct elements within a new JSON array, as follows:
 
 _Writing data_
 ```bash
@@ -156,7 +156,7 @@ curl -XPOST 'localhost:4001/db/query?pretty&timings' -H "Content-Type: applicati
 ```
 
 ### Named Parameters
-Named parameters are also supported. To use this feature set the values using a dictionary like so:
+Named parameters are also supported. To use this feature, set the values using a dictionary like so:
 
 _Writing data_
 ```bash
@@ -189,9 +189,9 @@ curl -XPOST 'localhost:4001/db/execute?pretty&transaction' -H "Content-Type: app
 ]"
 ```
 
-When a transaction takes place either both statements will succeed, or neither. Performance is *much, much* better if multiple SQL INSERTs or UPDATEs are executed via a transaction. Note that processing of the request ceases the moment any single query results in an error.
+In this example, either both statements succeed or neither does. Performance is substantially better if multiple SQL INSERTs or UPDATEs are executed via a transaction. Note that processing of the request ceases the moment any single query results in an error.
 
-The behavior of rqlite if you explicitly issue `BEGIN`, `COMMIT`, `ROLLBACK`, `SAVEPOINT`, and `RELEASE` to control your own transactions is **not defined**. This is because the behavior of a cluster that fails while such a manually-controlled transaction is in progress is not yet defined. It is important to control transactions only through the query parameters shown above.
+The behavior of rqlite if you explicitly issue `BEGIN`, `COMMIT`, `ROLLBACK`, `SAVEPOINT`, and `RELEASE` to control your own transactions is **not defined**. This is because the behavior of a cluster that fails while such a manually controlled transaction is in progress is not yet defined. It is important to control transactions only through the query parameters shown above.
 
 ## BLOB data
 Working with [BLOB](https://www.sqlite.org/datatype3.html) data may require specialized handling, depending on your use case. Examples of writing BLOB data, and reading it back, are shown below.
@@ -271,7 +271,7 @@ curl -G 'localhost:4001/db/query?pretty&blob_array' --data-urlencode 'q=SELECT *
 ```
 
 ## Handling Errors
-Errors are indicated in two ways. Some error conditions will be flagged via `4xx` or `5xx` HTTP status codes, so you should always check that first. However, even if rqlite responds with HTTP `200` you should check for any errors that occurred while processing the request, which usually indicates an error at the database-level. These will be indicated via the presence of an `error_v2` key in the JSON response. For example:
+Errors are indicated in two ways. Some error conditions will be flagged via `4xx` or `5xx` HTTP status codes, so you should always check that first. However, even if rqlite responds with HTTP `200` you should check for any errors that occurred while processing the request, which usually indicate a database error. These will be indicated via the presence of an `error_v2` key in the JSON response. For example:
 
 ```bash
 curl -XPOST 'localhost:4001/db/execute?pretty&timings' -H "Content-Type: application/json" -d "[
@@ -296,7 +296,7 @@ curl -XPOST 'localhost:4001/db/execute?pretty&timings' -H "Content-Type: applica
 }
 ```
 
->The `error_V2` key was introduced in v10.6.0. If `sqlite` is present then the error is SQLite-specific and will contain [its documented error codes](https://www.sqlite.org/rescode.html). `error` is deprecated. If you wish to suppress the new error style, then add `errors=v1` to the URL as a query parameter. If you prefer only the new style add `errors=v2` to the URL.
+>The `error_v2` key was introduced in v10.6.0. If `sqlite` is present then the error is SQLite-specific and will contain [its documented error codes](https://www.sqlite.org/rescode.html). `error` is deprecated. If you wish to suppress the new error style, then add `errors=v1` to the URL as a query parameter. If you prefer only the new style add `errors=v2` to the URL.
 
 ## Query Timeouts
 By default, SQL queries do not time out. You can set a timeout by setting the `db_timeout` URL parameter. This parameter allows you to specify the maximum amount of time to spend processing the query before it is interrupted and an error returned. Note that this timeout is applied per SQL statement, not to the entire HTTP request. An example request with a 2-second timeout is shown below.
@@ -376,7 +376,7 @@ This time the response includes both results and rows from all those operations,
     "time": 0.010571084
 }
 ```
-The _Unified Endpoint_ supports transactions, Associative responses, [Read Consistency](/docs/api/read-consistency/) levels, and Parameterized Statements. Just set the relevant Query URL parameters, as described earlier on this page. [_Queued Writes_](/docs/api/queued-writes/), however, are **not** supported by the Unified Endpoint.
+The _Unified Endpoint_ supports transactions, Associative responses, [Read Consistency](/docs/api/read-consistency/) levels, and Parameterized Statements. Just set the relevant URL query parameters, as described earlier on this page. [_Queued Writes_](/docs/api/queued-writes/), however, are **not** supported by the Unified Endpoint.
 
 ## PRAGMA Directives
 
@@ -480,7 +480,7 @@ curl -XPOST 'localhost:4001/db/execute?raft_index' -H "Content-Type: application
 ```
 
 ### Request Forwarding Timeouts
-If a Follower forwards a request to a Leader, by default the Leader must respond within 30 seconds. You can control this timeout by setting the `timeout` parameter. For example, to set a 2 minute timeout, you would issue the following request:
+If a Follower forwards a request to a Leader, by default the Leader must respond within 30 seconds. You can control this timeout by setting the `timeout` parameter. For example, to set a 2-minute timeout, you would issue the following request:
 ```bash
 curl -XPOST 'localhost:4001/db/execute?timeout=2m' -H "Content-Type: application/json" -d '[
     ["INSERT INTO foo(name, age) VALUES(?, ?)", "fiona", 20]

@@ -90,4 +90,4 @@ $ rqlite -H 192.168.0.1
 ```
 
 ## Command history
-Command history is stored and reloaded between sessions, in a hidden file in the user's home directory named `.rqlite_history`. By default 100 previous commands are stored, though this value can be explicitly set via the environment variable `RQLITE_HISTFILESIZE`. If `RQLITE_HISTFILESIZE` is set to 0, no history file is written at all.
+Command history is saved between sessions in `.rqlite_history`, a hidden file in your home directory. By default, the shell stores the previous 100 commands. You can change this limit with the `RQLITE_HISTFILESIZE` environment variable. If `RQLITE_HISTFILESIZE` is set to 0, no history file is written at all.
