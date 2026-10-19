@@ -1,11 +1,11 @@
 ---
 title: "FAQ"
 linkTitle: "FAQ"
-description: "Frequently-asked questions about rqlite"
+description: "Frequently asked questions about rqlite"
 weight: 60
 ---
 ## What exactly does rqlite do?
-rqlite is about replicating a set of data, which has been written to it using SQL. The data is replicated for fault tolerance because your data is so important that you want multiple copies distributed in different places, because you want to be able to query your data even if some machines fail, or both. These different places could be different machines on a rack, or different machines, each in different buildings, or even different machines, [each on different continents](https://www.philipotoole.com/rqlite-v3-0-1-globally-replicating-sqlite/).
+rqlite replicates data written using SQL across multiple nodes for fault tolerance. This lets you keep copies in different locations and continue querying your data even if some machines fail. Nodes can run on machines in the same rack, in separate buildings, or even [on different continents](https://www.philipotoole.com/rqlite-v3-0-1-globally-replicating-sqlite/).
 
 On top of that, rqlite provides strong guarantees about what state any copy of that data is in, with respect to a special node called the _Leader_. That is where the [Raft Consensus Protocol](https://raft.github.io/) comes in. By using Raft, rqlite prevents divergent copies of the data, and ensures there is one authoritative, consistent copy of that data at all times.
 
@@ -15,12 +15,12 @@ rqlite is for applications needing an easy-to-use, fault-tolerant, and highly av
 ## Why would I use this, versus some other distributed database?
 _[Complexity is your enemy](https://x.com/richardbranson/status/242582296157384704)._
 
-**rqlite is very simple to deploy, run, and manage** -- in fact, simplicity-of-operation is a key design goal. It's also lightweight and easy to query. It's a single binary you can drop anywhere on a machine, and just start it, which makes it very convenient. It takes literally seconds [to configure and form a cluster](/docs/clustering/), which provides you with fault tolerance and high availability. **With rqlite you have complete control over your database infrastructure, and the data it stores.**
+**rqlite is very simple to deploy, run, and manage** -- in fact, simplicity of operation is a key design goal. It's also lightweight and easy to query. It's a single binary you can drop anywhere on a machine, and just start it, which makes it very convenient. It takes literally seconds [to configure and form a cluster](/docs/clustering/), which provides you with fault tolerance and high availability. **With rqlite you have complete control over your database infrastructure, and the data it stores.**
 
 That said, it's always possible it's _too_ simple for your needs.
 
 ## How do I access the database?
-The primary way to access the database is via the [HTTP API](/docs/api/api/). You can access it directly, or use a [client library](/docs/api/client-libraries/). For more casual use you can use the [command line tool](/docs/cli/). `rqlited` also offers [CORS](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) support via command-line flags you can set at launch time.
+The primary way to access the database is via the [HTTP API](/docs/api/api/). You can access it directly, or use a [client library](/docs/api/client-libraries/). For interactive use, you can use the [command-line tool](/docs/cli/). `rqlited` also offers [CORS](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) support via command-line flags you can set at launch time.
 
 It is also technically possible to [read the SQLite file directly](/docs/guides/direct-access).
 
@@ -36,7 +36,7 @@ Check out the [Kubernetes deployment guide](/docs/guides/kubernetes/).
 ## Can any node execute a write request, and have the system "synchronize it all"?
 The first thing to understand is that you can send your write-request to any node in the cluster, and rqlite will do the right thing automatically. You do not need to direct your write requests specifically to the Leader node.
 
-Under the covers however, only the Leader can make changes to the database. If a client sends a write-request to a node and that node is not the Leader, the node will transparently forward the request to the Leader, wait for a response, and then return the response to the client. If the node receiving the write cannot contact the Leader (which shouldn't happen during normal operation, as all functional clusters have a Leader), the write will fail and return an error to the client.
+Under the covers, however, only the Leader can make changes to the database. If a client sends a write-request to a node and that node is not the Leader, the node will transparently forward the request to the Leader, wait for a response, and then return the response to the client. If the node receiving the write cannot contact the Leader (which shouldn't happen during normal operation, as all functional clusters have a Leader), the write will fail and return an error to the client.
 
 ## Can I send a read request to any node in the cluster?
 Yes. If a read request must be serviced by the Leader, however, rqlite will transparently forward the request to the Leader, wait for the Leader to handle it, and return the results to the client. If the node receiving the read cannot contact the Leader (which shouldn't happen during normal operation, as all functional clusters have a Leader), the read will fail and return an error to the client.
@@ -59,7 +59,7 @@ Raft is a Consistency/Partition-tolerance (CP) protocol. This means that if an r
 ## Does rqlite require consensus be reached before a write is accepted?
 Yes, this is an intrinsic part of the Raft protocol. How long it takes to reach [consensus](https://computersciencewiki.org/index.php/Distributed_consensus) depends primarily on your network. It will take two round trips from a Leader to a quorum of nodes, though each of those nodes is contacted in parallel.
 
-There is one exception however, when rqlite does not wait for consensus. You can use [Queued Writes](/docs/api/queued-writes/), which trades off durability for performance.
+There is one exception, however, when rqlite does not wait for consensus. You can use [Queued Writes](/docs/api/queued-writes/), which trade off durability for performance.
 
 ## How does a client detect a cluster partition?
 If the client is on the same side of the partition as a quorum of nodes, there will be no real problem, and any writes should succeed. However if the client is on the other side of the partition, one of two things will happen. The client may be redirected to the Leader, but will then (presumably) fail to contact the Leader due to the partition, and experience a timeout. Alternatively the client may receive a `no leader` error.
@@ -72,7 +72,7 @@ Sure. Many people do so, as they like accessing a SQLite database over HTTP. Of 
 It's important to understand, however, that "single-node" means a single-node *cluster* -- in other words, a cluster with a configured size of one node. A 3-node cluster, in which two nodes fail, is not a single-node cluster. In that case you've still got a 3-node cluster, but one which is offline due to lack of quorum.
 
 ## How can I change my multi-node cluster to a single-node system?
-You can't simply shut down all the nodes except one, and expect the single node to work normally, due to Raft quorum requirements -- but you do have options. One thing you can do is to [backup your cluster](/docs/guides/backup/), and then [boot a new single node](/docs/guides/backup/#booting-with-a-sqlite-database) using the backup. This is probably the simplest way to do it, and will be very fast. Alternatively you can explicitly force the configuration of your cluster to be single node, by following the [_Dealing with Failure_](/docs/clustering/general-guidelines/#recovering-a-cluster-that-has-permanently-lost-quorum) guide, and using a configuration file that only contains a single node.
+You can't simply shut down all the nodes except one, and expect the single node to work normally, due to Raft quorum requirements -- but you do have options. One thing you can do is to [back up your cluster](/docs/guides/backup/), and then [boot a new single node](/docs/guides/backup/#booting-with-a-sqlite-database) using the backup. This is probably the simplest way to do it, and will be very fast. Alternatively you can explicitly force the configuration of your cluster to be single node, by following the [_Dealing with Failure_](/docs/clustering/general-guidelines/#recovering-a-cluster-that-has-permanently-lost-quorum) guide, and using a configuration file that only contains a single node.
 
 ## What is the maximum size of a cluster?
 There is no explicit maximum cluster size. However the [practical cluster size limit is probably about 11 _voting nodes_](/docs/clustering/). You can go bigger by adding [read replicas](/docs/clustering/read-replicas/).
@@ -118,15 +118,15 @@ Depending on your Operating System, libc may be required. On Linux specifically 
 ```
 SQLite is never required on the host machine however, as it is compiled into the rqlite release.
 
-## How is it different than dqlite?
-dqlite is a library, written in C, that you need to integrate with your own software. That requires programming. rqlite is a standalone application -- it's a full [RDBMS](https://techterms.com/definition/rdbms) (albeit a relatively simple one). rqlite has everything you need to read and write data, and backup, maintain, and monitor the database itself.
+## How is it different from dqlite? {#how-is-it-different-than-dqlite}
+dqlite is a library, written in C, that you need to integrate with your own software. That requires programming. rqlite is a standalone application -- it's a full [RDBMS](https://techterms.com/definition/rdbms) (albeit a relatively simple one). rqlite has everything you need to read and write data, and back up, maintain, and monitor the database itself.
 
 rqlite and dqlite are completely separate projects, and rqlite does not use dqlite. In fact, rqlite was created before dqlite.
 
-## How is it different than Litestream?
+## How is it different from Litestream? {#how-is-it-different-than-litestream}
 [Litestream](https://github.com/benbjohnson/litestream) adds reliability to a system using SQLite by periodically backing up the SQLite database to something like AWS S3. If you lose the node running your SQLite database, you must restore it from your backup. Litestream does this in a very elegant way, and doesn't change how applications interact with SQLite. There is also a very small chance of data loss in the event of node failure, but Litestream allows you to make trade-offs that suit your application.
 
 rqlite, in contrast, adds reliability **and** high availability via clustering. This means that any application talking to rqlite shouldn't notice if a node fails because other nodes in the cluster automatically take over. This offers significantly more protection against any data loss. rqlite also offers very strict guarantees about the state of the SQLite database, relative to the Leader. rqlite is not a drop-in replacement for SQLite, however.
 
-## How is it different than LiteFS?
+## How is it different from LiteFS? {#how-is-it-different-than-litefs}
 [LiteFS](https://github.com/superfly/litefs) is another SQLite replication system. While it replicates SQLite differently than the approach that Litestream takes, the differences between it and rqlite are similar. rqlite is a highly available distributed database solution, not a SQLite replication system like LiteFS.

@@ -32,9 +32,9 @@ $
 ```
 Setting the URL query parameter `queue` enables queuing mode, adding the request data to an internal queue which rqlite manages for you. Once the request has been queued, the response is returned to the client.
 
-rqlite will later merge queued requests, once a batch-size of them has been queued on the node (or a configurable timeout expires), and execute them as though they had all been contained in a single request.
+rqlite merges queued requests when the configured batch size is reached or a configurable timeout expires. It then executes them as a single request.
 
-Each response includes a monotonically-increasing `sequence_number`, which allows you to track when this request is actually persisted to the Raft log. The `/status` [diagnostics](/docs/guides/monitoring-rqlite) endpoint includes the sequence number of the latest request successfully written to Raft.
+Each response includes a monotonically increasing `sequence_number`, which allows you to track when this request is actually persisted to the Raft log. The `/status` [diagnostics](/docs/guides/monitoring-rqlite) endpoint includes the sequence number of the latest request successfully written to Raft.
 
 >Sequence numbers are local to the node that received the _Queued Write_ request. Each node generates its own series of sequence numbers, and is not aware of other nodes' sequence numbers.
 
@@ -51,12 +51,12 @@ This example also shows setting a timeout. If the queue has not emptied after th
 The behavior of the queue rqlite uses to batch the requests is configurable at rqlite launch time. You can change the minimum number of requests that must be present in the queue before they are written, as well as the timeout after which whatever is in the queue will be written regardless of queue size. Pass `-h` to `rqlited` to see the queue defaults, and list all command-line options.
 
 ## Trade-offs
-As with most databases, there is a trade-off to be made between write-performance and durability, but for some applications these trade-offs are worth it.
+As with most databases, there is a trade-off to be made between write performance and durability, but for some applications these trade-offs are worth it.
 
 Because the API returns immediately after queuing the requests **but before the data is committed to the Raft log** there is a small risk of data loss in the event the node crashes before queued data is persisted. You can make this window arbitrarily small by adjusting the queuing parameters, at the cost of write performance.
 
-By default a node will retry a Queued Write once if the Leader is not reachable. This does mean that if a Queued Write appeared to fail, but was actually successful (the response from the Leader may be dropped by the network), data may be duplicated. You can eliminate this risk by setting `-write-queue-retry` to zero.
+By default, a node will retry a Queued Write once if the Leader is not reachable. This does mean that if a Queued Write appeared to fail, but was actually successful (the response from the Leader may be dropped by the network), data may be duplicated. You can eliminate this risk by setting `-write-queue-retry` to zero.
 
 Finally, when the API returns `HTTP 200 OK`, that simply acknowledges that the data has been queued correctly. It does not indicate that the SQL statements will actually be applied successfully to the database. Be sure to check the node's logs and diagnostics if you have any concerns about failed queued writes.
 
-By default, writes from the queue are not performed within a transaction. If you wish to change this, it must be set at launch time via the command line option `-write-queue-tx`.
+By default, writes from the queue are not performed within a transaction. If you wish to change this, it must be set at launch time via the command-line option `-write-queue-tx`.

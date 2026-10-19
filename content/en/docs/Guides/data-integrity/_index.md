@@ -7,13 +7,13 @@ weight: 35
 
 ## Data files at startup
 
-When a node starts, rqlite computes a [CRC Checksum](https://en.wikipedia.org/wiki/Cyclic_redundancy_check) over every on-disk data file and compares it to a value that was stored when rqlite originally wrote the file (this value is stored in a _sidecar_ file). The node refuses to run if any file fails the check. This catches bitrot, or other modification, that may have occurred while a node sits shut down.
+When a node starts, rqlite computes a [CRC checksum](https://en.wikipedia.org/wiki/Cyclic_redundancy_check) over every on-disk data file and compares it to a value that was stored when rqlite originally wrote the file (this value is stored in a _sidecar_ file). The node refuses to run if any file fails the check. This catches bitrot, or other modification, that may have occurred while a node is shut down.
 
 ## Snapshots
 
 rqlite computes a CRC over each Raft _snapshot_ at write time and stores the CRC alongside the snapshot file. When a Leader sends a snapshot to a Follower, it sends the stored CRC with it. The Follower recomputes the CRC over the bytes it received and rejects the snapshot if the values do not match.
 
-This gives end-to-end integrity from the moment the snapshot was first written. It catches both transport corruption and any on-disk corruption that may have struck the sender's copy between snapshot creation and send.
+This gives end-to-end integrity from the moment the snapshot was first written. It catches both transport corruption and any on-disk corruption that may have struck the sender's copy between snapshot creation and transmission.
 
 ## Database state after snapshot merging
 
@@ -35,4 +35,4 @@ For continuous protection, deploy rqlite on a file system that performs its own 
 
 When a node detects corruption -- at startup, on snapshot receive, or during `PRAGMA quick_check` -- it refuses to use the bad data. To recover, ensure the node is stopped, remove its data directory, restart it, and let it rejoin the cluster. Alternatively remove and deprovision the node, and add a new node to the cluster. In either case rqlite will replicate the current state from the Leader.
 
-This path depends on the cluster having quorum and at least one healthy peer with intact data. A correlated failure across nodes -- a firmware bug affecting every disk of the same model, or a shared-storage outage -- may force you to [perform an emergency recovery](/docs/clustering/general-guidelines/#dealing-with-failure). Operators running production clusters should also keep independent [backups](/docs/guides/backup/) against this case.
+This path depends on the cluster having quorum and at least one healthy peer with intact data. A correlated failure across nodes -- a firmware bug affecting every disk of the same model, or a shared-storage outage -- may force you to [perform an emergency recovery](/docs/clustering/general-guidelines/#dealing-with-failure). Operators running production clusters should also keep independent [backups](/docs/guides/backup/) to protect against this scenario.

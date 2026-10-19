@@ -4,7 +4,7 @@ linkTitle: "Install rqlite"
 description: "How to download and install rqlite"
 weight: 20
 ---
-Prebuilt binaries are available for a variety of systems including **Linux**, **macOS**, and **Microsoft Windows**, and can be built for many target CPUs, including x86, AMD, MIPS, RISC, PowerPC, and ARM. You can find prebuilt binaries on the rqlite [GitHub releases page](https://github.com/rqlite/rqlite/releases/latest).
+Prebuilt binaries are available for **Linux**, **macOS**, and **Microsoft Windows**. rqlite can also be built for many target CPUs, including x86, AMD, MIPS, RISC, PowerPC, and ARM. You can find prebuilt binaries on the rqlite [GitHub releases page](https://github.com/rqlite/rqlite/releases/latest).
 
 ## Platforms
 
@@ -15,7 +15,7 @@ The quickest way to install rqlite on Linux is the install script, which downloa
 curl -fsSL https://rqlite.io/install.sh | sh
 ```
 
-By default this installs into `/usr/local/bin`. Two environment variables let you control it:
+By default, this installs into `/usr/local/bin`. Two environment variables let you control it:
 
 | Variable | Description | Default |
 | --- | --- | --- |
@@ -27,7 +27,7 @@ RQLITE_VERSION=v9.4.1 INSTALL_DIR=$HOME/bin sh -c "$(curl -fsSL https://rqlite.i
 ```
 
 {{< note >}}
-The install script supports Linux only. On macOS use Homebrew, and on Windows download the release directly.
+The install script supports Linux only. On macOS, use Homebrew. On Windows, download the release directly.
 {{< /note >}}
 
 ### Docker
@@ -59,12 +59,12 @@ brew install rqlite
 ```
 
 ### Windows
-You can download the Windows release on the [GitHub releases page](https://github.com/rqlite/rqlite/releases). Alternatively the latest top-of-tree build [is also available for download](https://ci.appveyor.com/api/projects/otoolep/rqlite/artifacts/rqlite-latest-win64.zip?branch=master) from AppVeyor.
+You can download the Windows release on the [GitHub releases page](https://github.com/rqlite/rqlite/releases). Alternatively, the latest top-of-tree build [is also available for download](https://ci.appveyor.com/api/projects/otoolep/rqlite/artifacts/rqlite-latest-win64.zip?branch=master) from AppVeyor.
 
 ## What's included?
 
 An rqlite release includes two key binaries:
-- `rqlited`: the actual rqlite server.
+- `rqlited`: the rqlite server.
 - `rqlite`: a command-line tool for interacting with rqlite.
 
 Depending on the packaging process, a simple benchmarking tool, `rqbench`, may also be included.

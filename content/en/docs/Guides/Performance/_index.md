@@ -13,7 +13,7 @@ rqlite performance -- usually defined as the number of database updates performe
 - Disk performance
 - Network latency
 
-Depending on your machine (particularly its disk IO performance) and network, write throughput could be anything from 10 requests per second to hundreds of requests per second.
+Depending on your machine (particularly its disk I/O performance) and network, write throughput could be anything from 10 requests per second to hundreds of requests per second.
 
 ### Disk
 Disk performance is the single biggest determinant of rqlite performance _on a low-latency network_. This is because every change to the system must go through the Raft subsystem, and the Raft subsystem calls `fsync()` after every write to its log. Raft does this to ensure that the change is safely persisted in permanent storage before writing those changes to the SQLite database.
@@ -37,7 +37,7 @@ rqlite is compatible with [SQLite VACUUM](https://www.sqlite.org/lang_vacuum.htm
 curl -XPOST 'localhost:4001/db/execute' -H "Content-Type: application/json" -d '["VACUUM"]'
 ```
 
-You can even schedule `VACUUM` to take place periodically and automatically, via the `-auto-vacuum-int` command line flag. For example:
+You can even schedule `VACUUM` to take place periodically and automatically, via the `-auto-vacuum-int` command-line flag. For example:
 ```bash
 rqlited -auto-vacuum-int=24h # rqlite will automatically run a VACUUM every day
 ```
@@ -49,7 +49,7 @@ rqlite is also compatible with [`PRAGMA optimize`](https://www.sqlite.org/pragma
 ```bash
 curl -XPOST 'localhost:4001/db/execute' -H "Content-Type: application/json" -d '["PRAGMA optimize"]'
 ```
-The SQLite documentation recommends periodically optimizing the database. Therefore rqlite automatically performs an optimize once a day. You can change the optimization interval, or disable automatic optimization entirely, via the `-auto-optimize-int` command line flag. For example:
+The SQLite documentation recommends periodically optimizing the database. Therefore rqlite automatically performs an optimize once a day. You can change the optimization interval, or disable automatic optimization entirely, via the `-auto-optimize-int` command-line flag. For example:
 ```bash
 rqlited -auto-optimize-int=6h # rqlite will run 'PRAGMA optimize' every six hours
 rqlited -auto-optimize-int=0h # Disable automatic optimization
@@ -64,7 +64,7 @@ By using the [bulk API](/docs/api/bulk-api/), transactions, or both, write throu
 If you can tolerate a very small risk of some data loss in the event that a node crashes, you could consider using [Queued Writes](/docs/api/queued-writes/). Using Queued Writes can easily give you orders of magnitude improvement in write performance, without changing any client code.
 
 ### Use more powerful hardware
-Obviously running rqlite on better disks, better networks, or both, will improve performance generally.
+Faster disks and lower-latency networks can improve rqlite performance.
 
 ### Use a memory-backed filesystem
 It is possible to run rqlite entirely on top of a memory-backed file system and testing shows that this approach can result in 100x improvement in performance. Using a memory-backed file system means that **both** the Raft log and SQLite database would be stored in memory only, which will maximize I/O performance.

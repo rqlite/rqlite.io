@@ -5,9 +5,9 @@ description: "Backing up and restoring your rqlite system"
 weight: 40
 ---
 ## Backing up rqlite
-rqlite supports hot backing up a node. You can retrieve a copy of the underlying SQLite database via the [rqlite shell](/docs/cli/), or by directly accessing the API. Retrieving a full copy of the SQLite database is the recommended way to back up an rqlite system.
+rqlite supports hot backups, so you can back up a node while it is running. You can retrieve a copy of the underlying SQLite database via the [rqlite shell](/docs/cli/), or by directly accessing the API. Retrieving a full copy of the SQLite database is the recommended way to back up an rqlite system.
 
-To back up to a file using the rqlite shell issue the following command:
+To back up to a file using the rqlite shell, issue the following command:
 ```
 127.0.0.1:4001> .backup bak.sqlite3
 backup file written successfully
@@ -56,7 +56,7 @@ curl -s -XGET localhost:4001/db/backup?compress -o bak.sqlite3.gz
 You can combine `compress` with `vacuum` (`?compress&vacuum`) for the smallest possible download.
 
 ### Checking for failed backups
-Because rqlite streams backups over HTTP, standard HTTP response codes e.g. `500 Internal Error` cannot be used to indicate failure. Instead **if** the stream is interrupted the node will set the [_Trailing_ HTTP header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Trailer) `X-STREAM-ERROR`. The value of this error will contain information on the error. An example `curl` session showing the header set:
+Because rqlite streams backups over HTTP, standard HTTP response codes e.g. `500 Internal Error` cannot be used to indicate failure. Instead **if** the stream is interrupted the node will set the [_Trailing_ HTTP header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Trailer) `X-STREAM-ERROR`. The header value contains details about the error. An example `curl` session showing the header set:
 ```bash
 $ curl -s --raw localhost:4001/db/backup 
 0
@@ -67,7 +67,7 @@ X-Stream-Error: I/O timeout
 rqlite's _Backup_ system is extensively tested. However you should periodically check your backups, and ensure they are valid SQLite files. One way to do this is to use SQLite itself to run an [integrity check](https://www.sqlite.org/pragma.html#pragma_integrity_check) on your backups.
 
 ## Automatic Backups
-rqlite supports automatically, and periodically, backing up its data to Cloud-hosted storage and the local file system. To save network traffic and disk space rqlite writes a **compressed** copy of its SQLite database, and will not create a backup if the SQLite database hasn't changed since the last upload took place.
+rqlite can automatically back up its data at regular intervals to cloud storage or the local file system. To save network traffic and disk space rqlite writes a **compressed** copy of its SQLite database, and will not create a backup if the SQLite database hasn't changed since the last upload took place.
 
 > Only the Leader performs the backup. If a new node becomes the Leader it will take over the backup process.
 
@@ -92,7 +92,7 @@ To configure automatic backups to an [Amazon S3 bucket](https://aws.amazon.com/s
 	}
 }
 ```
-`interval` is configurable and must be set to a [Go duration string](https://pkg.go.dev/time#ParseDuration), `vacuum` is optional and, if set to `true`, instructs rqlite to first [`VACUUM`](https://www.sqlite.org/lang_vacuum.html) the backup copy before it uploads it. In the example above, rqlite will check every 5 minutes if an upload is required, and do so if needed. You must also supply your Access Key, Secret Key, S3 bucket name, and the bucket's region. The backup will be stored in the bucket at `path`, which should also be set to your preferred value. Leave all other fields as is.
+`interval` is configurable and must be set to a [Go duration string](https://pkg.go.dev/time#ParseDuration), `vacuum` is optional and, if set to `true`, instructs rqlite to first [`VACUUM`](https://www.sqlite.org/lang_vacuum.html) the backup copy before it uploads it. In the example above, rqlite will check every 5 minutes if an upload is required, and do so if needed. You must also supply your Access Key, Secret Key, S3 bucket name, and the bucket's region. The backup will be stored in the bucket at `path`, which should also be set to your preferred value. Leave all other fields unchanged.
 
 If you're running rqlite within Amazon Web Services and want to use the IAM Role from the environment (such as an [EC2 role](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/iam-roles-for-amazon-ec2.html) or an [IRSA role for EKS](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html)), you can omit `access_key_id` and `secret_access_key` from the `sub` object, or set them to a zero-value such as `null` or the empty string. This will cause the AWS SDK used by rqlite to follow the [default credential provider chain](https://docs.aws.amazon.com/sdk-for-go/v1/developer-guide/configuring-sdk.html#specifying-credentials).
 
@@ -200,7 +200,7 @@ rqlite supports initializing a node directly from SQLite data. This is useful fo
 ### Booting with a SQLite Database
 _Booting_ is a specialized process that enables rapid initialization of a node from a SQLite database image. This method is designed for **high-efficiency data loading, particularly suited for disaster recovery or initializing a large database quickly** though you can use it with any size of database. The only limiting factor is how fast your disks are, and loading multi-GB SQLite files is possible via _Booting_.
 
-There is an important limitation however: _Booting_ is designed **exclusively for single-node setups**. After a successful _boot_, however, the node is ready for normal operation and can be scaled to a multi-node cluster as needed. Just [join new nodes](/docs/clustering/) to the booted node (or increase the [replica count](/docs/guides/kubernetes/) if using Kubernetes).
+There is an important limitation, however: _Booting_ is designed **exclusively for single-node setups**. After a successful _boot_, however, the node is ready for normal operation and can be scaled to a multi-node cluster as needed. Just [join new nodes](/docs/clustering/) to the booted node (or increase the [replica count](/docs/guides/kubernetes/) if using Kubernetes).
 
 #### Example
 To boot a standalone rqlite node listening on localhost use the `/boot` endpoint, as shown by the example below.
@@ -285,9 +285,9 @@ Database restored successfully
 ```
 
 #### Best Practices
-When restoring an rqlite system, it is recommended that the cluster be **freshly deployed, without any pre-existing data**. This is the easiest state to manage and monitor -- and if a _Restore_ operation should fail (which is quite unlikely) it is best to start again with a new cluster. However, if you do decide to _Load_ or _Boot_ a system with a SQLite binary file, any existing data will be replaced in its entirety by the operation.
+When restoring an rqlite system, it is recommended that the cluster be **freshly deployed, without any pre-existing data**. This is the easiest state to manage and monitor -- and if a _Restore_ operation should fail (which is unlikely) it is best to start again with a new cluster. However, if you do decide to _Load_ or _Boot_ a system with a SQLite binary file, any existing data will be replaced in its entirety by the operation.
 
-You should also ensure there is **no other write traffic being sent to your rqlite system** while you are restoring from a backup. Not doing so can lead to confusing results.
+You should also ensure there is **no other write traffic being sent to your rqlite system** while you are restoring from a backup. Concurrent writes during a restore can lead to confusing results.
 
 Note that SQLite dump files normally contain a command to disable Foreign Key constraints. If you are running with Foreign Key Constraints enabled, and wish to re-enable this, this is the one time you should explicitly re-enable those constraints via the following `curl` command:
 ```bash

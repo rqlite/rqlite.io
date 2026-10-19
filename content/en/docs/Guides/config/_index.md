@@ -23,7 +23,7 @@ Flags are grouped by topic below. Pass `-h` to `rqlited` to print the same infor
 	<tr>
 		<td><code>-node-id</code></td>
 		<td>Unique ID for node. If not set, set to advertised Raft address.
-		    <br><br>While not required, providing an explicit ID to a node makes cluster management simpler. Once set a node&#39;s ID cannot change. If you do change it your cluster will not operate correctly.
+		    <br><br>While not required, providing an explicit ID to a node makes cluster management simpler. Once set, a node&#39;s ID cannot change. If you do change it, your cluster will not operate correctly.
 </td>
 	</tr>
 </table>
@@ -38,7 +38,7 @@ Flags are grouped by topic below. Pass `-h` to `rqlited` to print the same infor
 	<tr>
 		<td><code>-http-addr</code></td>
 		<td>HTTP server bind address. To enable HTTPS, set X.509 certificate and key.
-		    <br><br>This is the interface rqlite will listen on for API requests. 0.0.0.0 is an acceptable address and will mean that rqlite will listen on all interfaces. However if you do use 0.0.0.0 you must then set &lt;code&gt;-http-adv-addr&lt;/code&gt; to the actual network address (or hostname) the node can be reached on, as rqlite transmits its HTTP API address in certain circumstances.
+		    <br><br>This is the interface rqlite will listen on for API requests. 0.0.0.0 is an acceptable address and will mean that rqlite will listen on all interfaces. If you use 0.0.0.0, you must also set <code>-http-adv-addr</code> to the actual network address (or hostname) the node can be reached on, as rqlite transmits its HTTP API address in certain circumstances.
 </td>
 	</tr>
 	<tr>
@@ -71,13 +71,13 @@ Flags are grouped by topic below. Pass `-h` to `rqlited` to print the same infor
 	<tr>
 		<td><code>-http-key</code></td>
 		<td>Path to HTTPS X.509 private key.
-		    <br><br>This is the private key corresponding to the X509 certificate.
+		    <br><br>This is the private key corresponding to the X.509 certificate.
 </td>
 	</tr>
 	<tr>
 		<td><code>-http-ca-cert</code></td>
 		<td>Path to X.509 CA certificate for HTTPS.
-		    <br><br>If this value is set rqlite will use this CA certificate to validate any other X509 certificate presented to it, if the node needs to contact another node&#39;s HTTP API. It also uses this CA to verify any X509 certificates presented to it by clients connecting to its HTTPS API.
+		    <br><br>If this value is set rqlite will use this CA certificate to validate any other X.509 certificate presented to it, if the node needs to contact another node&#39;s HTTP API. It also uses this CA to verify any X.509 certificates presented to it by clients connecting to its HTTPS API.
 </td>
 	</tr>
 	<tr>
@@ -114,7 +114,7 @@ Flags are grouped by topic below. Pass `-h` to `rqlited` to print the same infor
 	<tr>
 		<td><code>-node-key</code></td>
 		<td>Path to X.509 private key for node-to-node mutual authentication and encryption.
-		    <br><br>This is the private key corresponding to the node&#39;s X509 certificate, which it uses for encrypting inter-node communications.
+		    <br><br>This is the private key corresponding to the node&#39;s X.509 certificate, which it uses for encrypting inter-node communications.
 </td>
 	</tr>
 	<tr>
@@ -159,7 +159,7 @@ Flags are grouped by topic below. Pass `-h` to `rqlited` to print the same infor
 	<tr>
 		<td><code>-raft-addr</code></td>
 		<td>Raft communication bind address.
-		    <br><br>This is the interface rqlite will listen on for connections from other nodes, as part of managing Raft consensus. 0.0.0.0 is an acceptable address and will mean that `rqlite` will listen on all interfaces. However if you do use 0.0.0.0 you must then set &lt;code&gt;-raft-adv-addr&lt;/code&gt; to the actual network address (or hostname) the node can be reached on, as rqlite transmits its Raft network address to other nodes.
+		    <br><br>This is the interface rqlite will listen on for connections from other nodes, as part of managing Raft consensus. 0.0.0.0 is an acceptable address and means that rqlite listens on all interfaces. If you use 0.0.0.0, you must also set <code>-raft-adv-addr</code> to the actual network address (or hostname) the node can be reached on, as rqlite transmits its Raft network address to other nodes.
 </td>
 	</tr>
 	<tr>

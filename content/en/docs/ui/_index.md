@@ -12,10 +12,10 @@ rqlite serves a built-in console app, making it more convenient to manage an rql
 
 {{< lightbox src="/console.png" alt="rqlite Console Application" width="600" >}}
 <br>
-If you are running your rqlite node on a different hostname (and perhaps port) adjust the address accordingly.
+If your rqlite node uses a different hostname or port, adjust the address accordingly.
 
 ## Third-party Applications
-There are various **third-party** graphical applications which support rqlite. It is important to do your own evaluation of these applications to ensure they meet your needs, including any data security needs and concerns.
+Several **third-party** graphical applications support rqlite. Evaluate them to ensure they meet your functional and data security requirements.
 
 - [Dataflare](https://dataflare.app)
 - [LibSQL Studio](https://libsqlstudio.com/)

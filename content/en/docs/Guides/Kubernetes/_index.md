@@ -32,7 +32,7 @@ curl -s https://raw.githubusercontent.com/rqlite/kubernetes-configuration/master
 kubectl apply -f rqlite-3-nodes.yaml
 ```
 
-Note the `args` passed to rqlite in the YAML file. The arguments tell rqlite to use `dns` discovery mode, and to resolve the DNS name `rqlite-svc-internal` to find the IP addresses of other nodes in the cluster. Furthermore, it tells rqlite to wait until three nodes are available (counting itself as one of those nodes) before attempting to form a cluster.
+Note the `args` passed to rqlite in the YAML file. The arguments tell rqlite to use `dns` discovery mode, and to resolve the DNS name `rqlite-svc-internal` to find the IP addresses of other nodes in the cluster. The arguments also tell rqlite to wait until three nodes are available (counting itself as one of those nodes) before attempting to form a cluster.
 
 ### Scaling the cluster
 You can grow the cluster at any time, simply by setting the replica count to the desired cluster size. For example, to grow the above cluster to 9 nodes, you would issue the following command:
@@ -41,7 +41,7 @@ kubectl scale statefulsets rqlite --replicas=9
 ```
 You could also increase the `replicas` count in `rqlite-3-nodes.yaml` and reapply the file. Note that you do **not** need to change the value of `bootstrap-expect`. If you do, you may trigger Kubernetes to restart the previously launched Pods during the scaling process. `bootstrap-expect` only needs to be set to the desired size of your cluster the very first time you launch it.
 
-> **It is important that your rqlite cluster is healthy and fully functional before scaling up. It is also critical that DNS is working properly too.** If this is not the case, some of the new nodes may become standalone single-node clusters, as they will be unable to connect to the Leader.
+> **It is important that your rqlite cluster is healthy and fully functional before scaling up. DNS must also be working properly.** If this is not the case, some of the new nodes may become standalone single-node clusters, as they will be unable to connect to the Leader.
 
 #### Shrinking the cluster
 Scaling your cluster down is also possible, but there are some important details to be aware of. Let's work through an example.
@@ -53,7 +53,7 @@ kubectl scale statefulsets rqlite --replicas=1
 However, from the point of view of the remaining rqlite node, the other two nodes have **failed** -- and the single-node system doesn't have a quorum now. This means your cluster is effectively offline, and you would need to bring at least 1 node back online before you could use your rqlite system again. There are two ways to avoid this situation, however.
 
 - Remove one node at a time, and [explicitly remove the node](/docs/clustering/general-guidelines/#removing-or-replacing-a-node) that has been taken offline. This will tell the remaining nodes that the cluster has been shrunk, which should also reduce the quorum requirements. **Be careful that you don't reduce the replica count such that there is no longer a quorum of nodes available. If you do this, and deprovision the offline nodes permanently, you may render your cluster unusable, and need to perform a manual recovery.** The manual recovery process is [fully documented](/docs/clustering/general-guidelines/#dealing-with-failure).
-- Enable `-raft-cluster-remove-shutdown=true` when launching your rqlite nodes. With this option enabled a node will remove itself from the cluster before it shuts down (assuming a graceful stop). This is basically the same as the first option, but means you don't have to manually remove the node.
+- Enable `-raft-cluster-remove-shutdown=true` when launching your rqlite nodes. With this option enabled, a node will remove itself from the cluster before it shuts down (assuming a graceful stop). This is basically the same as the first option, but means you don't have to manually remove the node.
 
 Scaling up again after shrinking your cluster is also possible -- simply issue your scale-up command again.
 

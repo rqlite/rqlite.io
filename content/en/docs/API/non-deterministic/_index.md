@@ -9,14 +9,14 @@ date: 2017-01-05
 ## Understanding the problem
 rqlite performs _statement-based replication_. This means that every SQL statement is usually stored in the Raft log exactly in the form it was received. Each rqlite node then reads the Raft log and applies the SQL statements it finds there to its own local copy of SQLite.
 
-But if a SQL statement contains a [non-deterministic function](https://www.sqlite.org/deterministic.html), this type of replication can result in different SQLite data under each node -- which is not meant to happen. For example, the following statement could result in a different SQLite database under each node:
+But if a SQL statement contains a [non-deterministic function](https://www.sqlite.org/deterministic.html), this type of replication can result in different SQLite data on each node -- which is not meant to happen. For example, the following statement could result in a different SQLite database on each node:
 ```
 INSERT INTO foo (n) VALUES(random());
 ```
 This is because `RANDOM()` is evaluated by each node independently, and `RANDOM()` will almost certainly return a different value on each node.
 
 ## How rqlite solves this problem
-An rqlite node addresses this issue by _rewriting_ received SQL statements that contain certain non-deterministic functions, evaluating the non-deterministic factor, before writing the statement to the Raft log. The rewritten statement is then applied to the SQLite database as usual.
+An rqlite node addresses this issue by evaluating certain non-deterministic functions and _rewriting_ the SQL statement with their results before writing it to the Raft log. The rewritten statement is then applied to the SQLite database as usual.
 
 ## What does rqlite rewrite?
 
@@ -26,7 +26,7 @@ A SQL statement containing [`RANDOM()`](https://www.sqlite.org/lang_corefunc.htm
 - The statement is part of a read-request i.e. the request is sent to the `/db/query` HTTP API **and** the read-request is made with _Strong_ read consistency.
 
 It is **not** rewritten if **either** of the following is true:
-- `RANDOM()` is used as an `ORDER BY` qualifier. This does mean that certain `INSERT` statements are not rewritten e.g. `INSERT INTO foo (x) SELECT x FROM bar ORDER BY RANDOM()`. Executing such a statement may result in different data under each node.
+- `RANDOM()` is used as an `ORDER BY` qualifier. This does mean that certain `INSERT` statements are not rewritten e.g. `INSERT INTO foo (x) SELECT x FROM bar ORDER BY RANDOM()`. Executing such a statement may result in different data on each node.
 - The HTTP request containing the SQL statement has the query parameter `norwrandom` present.
 
 `RANDOM()` is replaced with a random integer between -9223372036854775808 and +9223372036854775807 by the rqlite node that first receives the SQL statement.
@@ -95,7 +95,7 @@ rqlite only rewrites functions that are evaluated when the statement itself runs
 CREATE TABLE foo (id INTEGER PRIMARY KEY, created DATETIME DEFAULT CURRENT_TIMESTAMP);
 INSERT INTO foo (id) VALUES (1);
 ```
-The `CREATE TABLE` statement is replicated exactly as written, which is what you want -- rewriting it would fix the default to the moment the table was created. But the `INSERT` doesn't mention `created`, so there is nothing for rqlite to rewrite. Instead each node fills in the default itself, using its own clock, when it executes the `INSERT`. As a result the value of `created` for that row may differ slightly from node to node.
+The `CREATE TABLE` statement is replicated exactly as written, which is what you want -- rewriting it would fix the default to the moment the table was created. But the `INSERT` doesn't mention `created`, so there is nothing for rqlite to rewrite. Instead, each node fills in the default itself, using its own clock, when it executes the `INSERT`. As a result, the value of `created` for that row may differ slightly from node to node.
 
 The same is true of `RANDOM()` and the date and time functions when they appear in `CHECK` constraints, generated columns, index expressions, triggers, and views.
 

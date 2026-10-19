@@ -4,10 +4,10 @@ linkTitle: "Security"
 description: "How to secure your rqlite deployment"
 weight: 20
 ---
-rqlite can be secured in various ways, and with different levels of control.
+rqlite can be secured in various ways, and at different levels of control.
 
 ## SQLite security
-SQLite has some [documentation on security](https://www.sqlite.org/security.html), which is worth reviewing. Much of it can be applied to rqlite, though implementing some of the practices would need you to [recompile rqlite](/docs/install-rqlite/building-from-source/).
+SQLite has some [documentation on security](https://www.sqlite.org/security.html), which is worth reviewing. Much of it can be applied to rqlite, though implementing some of the practices requires you to [recompile rqlite](/docs/install-rqlite/building-from-source/).
 
 ## File system security
 You should control access to the data directory that each rqlite node uses. There is usually no reason for any user to directly access this directory. File-level security is also very important if you decide to use _TLS Certificates and Keys_ with rqlite (see later). You could also consider running rqlite on an encrypted file system.
@@ -15,7 +15,7 @@ You should control access to the data directory that each rqlite node uses. Ther
 > If you plan to have systems other than rqlite access the SQLite database file then you should carefully review the [_Direct Access_ guide](/docs/guides/direct-access/).
 
 ## Network security
-Each rqlite node listens on 2 TCP ports -- one for the HTTP API, and the other for inter-node (Raft consensus) communications. Only the HTTP API port need be reachable from outside the cluster.
+Each rqlite node listens on 2 TCP ports -- one for the HTTP API, and the other for inter-node (Raft consensus) communications. Only the HTTP API port needs to be reachable from outside the cluster.
 
 So, if possible, configure the network such that the Raft port on each node is only accessible from other nodes in the cluster. Alternatively run the Raft connections on a physically, or logically, different network from the network the HTTP API is connected to. There is no need for the Raft port to be accessible by rqlite clients, which only need to use the HTTP API.
 
@@ -31,7 +31,7 @@ Be sure to use [_Parameterized Statements_](/docs/api/api/#parameterized-stateme
 rqlite executes all SQL statements sent to the [`/db/query` endpoint](/docs/api/api/) using a read-only connection to the SQLite database. This ensures that no request sent to the `/db/query` endpoint can ever modify the underlying database, or its configuration, regardless of the content of the request. Therefore if you restrict a client to only the `/db/query` endpoint you can be sure that client will never modify the database.
 
 ### HTTPS and Mutual TLS
-rqlite supports secure access via HTTPS, using [_Transport Layer Security (TLS)_](https://www.cloudflare.com/learning/ssl/what-is-an-ssl-certificate/). Using TLS ensures that all communication between clients and a cluster is encrypted. The HTTPS API also supports [Mutual TLS](https://www.cloudflare.com/learning/access-management/what-is-mutual-tls/). If Mutual TLS is enabled only clients that present a trusted certificate can access rqlite via the HTTP API.
+rqlite supports secure access via HTTPS, using [_Transport Layer Security (TLS)_](https://www.cloudflare.com/learning/ssl/what-is-an-ssl-certificate/). Using TLS ensures that all communication between clients and a cluster is encrypted. The HTTPS API also supports [Mutual TLS](https://www.cloudflare.com/learning/access-management/what-is-mutual-tls/). If Mutual TLS is enabled, only clients that present a trusted certificate can access rqlite via the HTTP API.
 
 >rqlite continuously monitors the server certificate and key files, automatically reloading them when changes are detected. This allows you to rotate these files without restarting the node. However, changes to the CA certificate are not detected automatically; you must restart the node to apply a new CA certificate.
 
@@ -50,7 +50,7 @@ To configure HTTPS, you set the following command-line options when launching rq
 ```
 
 ### Configuring Usernames and Passwords
-The HTTP API supports [Basic Auth](https://tools.ietf.org/html/rfc2617). Each rqlite node can be passed a JSON-formatted configuration file, which configures valid usernames and associated passwords for **that** node. In other words if you want every node in a cluster to accept identical credentials for a given user, you must ensure the configuration file for every node contains the same information for that user. But the configuration does not **need** to be identical under every node.
+The HTTP API supports [Basic Auth](https://tools.ietf.org/html/rfc2617). Each rqlite node can be passed a JSON-formatted configuration file, which configures valid usernames and associated passwords for **that** node. In other words if you want every node in a cluster to accept identical credentials for a given user, you must ensure the configuration file for every node contains the same information for that user. But the configuration does not **need** to be identical on every node.
 
 ### User-level permissions
 rqlite, via the configuration file, also supports user-level permissions. Each user can be granted one or more of the following permissions:
@@ -60,7 +60,7 @@ rqlite, via the configuration file, also supports user-level permissions. Each u
 - _join_: user can join a cluster. In practice only a node joins a cluster, so it's the joining node that must supply the credentials.
 - _join-read-only_: user can join a cluster, but only as a [read replica](/docs/clustering/read-replicas/).
 - _leader-ops_: user can perform Leader-related operations via `/leader`.
-- _load_: user may load an SQLite dump file into a node via the `/db/load` or `/boot` endpoints.
+- _load_: user may load a SQLite dump file into a node via the `/db/load` or `/boot` endpoints.
 - _query_: user may access the query endpoint at `/db/query` and the SQL rewriting endpoint at `/db/sql`.
 - _ready_: user can retrieve node readiness via `/readyz`.
 - _remove_: user can remove a node from a cluster. If a node performs an auto-remove on shutdown, then the `-join-as` user must have this permission.
