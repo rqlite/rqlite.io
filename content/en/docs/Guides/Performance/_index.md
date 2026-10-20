@@ -36,6 +36,7 @@ rqlite is compatible with [SQLite VACUUM](https://www.sqlite.org/lang_vacuum.htm
 ```bash
 curl -XPOST 'localhost:4001/db/execute' -H "Content-Type: application/json" -d '["VACUUM"]'
 ```
+> An explicit `VACUUM` must be performed via the `/db/execute` endpoint. Attempting to `VACUUM` via the `/db/query` endpoint will fail.
 
 You can even schedule `VACUUM` to take place periodically and automatically, via the `-auto-vacuum-int` command-line flag. For example:
 ```bash
