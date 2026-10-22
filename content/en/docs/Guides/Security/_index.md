@@ -11,17 +11,14 @@ Always run the latest release of rqlite. If a security issue is identified, rqli
 
 To hear about new releases and security issues as they are announced, join the [rqlite Slack channel](https://www.rqlite.io/join-slack) and monitor the [rqlite GitHub repository](https://github.com/rqlite/rqlite) for [security advisories](https://github.com/rqlite/rqlite/security/advisories).
 
-## Apply SQLite security practices
-Review the [SQLite security documentation](https://www.sqlite.org/security.html) and apply what you can to rqlite. Some of the practices it describes require you to [recompile rqlite](/docs/install-rqlite/building-from-source/).
-
 ## Restrict access to the data directory
 Run rqlite as a dedicated, non-root user, and make that user the only one with access to the data directory -- for example, set the permissions on the data directory to `0700`. There is usually no reason for any other user, or any other process, to access this directory.
 
 Protect any TLS certificates and private keys you supply to rqlite (see below) in the same way. Consider running rqlite on an encrypted file system.
 
-{{< warning >}}
+{{% warning %}}
 If you plan to have systems other than rqlite access the SQLite database file, carefully review the [_Direct Access_ guide](/docs/guides/direct-access/) first.
-{{< /warning >}}
+{{% /warning %}}
 
 ## Lock down the network
 Each rqlite node listens on 2 TCP ports -- one for the HTTP API, and the other for inter-node (Raft consensus) communications. Only the HTTP API port needs to be reachable from outside the cluster.
@@ -52,9 +49,9 @@ To enable HTTPS, set the following command-line options when launching rqlite:
 ### Enable Mutual TLS
 Enable [Mutual TLS](https://www.cloudflare.com/learning/access-management/what-is-mutual-tls/) so that only clients presenting a certificate signed by a trusted CA can access the HTTP API. To do so, pass `-http-verify-client` and set `-http-ca-cert` to the CA certificate used to sign your client certificates. Mutual TLS is disabled by default.
 
-{{< note >}}
+{{% note %}}
 rqlite continuously monitors the server certificate and key files, automatically reloading them when changes are detected. This allows you to rotate these files without restarting the node. However, changes to the CA certificate are not detected automatically; you must restart the node to apply a new CA certificate.
-{{< /note >}}
+{{% /note %}}
 
 ## Require authentication
 Enable authentication so that every request to the HTTP API must carry valid credentials. The HTTP API supports [Basic Auth](https://tools.ietf.org/html/rfc2617). To enable it, pass each node a JSON-formatted configuration file via the `-auth` command-line flag. This file configures the valid usernames, passwords, and permissions for **that** node. If you want every node in a cluster to accept identical credentials for a given user, ensure the configuration file for every node contains the same information for that user. The configuration does not **need** to be identical on every node however.
@@ -69,11 +66,13 @@ Create a separate user for each client, or class of client, and grant that user 
 Each user can be granted one or more of the following permissions:
 - _all_: user can perform all operations on a node.
 - _backup_: user may retrieve a backup via the endpoint `/db/backup`.
+- _demote_: user can demote a voting node to a non-voting node.
 - _execute_: user may access the execute endpoint at `/db/execute`.
 - _join_: user can join a cluster. In practice only a node joins a cluster, so it's the joining node that must supply the credentials.
 - _join-read-only_: user can join a cluster, but only as a [read replica](/docs/clustering/read-replicas/).
 - _leader-ops_: user can perform Leader-related operations via `/leader`.
 - _load_: user may load a SQLite dump file into a node via the `/db/load` or `/boot` endpoints.
+- _promote_: user can promote a non-voting node to a voter.
 - _query_: user may access the query endpoint at `/db/query` and the SQL rewriting endpoint at `/db/sql`.
 - _ready_: user can retrieve node readiness via `/readyz`.
 - _remove_: user can remove a node from a cluster. If a node performs an auto-remove on shutdown, then the `-join-as` user must have this permission.
@@ -132,13 +131,13 @@ _In the options below, the node receiving a connection is considered the server,
       Enable mutual TLS for node-to-node communication.
       Mutual TLS is disabled by default.
 ```
-{{< warning >}}
+{{% warning %}}
 Never use `-node-no-verify` in production. It disables certificate verification entirely and exists only for testing.
-{{< /warning >}}
+{{% /warning %}}
 
-{{< note >}}
+{{% note %}}
 rqlite continuously monitors the node-to-node certificate and key files, automatically reloading them when changes are detected. This allows you to rotate these files without restarting the node. However, changes to the CA certificate are not detected automatically; you must restart the node to apply a new CA certificate.
-{{< /note >}}
+{{% /note %}}
 
 ## Example: a secured cluster
 The example below starts a node with HTTPS enabled, node-to-node encryption enabled, and authentication enabled using the configuration file shown above. It assumes the HTTPS X.509 certificate and key are at the paths `server.crt` and `key.pem` respectively, and that the node-to-node certificate and key are at `node.crt` and `node-key.pem`.
