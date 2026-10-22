@@ -961,9 +961,12 @@ h1, h2, h3, h4, h5, h6,
   }
 }
 
-// Callout shortcodes.
+// Callout shortcodes ({{% note %}} / {{% warning %}}) and plain blockquotes.
 .td-content {
-  blockquote {
+  blockquote,
+  .note,
+  .warning {
+    margin-bottom: 1rem;
     padding: 0.9rem 1.2rem;
     border-left: 3px solid $rq-blue;
     border-radius: 0 0.4rem 0.4rem 0;
@@ -971,6 +974,11 @@ h1, h2, h3, h4, h5, h6,
     color: #33404F;
 
     > :last-child { margin-bottom: 0; }
+  }
+
+  .warning {
+    border-left-color: $rq-amber;
+    background: rgba($rq-amber, 0.1);
   }
 
   table {
