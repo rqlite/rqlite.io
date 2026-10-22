@@ -6,6 +6,9 @@ weight: 20
 ---
 rqlite can be secured in various ways, and at different levels of control.
 
+## Run the latest version
+If a security issue is identified, rqlite is always promptly patched and released. Always run the latest release of rqlite for maximum protection.
+
 ## SQLite security
 SQLite has some [documentation on security](https://www.sqlite.org/security.html), which is worth reviewing. Much of it can be applied to rqlite, though implementing some of the practices requires you to [recompile rqlite](/docs/install-rqlite/building-from-source/).
 
@@ -17,7 +20,7 @@ You should control access to the data directory that each rqlite node uses. Ther
 ## Network security
 Each rqlite node listens on 2 TCP ports -- one for the HTTP API, and the other for inter-node (Raft consensus) communications. Only the HTTP API port needs to be reachable from outside the cluster.
 
-So, if possible, configure the network such that the Raft port on each node is only accessible from other nodes in the cluster. Alternatively run the Raft connections on a physically, or logically, different network from the network the HTTP API is connected to. There is no need for the Raft port to be accessible by rqlite clients, which only need to use the HTTP API.
+**Configure the network such that the Raft port on each node is only accessible from other nodes in the cluster**. Alternatively run the Raft connections on a physically, or logically, different network from the network the HTTP API is connected to. There is no need for the Raft port to be accessible by rqlite clients, which only need to use the HTTP API.
 
 If the IP addresses (or subnets) of rqlite clients are also known, it may also be possible to limit access to the HTTP API from those addresses only.
 
