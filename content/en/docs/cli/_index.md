@@ -39,11 +39,20 @@ Options:
   -c, --ca-cert
       path to trusted X.509 root CA certificate
 
+  -d, --client-cert
+      path to client X.509 certificate for mutual TLS
+
+  -k, --client-key
+      path to client X.509 key for mutual TLS
+
   -u, --user
       set basic auth credentials in form username:password
 
   -v, --version
       display CLI version
+
+  -t, --http-timeout[=30s]
+      set timeout on HTTP requests
 ```
 
 ## Example
@@ -51,21 +60,38 @@ Connecting to a host running locally and listing available commands:
 ```
 $ rqlite
 127.0.0.1:4001> .help
-.backup <file>                      Write database backup to SQLite file
-.consistency [none|weak|strong]     Show or set read consistency level
-.dump <file>                        Dump the database in SQL text format to a file
-.exit                               Exit this program
-.expvar                             Show expvar (Go runtime) information for connected node
-.help                               Show this message
-.indexes                            Show names of all indexes
-.nodes                              Show connection status of all nodes in cluster
-.ready                              Show ready status for connected node
-.remove <raft ID>                   Remove a node from the cluster
-.restore <file>                     Restore the database from a SQLite database file or dump file
-.schema                             Show CREATE statements for all tables
-.status                             Show status and diagnostic information for connected node
-.sysdump <file>                     Dump system diagnostics to a file for offline analysis
-.tables                             List names of tables
+.backup FILE                                  Write database backup to FILE
+.blobarray [on|off]                           Show setting, or set BLOB data display as byte arrays
+.boot FILE                                    Boot the node using a SQLite file read from FILE
+.changes [on|off]                             Show setting, or set display of last insert ID after writes
+.consistency [none|weak|linearizable|strong]  Show or set read consistency level
+.demote NODEID                                Demote node NODEID from a voter to a non-voter
+.dump FILE [TABLE,TABLE...]                   Dump the database in SQL text to FILE, optionally limited to TABLEs
+.exit                                         Exit this program
+.expvar                                       Show expvar (Go runtime) information for connected node
+.extensions                                   Show loaded SQLite extensions
+.forcewrites [on|off]                         Show setting, or set all statements to be executed via /db/execute
+.help                                         Show this message
+.indexes                                      Show names of all indexes
+.leader                                       Show the current cluster leader
+.mode [column|csv|json|line]                  Show or set output mode for query results
+.nodes [all]                                  Show connection status of voting nodes. 'all' to show all nodes
+.output FILE                                  Send output to FILE, or stdout if FILE is omitted
+.promote NODEID                               Promote node NODEID from a non-voter to a voter
+.quit                                         Exit this program
+.read FILE                                    Read and execute SQL statements from FILE
+.ready                                        Show ready status for connected node
+.reap                                         Request a snapshot reap on connected node
+.remove NODEID                                Remove node NODEID from the cluster
+.restore FILE                                 Load using SQLite file or SQL dump contained in FILE
+.schema                                       Show CREATE statements for all tables
+.show                                         Show the current values for various settings
+.snapshot [TRAILINGLOGS]                      Request a Raft snapshot and log truncation on connected node
+.status                                       Show status and diagnostic information for connected node
+.stepdown [NODEID]                            Instruct the leader to step down, optionally specifying the new leader node
+.sysdump FILE                                 Dump system diagnostics to FILE
+.tables                                       List names of tables
+.timer [on|off]                               Show setting, or set query timings on or off
 127.0.0.1:4001>
 ```
 Inserting some data via standard SQLite syntax and then reading it back:
