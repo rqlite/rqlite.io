@@ -1281,6 +1281,15 @@ footer.bg-dark {
   a { font-weight: 500; }
 }
 
+// Short subsection below the community cards.
+.rq-support-sub {
+  margin: 2.75rem 0 0.6rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: $rq-ink;
+}
+
 // Community cards carry a paragraph rather than a bullet list.
 .rq-card > p {
   margin: 0;
