@@ -172,8 +172,12 @@ enable = false
   icon = "fa fa-user-group"
   desc = "Discussion and help from your fellow users"
 [[params.links.user]]
-  name ="Contact the rqlite team"
-  url = "https://www.philipotoole.com/contact/"
+  name = "Support and consulting"
+  url = "/support/"
+  icon = "fa fa-life-ring"
+[[params.links.user]]
+  name = "Contact the rqlite team"
+  url = "mailto:hello@philipotoole.com"
   icon = "fa fa-envelope"
   desc = "How to get in touch with the rqlite team"
 [[params.links.developer]]
@@ -211,6 +215,11 @@ enable = false
     name = "Install"
     weight = 35
     url = "/docs/install-rqlite"
+
+[[menu.main]]
+    name = "Support"
+    weight = 40
+    url = "/support"
 
 [[menu.main]]
     name = "Blog"
