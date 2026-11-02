@@ -81,6 +81,7 @@ languageName ="English"
 
 [params]
 copyright = "rqlite authors"
+trademark = "rqlite™ is a trademark of Philip O'Toole."
 
 # First one is picked as the Twitter card image if not set on page.
 # images = ["images/project-illustration.png"]
