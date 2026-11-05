@@ -38,6 +38,11 @@ How does the node guarantee linearizable reads? It does this as follows: when th
 
 Linearizable reads mean the Leader contacts at least a quorum of nodes, and will therefore increase query response times. But since the Raft log is not actually involved, read performance is only dependent on the network performance between the nodes.
 
+<div style="border-left: 4px solid red; padding: 10px; background-color: #ffe6e6;">
+<strong>⚠️ Warning:</strong> Due to a <a href="https://github.com/hashicorp/raft/issues/725">known issue</a> with the <a href="https://github.com/hashicorp/raft">Hashicorp Raft implementation</a>, Linearizable reads are not robust if a cluster contains <a href="/docs/clustering/read-replicas/">Read Replicas</a>.
+</div>
+<br>
+
 ## None
 With _None_, the node receiving your read request simply queries its local SQLite database, and does not perform any Leadership or other cluster-contact checks -- in fact, the node could be completely disconnected from the rest of the cluster, but the query will still be successful. This offers the absolute fastest query response, but suffers from the potential issues outlined above, whereby there is a chance of _Stale Reads_ if the Leader changes during the query, or if the node has become disconnected from the cluster.
 > _None_ consistency is required if a node restarts and, for whatever reason, can't contact the cluster Leader. Using _None_ will instruct the node to query the database as it finds it after restarting. If you select any other consistency level the node will return an error. While the query results may be stale, this may be acceptable depending on your application.
