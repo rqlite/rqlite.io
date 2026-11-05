@@ -15,9 +15,14 @@ rqlite is for applications needing an easy-to-use, fault-tolerant, and highly av
 ## Why would I use this, versus some other distributed database?
 _[Complexity is your enemy](https://x.com/richardbranson/status/242582296157384704)._
 
-**rqlite is very simple to deploy, run, and manage** -- in fact, simplicity of operation is a key design goal. It's also lightweight and easy to query. It's a single binary you can drop anywhere on a machine, and just start it, which makes it very convenient. It takes literally seconds [to configure and form a cluster](/docs/clustering/), which provides you with fault tolerance and high availability. **With rqlite you have complete control over your database infrastructure, and the data it stores.**
+**rqlite is very simple to deploy, run, and manage** -- in fact, simplicity of operation is a key design goal. It's also lightweight and easy to query. It's a single binary you can drop anywhere on a machine, and just start it, which makes it very convenient. It takes literally seconds [to configure and form a cluster](/docs/clustering/), which provides you with fault tolerance and high availability.
 
 That said, it's always possible it's _too_ simple for your needs.
+
+## Is rqlite a hosted or managed service?
+No. rqlite is software you run yourself, on your own machines or in your own cloud account. There is no vendor between you and your data, no account to create, and no service to go away. You decide where the data lives, how it is backed up, and who can reach it.
+
+**With rqlite you have complete control over your database infrastructure, and the data it stores.**
 
 ## How do I access the database?
 The primary way to access the database is via the [HTTP API](/docs/api/api/). You can access it directly, or use a [client library](/docs/api/client-libraries/). For interactive use, you can use the [command-line tool](/docs/cli/). `rqlited` also offers [CORS](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) support via command-line flags you can set at launch time.
