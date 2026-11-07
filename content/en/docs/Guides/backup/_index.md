@@ -96,6 +96,18 @@ To configure automatic backups to an [Amazon S3 bucket](https://aws.amazon.com/s
 
 If you're running rqlite within Amazon Web Services and want to use the IAM Role from the environment (such as an [EC2 role](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/iam-roles-for-amazon-ec2.html) or an [IRSA role for EKS](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html)), you can omit `access_key_id` and `secret_access_key` from the `sub` object, or set them to a zero-value such as `null` or the empty string. This will cause the AWS SDK used by rqlite to follow the [default credential provider chain](https://docs.aws.amazon.com/sdk-for-go/v1/developer-guide/configuring-sdk.html#specifying-credentials).
 
+#### Server-side encryption
+To have S3 encrypt backups at rest, set `server_side_encryption` in the `sub` object to `AES256`, `aws:kms`, or `aws:kms:dsse`. With a KMS algorithm you may also set `sse_kms_key_id` to the ID, ARN, or alias of the KMS key to use; if omitted, S3 uses the AWS managed key for your account. If `server_side_encryption` is not set, the bucket's default encryption policy applies. Invalid settings are rejected when rqlite starts. Restoring from an encrypted backup needs no extra configuration, since S3 decrypts the object on download.
+```json
+	"sub": {
+		"region": "$BUCKET_REGION",
+		"bucket": "$BUCKET_NAME",
+		"path": "backups/db.sqlite3.gz",
+		"server_side_encryption": "aws:kms",
+		"sse_kms_key_id": "alias/rqlite-backups"
+	}
+```
+
 ### S3-Compliant Providers
 rqlite can back up to any non-Amazon cloud storage that exposes an S3-compliant API. Examples include [Wasabi](https://wasabi.com/), [Backblaze B2](https://www.backblaze.com/cloud-storage), or self-hosted solutions such as [MinIO](https://min.io/). This is done by specifying the `endpoint` field in the `sub` object, and, where needed, the `force_path_style` field.
 
