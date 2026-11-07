@@ -167,6 +167,18 @@ To configure automatic backups to a [Google Cloud Storage bucket](https://cloud.
 ```
 Configure your `project_id`, `bucket`, and `name`. `credentials_path` is the path to the file containing the [Service Account key in JSON format](https://cloud.google.com/iam/docs/keys-create-delete).
 
+#### Customer-managed encryption keys
+GCS always encrypts objects at rest. To have it use a [Cloud KMS key](https://cloud.google.com/storage/docs/encryption/customer-managed-keys) of your choosing, set `kms_key_name` in the `sub` object to the key's full resource name, of the form `projects/P/locations/L/keyRings/R/cryptoKeys/K`. A key version is not accepted, since GCS always encrypts with the key's primary version. If `kms_key_name` is not set, the bucket's default encryption applies. A malformed key name is rejected when rqlite starts. Restoring from an encrypted backup needs no extra configuration, since GCS decrypts the object on download.
+```json
+	"sub": {
+		"project_id": "$PROJECT_ID",
+		"bucket": "$BUCKET",
+		"name": "db.sqlite3.gz",
+		"credentials_path": "$CREDENTIALS_PATH",
+		"kms_key_name": "projects/my-project/locations/us/keyRings/rqlite/cryptoKeys/backups"
+	}
+```
+
 ### File System
 To configure backups to the local file system, create a file with the following (example) contents:
 ```json
