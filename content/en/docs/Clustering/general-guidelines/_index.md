@@ -93,7 +93,7 @@ curl --XPOST http://host:4001/promote -d '{"id": "<node ID>"}'
 curl --XPOST http://host:4001/demote -d '{"id": "<node ID>"}'
 ```
 
->Promotion can make scaling your cluster safer. Joining a voting node to your cluster immediately increases the cluster’s quorum requirements; if the new node is unreachable, the cluster could lose availability. Instead, you can now join the node as a read replica, confirm it is reachable and healthy, and then promote it to a voter.
+>Promotion can make the process of scaling your cluster safer. Joining a voting node to your cluster immediately increases the cluster’s quorum requirements; if the new node is unreachable, the cluster could lose availability. Instead, you can join the node as a read replica, confirm it is reachable and healthy, and then promote it to a voter.
 
 ## Removing or replacing a node
 If a node fails completely and is not coming back, or if you shut down a node because you wish to deprovision it, its record should also be removed from the cluster (a node can be configured to do this automatically on shutdown if you prefer -- see later). To remove the record of a node from a cluster, execute the following command at the rqlite CLI:
@@ -132,9 +132,7 @@ It is the nature of clustered systems that nodes can fail at any time. Depending
 If an rqlite process crashes, it is safe to simply restart it. The node will pick up any changes that happened on the cluster while the node was offline.
 
 ### Recovering a cluster that has permanently lost quorum
-_This section borrows heavily from the Consul documentation._
-
-In the event that multiple rqlite nodes are lost, causing a loss of quorum and a complete outage, partial recovery is possible using data on the remaining nodes in the cluster. There may be data loss in this situation because multiple servers were lost, so information about what's committed could be incomplete. The recovery process implicitly commits all outstanding Raft log entries, so it's also possible to commit data -- and therefore change the SQLite database -- that was uncommitted before the failure.
+In the event that multiple rqlite nodes are lost[^1], causing a loss of quorum and a complete outage, partial recovery is possible using data on the remaining nodes in the cluster. There may be data loss in this situation because multiple servers were lost, so information about what's committed could be incomplete. The recovery process implicitly commits all outstanding Raft log entries, so it's also possible to commit data -- and therefore change the SQLite database -- that was uncommitted before the failure.
 
 **You may also need to follow the recovery process if a cluster simply restarts, but all nodes (or a quorum of nodes) come up with different network identifiers. This can happen in certain deployment configurations.**
 
@@ -196,3 +194,4 @@ _Because rqlite uses the same Raft implementation as HashiCorp Consul, much of i
 - [Consul and the Raft Consensus Protocol](https://developer.hashicorp.com/consul/docs/architecture/consensus)
 - [Consul Reference Architecture](https://developer.hashicorp.com/consul/tutorials/production-deploy/reference-architecture)
 
+[^1]: These instructions borrow heavily from the [Consul](https://developer.hashicorp.com/consul) documentation.
