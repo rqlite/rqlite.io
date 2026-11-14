@@ -398,7 +398,7 @@ The rqlite CLI supports issuing many `PRAGMA` directives. For example:
 +----------------------------+
 | compile_options            |
 +----------------------------+
-| COMPILER=gcc-7.5.0         |
+| COMPILER=gcc-16.1.0         |
 +----------------------------+
 | DEFAULT_WAL_SYNCHRONOUS=1  |
 +----------------------------+
@@ -501,14 +501,14 @@ $ curl -v -G 'localhost:4003/db/query?pretty&timings&redirect' --data-urlencode 
 * Connected to localhost (127.0.0.1) port 4003 (#0)
 > GET /db/query?pretty&timings&q=SELECT%20%2A%20FROM%20foo HTTP/1.1
 > Host: localhost:4003
-> User-Agent: curl/7.43.0
+> User-Agent: curl/8.23.0
 > Accept: */*
 >
 < HTTP/1.1 301 Moved Permanently
 < Content-Type: application/json; charset=utf-8
 < Location: http://localhost:4001/db/query?pretty&timings&q=SELECT%20%2A%20FROM%20foo
-< X-Rqlite-Version: 4
-< Date: Mon, 07 Aug 2017 21:10:59 GMT
+< X-Rqlite-Version: 10.0.1
+< Date: Mon, 07 Aug 2026 21:10:59 GMT
 < Content-Length: 116
 <
 <a href="http://localhost:4001/db/query?pretty&amp;timings&amp;q=SELECT%20%2A%20FROM%20foo">Moved Permanently</a>.
