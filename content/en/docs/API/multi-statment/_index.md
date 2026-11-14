@@ -9,10 +9,19 @@ date: 2017-01-05
 ## Chaining inserts with `last_insert_rowid()`
 * **Use case:** Inserting a parent row and immediately inserting child rows in one atomic `/db/execute?transaction` request.
 * **Key note:** Highlight why `transaction` should always be enabled here so the whole batch either succeeds or rolls back together.
+```sql
+INSERT INTO users(name) VALUES('alice');
+INSERT INTO profiles(user_id, bio) VALUES(last_insert_rowid(), 'hello');
+```
 
 ## Collapsing read-modify-write into single SQL statements
 * **Use case:** Replacing *"fetch value in app → compute → write back"* with `INSERT INTO ... SELECT ...`, `WITH` CTEs, and `INSERT ... ON CONFLICT DO UPDATE` (upsert).
 * **Key note:** Not only does this avoid needing SQL variables, it eliminates race conditions between concurrent clients without needing interactive locks.
+```sql
+CREATE TEMP TABLE _vars AS SELECT id AS uid FROM users WHERE name = 'alice';
+INSERT INTO audit_log(user_id, action) VALUES((SELECT uid FROM _vars), 'login');
+DROP TABLE _vars;
+```
 
 ## Returning computed/generated values via `RETURNING`
 * **Use case:** Getting auto-increment IDs, UUIDs, or default timestamps back from `INSERT` / `UPDATE` / `DELETE` in a single round-trip without a follow-up `/db/query`.
