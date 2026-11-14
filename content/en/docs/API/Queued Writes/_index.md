@@ -57,6 +57,6 @@ Because the API returns immediately after queuing the requests **but before the 
 
 By default, **a node will retry a Queued Write once if the Leader is not reachable**. This does mean that if a Queued Write appeared to fail, but was actually successful (this could happen, for example, if the response from the Leader was dropped by the network), data may be duplicated. You can eliminate any risk of duplication by setting `-write-queue-retry` to zero.
 
-Finally, when the API returns `HTTP 200 OK`, that simply acknowledges that the data has been queued correctly. It does not mean that the SQL statements are syntactically valid, do not violate schema constraints, or will fail to be applied to the database for some other reason. Be sure to monitor the node's logs and metrics if you have any concerns about failed queued writes.
+Finally, when the API returns `HTTP 200 OK`, that simply acknowledges that the data has been queued correctly. It does not mean that the SQL statements are syntactically valid, or do not violate schema constraints. Be sure to monitor the node's logs and metrics if you have any concerns about failed queued writes.
 
 By default, batched writes are not performed within a transaction. If you wish to change this, it must be set at launch time via the command-line option `-write-queue-tx`.
