@@ -11,7 +11,7 @@ Normally rqlite waits until a write request has been safely committed to a major
 ## Usage
 Queued Writes are enabled via a special API flag, which will instruct rqlite to queue up write-requests and execute them asynchronously. This allows clients to send multiple distinct requests to an rqlite node, and have rqlite automatically do the batching and bulk insert for the client, without the client doing any extra work. The net result is as if the client wrote a single Bulk request containing all the queued statements. For the same reason that using the [Bulk API](/docs/api/bulk-api/) results in much higher write performance, **using the _Queued Writes_ API will also result in much higher write performance**.
 
-This functionality is best illustrated by an example, showing two requests being queued.
+This functionality is best illustrated by an example, showing two HTTP requests being queued.
 ```bash
 $ curl -XPOST 'localhost:4001/db/execute?queue' -H "Content-Type: application/json" -d '[
     ["INSERT INTO foo(name) VALUES(?)", "fiona"],
@@ -32,14 +32,14 @@ $
 ```
 Setting the URL query parameter `queue` enables queuing mode, adding the request data to an internal queue which rqlite manages for you. Once the request has been queued, the response is returned to the client.
 
-rqlite merges queued requests when the configured batch size is reached or a configurable timeout expires. It then executes them as a single request.
+rqlite merges queued requests when the configured batch size is reached or a configurable timeout expires. It then commits the batch asynchronously to the database.
 
-Each response includes a monotonically increasing `sequence_number`, which allows you to track when this request is actually persisted to the Raft log. The `/status` [diagnostics](/docs/guides/monitoring-rqlite) endpoint includes the sequence number of the latest request successfully written to Raft.
+Each response includes a monotonically increasing `sequence_number`, which allows you to track when this request is actually persisted to rqlite. The `/status` [diagnostics](/docs/guides/monitoring-rqlite) endpoint includes the sequence number of the latest request successfully committed.
 
 >Sequence numbers are local to the node that received the _Queued Write_ request. Each node generates its own series of sequence numbers, and is not aware of other nodes' sequence numbers.
 
 ### Waiting for a queue to flush
-You can explicitly tell the request to wait until the queue has persisted all pending requests. To do this, add the parameter `wait` to the request like so:
+You can explicitly tell the request to wait until the queue has committed all pending requests. To do this, add the parameter `wait` to the request like so:
 ```bash
 $ curl -XPOST 'localhost:4001/db/execute?queue&wait&timeout=10s' -H "Content-Type: application/json" -d '[
     ["INSERT INTO foo(name) VALUES(?)", "bob"]
