@@ -5,7 +5,7 @@ description: "How to perform transactional, multi-step operations in a single re
 weight: 15
 ---
 
-With most databases a client opens a connection, starts a transaction, runs a statement, looks at the result, and then decides what to run next. rqlite does not work this way. Each HTTP request stands alone, there is no session to carry state from one request to the next, and [explicit `BEGIN` and `COMMIT` statements are not supported](/docs/api/api/#transactions).
+With most databases a client opens a connection, starts a transaction, runs a statement, looks at the result, and then decides what to run next. rqlite does not work this way. Each HTTP request stands alone, there is no session to carry state from one request to the next, and [explicit `BEGIN` and `COMMIT` statements are not officially supported](/docs/api/api/#transactions).
 
 Instead, you send all the statements for an operation in one request and add `transaction` to the URL. rqlite then guarantees two things:
 
@@ -151,7 +151,7 @@ curl -XPOST 'localhost:4001/db/execute?pretty&transaction' -H "Content-Type: app
 ```
 The temporary table can hold any value you can select, not just a row ID. For example, `CREATE TEMP TABLE _vars AS SELECT id AS uid, name FROM users WHERE name = 'alice'` captures a row for use by the statements that follow.
 
-**Always create, use, and drop the temporary table within a single request, and always set `transaction`**. Because the request is a transaction, the table is removed whether the request succeeds or fails: on success by your `DROP TABLE`, and on failure by the rollback. Temporary tables are not part of the replicated database, so you should never rely on one existing from one request to the next.
+**Always create, use, and drop the temporary table within a single request, and always set `transaction`**. Because the request is a transaction, the table is removed whether the request succeeds or fails: on success by your `DROP TABLE`, and on failure by the rollback.
 
 ## Use constraints to abort a request
 SQL has no `IF` statement, but a constraint can serve the same purpose. If a statement violates a constraint the statement fails, and with `transaction` set the entire request is rolled back. This lets you make a request conditional on the state of the database.
