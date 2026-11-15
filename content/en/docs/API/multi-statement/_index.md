@@ -1,7 +1,7 @@
 ---
 title: "Multi-statement patterns"
 linkTitle: "Multi-statement patterns"
-description: "Patterns for performing multi-step operations in a single request"
+description: "How to perform transactional, multi-step operations in a single request"
 weight: 15
 ---
 
