@@ -11,7 +11,7 @@ Normally rqlite waits until a write request has been safely committed to a major
 ## Usage
 Queued Writes are enabled via a special API flag, which will instruct rqlite to queue up write-requests and execute them asynchronously. This allows clients to send multiple distinct requests to an rqlite node, and have rqlite automatically do the batching and bulk insert for the client, without the client doing any extra work. The net result is as if the client wrote a single Bulk request containing all the queued statements. For the same reason that using the [Bulk API](/docs/api/bulk-api/) results in much higher write performance, **using the _Queued Writes_ API will also result in much higher write performance**.
 
-This functionality is best illustrated by an example, showing two requests being queued.
+This functionality is best illustrated by an example, showing two HTTP requests being queued.
 ```bash
 $ curl -XPOST 'localhost:4001/db/execute?queue' -H "Content-Type: application/json" -d '[
     ["INSERT INTO foo(name) VALUES(?)", "fiona"],
@@ -32,14 +32,14 @@ $
 ```
 Setting the URL query parameter `queue` enables queuing mode, adding the request data to an internal queue which rqlite manages for you. Once the request has been queued, the response is returned to the client.
 
-rqlite merges queued requests when the configured batch size is reached or a configurable timeout expires. It then executes them as a single request.
+rqlite merges queued requests when the configured batch size is reached or a configurable timeout expires. It then commits the batch asynchronously to the database.
 
-Each response includes a monotonically increasing `sequence_number`, which allows you to track when this request is actually persisted to the Raft log. The `/status` [diagnostics](/docs/guides/monitoring-rqlite) endpoint includes the sequence number of the latest request successfully written to Raft.
+Each response includes a monotonically increasing `sequence_number`, which allows you to track when this request is actually persisted to rqlite. The `/status` [diagnostics](/docs/guides/monitoring-rqlite) endpoint includes the sequence number of the latest request successfully committed.
 
 >Sequence numbers are local to the node that received the _Queued Write_ request. Each node generates its own series of sequence numbers, and is not aware of other nodes' sequence numbers.
 
 ### Waiting for a queue to flush
-You can explicitly tell the request to wait until the queue has persisted all pending requests. To do this, add the parameter `wait` to the request like so:
+You can explicitly tell the request to wait until the queue has committed all pending requests. To do this, add the parameter `wait` to the request like so:
 ```bash
 $ curl -XPOST 'localhost:4001/db/execute?queue&wait&timeout=10s' -H "Content-Type: application/json" -d '[
     ["INSERT INTO foo(name) VALUES(?)", "bob"]
@@ -53,10 +53,10 @@ The behavior of the queue rqlite uses to batch the requests is configurable at r
 ## Trade-offs
 As with most databases, there is a trade-off to be made between write performance and durability, but for some applications these trade-offs are worth it.
 
-Because the API returns immediately after queuing the requests **but before the data is committed to the Raft log** there is a small risk of data loss in the event the node crashes before queued data is persisted. You can make this window arbitrarily small by adjusting the queuing parameters, at the cost of write performance.
+Because the API returns immediately after queuing the requests **but before the data is committed to Raft log** (and therefore written to SQLite database) there is a small risk of data loss in the event that the node crashes before queued data is persisted. You can make this window arbitrarily small by adjusting the queuing parameters, at the cost of write performance.
 
-By default, a node will retry a Queued Write once if the Leader is not reachable. This does mean that if a Queued Write appeared to fail, but was actually successful (the response from the Leader may be dropped by the network), data may be duplicated. You can eliminate this risk by setting `-write-queue-retry` to zero.
+By default, **a node will retry a Queued Write once if the Leader is not reachable**. This does mean that if a Queued Write appeared to fail, but was actually successful (this could happen, for example, if the response from the Leader was dropped by the network), data may be duplicated. You can eliminate any risk of duplication by setting `-write-queue-retry` to zero.
 
-Finally, when the API returns `HTTP 200 OK`, that simply acknowledges that the data has been queued correctly. It does not indicate that the SQL statements will actually be applied successfully to the database. Be sure to check the node's logs and diagnostics if you have any concerns about failed queued writes.
+Finally, when the API returns `HTTP 200 OK`, that simply acknowledges that the data has been queued correctly. It does not mean that the SQL statements are syntactically valid, or do not violate schema constraints. Be sure to monitor the node's logs and metrics if you have any concerns about failed queued writes.
 
-By default, writes from the queue are not performed within a transaction. If you wish to change this, it must be set at launch time via the command-line option `-write-queue-tx`.
+By default, batched writes are not performed within a transaction. If you wish to change this, it must be set at launch time via the command-line option `-write-queue-tx`.

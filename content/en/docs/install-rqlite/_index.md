@@ -19,7 +19,7 @@ By default, this installs into `/usr/local/bin`. Two environment variables let y
 
 | Variable | Description | Default |
 | --- | --- | --- |
-| `RQLITE_VERSION` | The version to install, for example `v10.6.4` | the latest release |
+| `RQLITE_VERSION` | The version to install, for example `v10.7.1` | the latest release |
 | `INSTALL_DIR` | The directory to install the binaries into | `/usr/local/bin` |
 
 ```bash
