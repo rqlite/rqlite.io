@@ -193,6 +193,8 @@ In this example, either both statements succeed or neither does. Performance is 
 
 The behavior of rqlite if you explicitly issue `BEGIN`, `COMMIT`, `ROLLBACK`, `SAVEPOINT`, and `RELEASE` to control your own transactions is **not defined**. This is because the behavior of a cluster that fails while such a manually controlled transaction is in progress is not yet defined. It is important to control transactions only through the query parameters shown above.
 
+Since you cannot hold a transaction open across requests, operations that involve several dependent steps must be expressed as a single request. See [_Multi-statement patterns_](/docs/api/multi-statement/) for how to do this.
+
 ## BLOB data
 Working with [BLOB](https://www.sqlite.org/datatype3.html) data may require specialized handling, depending on your use case. Examples of writing BLOB data, and reading it back, are shown below.
 

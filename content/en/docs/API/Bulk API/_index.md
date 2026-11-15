@@ -54,7 +54,7 @@ The response is of the form:
 Because a bulk operation is contained within a single Raft log entry, and only one Raft log entry is ever processed at a time, a bulk operation will never be interleaved with other requests.
 
 ### Transaction support
-You may still wish to set the `transaction` flag when issuing a bulk update. This ensures that if any error occurs while processing the bulk update, all changes will be rolled back.
+You may still wish to set the `transaction` flag when issuing a bulk update. This ensures that if any error occurs while processing the bulk update, all changes will be rolled back. [_Multi-statement patterns_](/docs/api/multi-statement/) shows how to use this to perform operations where one statement depends on the result of another.
 
 ## Queries
 If you want to execute more than one query per HTTP request then perform a POST, and place the queries in the body of the request as a JSON array. For example:
