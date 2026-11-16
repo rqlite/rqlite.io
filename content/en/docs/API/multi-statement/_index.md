@@ -283,40 +283,6 @@ Each request is applied on its own, one after the other, so two workers sending 
 }
 ```
 
-## Read and write in one request
-If you want to see the state of the database after your changes, send the statements to the [Unified Endpoint](/docs/api/api/#unified-endpoint). It accepts reads and writes in the same request, and with `transaction` set the reads see the changes made by the statements before them.
-```bash
-curl -XPOST 'localhost:4001/db/request?pretty&transaction&associative' -H "Content-Type: application/json" -d '[
-    ["UPDATE accounts SET balance = balance - ? WHERE id = ?", 30, 1],
-    ["UPDATE accounts SET balance = balance + ? WHERE id = ?", 30, 2],
-    ["SELECT id, balance FROM accounts"]
-]'
-```
-```json
-{
-    "results": [
-        {
-            "last_insert_id": 1,
-            "rows_affected": 1,
-            "rows": null
-        },
-        {
-            "last_insert_id": 1,
-            "rows_affected": 1,
-            "rows": null
-        },
-        {
-            "types": {"balance": "integer", "id": "integer"},
-            "rows": [
-                {"balance": 60, "id": 1},
-                {"balance": 40, "id": 2}
-            ]
-        }
-    ]
-}
-```
-The `last_insert_id` field is only meaningful in the result of an `INSERT`. In the results of other statements, as above, it simply repeats the value from an earlier insert.
-
 ## Pass a list of values as one parameter
 The number of statements in a request does not have to grow with the number of rows you want to write. Pass the rows as a single JSON-encoded parameter, and use [`json_each()`](https://www.sqlite.org/json1.html#jeach) to turn it into rows which an `INSERT ... SELECT` can read.
 
