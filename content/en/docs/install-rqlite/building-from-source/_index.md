@@ -93,6 +93,8 @@ Generally speaking, fixes are not backported to earlier major releases, though i
 - Make a release on that branch using the tag `v<new-release-number>`. This will kick off the release workflow on GitHub.
 
 ## Development philosophy
+Be sure to review the rqlite [_Contributing Guidelines_](https://github.com/rqlite/rqlite/blob/master/CONTRIBUTING.md).
+
 ### Clean commit histories
 If you open a pull request, please ensure the commit history is clean. Squash the commits into logical blocks, perhaps a single commit if that makes sense. What you want to avoid is commits such as "WIP" and "fix test" in the history. This keeps the history on master clean and easy to follow.
 
