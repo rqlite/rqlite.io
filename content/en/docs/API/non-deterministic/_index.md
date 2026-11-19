@@ -90,6 +90,10 @@ curl -XPOST 'localhost:4001/db/execute' -H "Content-Type: application/json" -d '
 ```
 
 ## What rqlite doesn't rewrite
+<div style="border-left: 4px solid red; padding: 10px; background-color: #ffe6e6;">
+<strong>⚠️ Warning:</strong> rqlite doesn't currently rewrite parameters for non-deterministic functions when those parameters are passed as part of a _parameterized query_. Make sure you use the non-parameterized version for those statements
+</div>
+<br>
 rqlite only rewrites functions that are evaluated when the statement itself runs. Some statements instead store an expression in the database schema, and SQLite evaluates that expression later. The most common example is a column default:
 ```
 CREATE TABLE foo (id INTEGER PRIMARY KEY, created DATETIME DEFAULT CURRENT_TIMESTAMP);
