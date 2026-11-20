@@ -111,7 +111,7 @@ This configuration also sets permissions for all users. _bob_ has permission to 
 Use [_Parameterized Statements_](/docs/api/api/#parameterized-statements) whenever a SQL statement includes values supplied by users or other untrusted sources. This protects against SQL Injection attacks.
 
 ## Encrypt node-to-node communication
-Enable TLS on inter-node connections, so that all Raft traffic between nodes is encrypted. Enable mutual TLS as well, so that nodes only accept connections from other nodes that present a valid certificate. To use TLS, supply every node with a TLS certificate and corresponding private key, in X.509 format. Note that every node in a cluster must operate with inter-node encryption enabled, or none at all.
+Enable TLS on inter-node connections, so that all Raft traffic between nodes is encrypted. **You should also enable mutual TLS**, so that nodes only accept connections from other nodes that present a valid certificate. To use TLS, supply every node with a TLS certificate and corresponding private key, in X.509 format. Note that every node in a cluster must operate with inter-node encryption enabled, or none at all.
 
 _In the options below, the node receiving a connection is considered the server, and the node initiating it is considered the client._
 ```bash
