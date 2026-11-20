@@ -7,10 +7,11 @@ date: 2025-07-05
 ---
 
 ## What is rqlite?
+rqlite is a lightweight, distributed relational database built on [SQLite](https://www.sqlite.org/). It combines the simplicity of SQLite with **fault tolerance** and **high availability**. rqlite shines when your application or distributed system needs data that stays available when nodes fail, but also needs every answer to be up to date and authoritative.
 
-rqlite is a lightweight, distributed relational database built on [SQLite](https://www.sqlite.org/). It combines the simplicity of SQLite with **fault tolerance** and **high availability**. Whether you're deploying services in the cloud or applications at the edge, rqlite gives you a relational database that is easy to deploy and operate.
+One of rqlite’s primary goals is **simplicity of deployment and operation**. It’s delivered as a single self-contained binary that you can drop onto a machine and run -- [forming a cluster](/docs/clustering/) takes just seconds with minimal configuration. This design greatly reduces the operational overhead typically associated with distributed systems. All data is replicated to multiple nodes using the [Raft consensus algorithm](https://raft.github.io/), so your data survives the loss of a minority of nodes. (rqlite prioritizes data consistency and high availability over write throughput -- every write goes through the Raft log -- so it’s not intended for write-scaling.)
 
-One of rqlite's primary goals is **simplicity of deployment and operation**. It's delivered as a single self-contained binary that you can drop onto a machine and run -- [forming a cluster](/docs/clustering/) takes just seconds with minimal configuration. This design greatly reduces the operational overhead typically associated with distributed systems. All data is automatically replicated to multiple nodes using the [Raft consensus algorithm](https://raft.github.io/), ensuring there is always a consistent copy of your data available. (rqlite prioritizes data consistency and high availability over write throughput -- every write goes through the Raft log -- so it's not intended for write-scaling, but rather for keeping your data safe and available in the face of failures.)
+Whether you’re deploying services in the cloud or applications at the edge, rqlite gives you a relational database you can rely on, and one that is easy to run.
 
 ## Key Features
 
@@ -18,7 +19,7 @@ One of rqlite's primary goals is **simplicity of deployment and operation**. It'
 
 - **Relational** -- Built on SQLite, rqlite supports full **SQL** for querying and manipulating data. This includes advanced SQLite features like [full-text search](https://www.sqlite.org/fts5.html), [JSON document support](https://www.sqlite.org/json1.html), and more, so you get the power of a SQL database in a highly available setting.
 - **Extensible** -- You can load [**SQLite extensions**](/docs/guides/extensions/) into rqlite nodes to extend database capabilities. For example, it's possible to add modules for [vector search](https://github.com/asg017/sqlite-vec), [cryptography, mathematical functions](https://github.com/nalgeon/sqlean), and other custom functionality by loading the same extensions that SQLite supports.
-- **Atomic writes** -- Add the `transaction` query parameter to execute multiple SQL statements in a single request *atomically*. If one statement fails, the entire transaction is rolled back. See [Transactions](/docs/api/api/#transactions) for details.
+- **Atomic writes** -- Add the `transaction` query parameter to execute multiple SQL statements in a single request *atomically*. If one statement fails, the entire transaction is rolled back. See [Transactions](/docs/api/api/#transactions) and [multi-statement requests](/docs/api/multi-statement/) for details.
 - **Change Data Capture** -- [Stream changes](/docs/guides/cdc/) from the SQLite database to an external system, allowing you to invalidate caches, update secondary databases, trigger application logic, and audit your changes.
 
 ### Easy operations
