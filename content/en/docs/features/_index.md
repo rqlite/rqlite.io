@@ -11,7 +11,7 @@ rqlite is a lightweight, distributed relational database built on [SQLite](https
 
 One of rqlite’s primary goals is **simplicity of deployment and operation**. It’s delivered as a single self-contained binary that you can drop onto a machine and run -- [forming a cluster](/docs/clustering/) takes just seconds with minimal configuration. This design greatly reduces the operational overhead typically associated with distributed systems. All data is replicated to multiple nodes using the [Raft consensus algorithm](https://raft.github.io/), so your data survives the loss of a minority of nodes. (rqlite prioritizes data consistency and high availability over write throughput -- every write goes through the Raft log -- so it’s not intended for write-scaling.)
 
-Whether you’re deploying services in the cloud or applications at the edge, rqlite gives you a relational database you can rely on, and one that is easy to run.
+Whether you’re deploying services in the cloud or applications at the edge, rqlite gives you **a relational database you can rely on**, and one that is **easy to run**.
 
 ## Key Features
 
