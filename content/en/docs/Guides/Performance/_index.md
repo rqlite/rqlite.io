@@ -45,6 +45,10 @@ rqlited -auto-vacuum-int=24h # rqlite will automatically run a VACUUM every day
 
 >Be sure to study the SQLite VACUUM documentation, as VACUUM may alter the database in a way you do not want. Performing a VACUUM may temporarily double the disk usage of rqlite, so make sure you have enough free disk space or VACUUM may fail. Writes are also **blocked** while a VACUUM is taking place.
 
+{{< warning >}}
+Automatic VACUUM runs independently on each node, as part of that node's own snapshotting, so nodes vacuum at different points in the Raft log. SQLite's VACUUM [may change the ROWIDs](https://www.sqlite.org/lang_vacuum.html) of rows in any table that does not have an explicit `INTEGER PRIMARY KEY`. With `-auto-vacuum-int` enabled, the same row can therefore have a different `rowid` on different nodes. A later write that selects rows by `rowid` in such a table, for example `DELETE FROM foo WHERE rowid = 2`, can then change different rows on different nodes. If you enable automatic VACUUM, give every table an explicit `INTEGER PRIMARY KEY`, or never refer to `rowid` in writes.
+{{< /warning >}}
+
 ### Optimize
 rqlite is also compatible with [`PRAGMA optimize`](https://www.sqlite.org/pragma.html#pragma_optimize). Issuing this command instructs SQLite to analyze its tables, gathering statistics which can improve query performance.
 ```bash
