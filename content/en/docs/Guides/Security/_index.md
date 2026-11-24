@@ -81,7 +81,9 @@ Each user can be granted one or more of the following permissions:
 - _cdc-hwm-update_: user can broadcast CDC high watermark updates. In practice only a node broadcasts such information, so it's the node that must supply the credentials via the `-cdc-as` command-line flag.
 - _ui_: user can access the built-in management application at `/console`.
 
-Note that for a user to be able to access the [Unified Endpoint](/docs/api/api/#unified-endpoint), they must have **both** _execute_ and _query_ permissions.
+{{% warning %}}
+For a user to be able to access the [Unified Endpoint](/docs/api/api/#unified-endpoint), they must have **both** _execute_ and _query_ permissions. In addition when a cluster processes a _Join_ request it may first remove a pre-existing node in the cluster. So don't grant _join_ or  _join-read-only_ to any user you don't also trust with _remove_ permission.
+{{% /warning %}}
 
 ### Example permissions file
 An example configuration file is shown below.
