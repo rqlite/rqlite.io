@@ -11,6 +11,9 @@ Always run the latest release of rqlite. If a security issue is identified, rqli
 
 To hear about new releases and security issues as they are announced, join the [rqlite Slack channel](https://www.rqlite.io/join-slack) and monitor the [rqlite GitHub repository](https://github.com/rqlite/rqlite) for [security advisories](https://github.com/rqlite/rqlite/security/advisories).
 
+## Restrict what rqlite can access
+Run rqlite as a dedicated, non-root user, and restrict that user such that it only has access to the rqlite data directory. With the possible exception of backup-to-local file, there is no reason rqlite needs to access any part of the filesystem outside of its data directory.
+
 ## Restrict access to the data directory
 Run rqlite as a dedicated, non-root user, and make that user the only one with access to the data directory -- for example, set the permissions on the data directory to `0700`. There is usually no reason for any other user, or any other process, to access this directory.
 
