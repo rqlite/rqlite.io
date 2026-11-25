@@ -8,8 +8,6 @@ For production deployments, restrict network access to both rqlite ports, requir
 
 rqlite permissions control access to operations on a shared database. They do not provide isolation between tenants, tables, or rows. Treat cluster membership, database loading, and access to backups as privileged capabilities. Use application-level authorization when different users must see different data.
 
-After configuring your deployment, work through [Verify your deployment](#verify-your-deployment). Repeat these checks after upgrades and changes to credentials, certificates, or network rules.
-
 ## Run the latest release
 Run the latest stable release of rqlite. Review release notes and [security advisories](https://github.com/rqlite/rqlite/security/advisories) to identify affected versions, available fixes, and any mitigations needed before you can upgrade. Prioritize deploying security fixes according to their impact and your exposure.
 
@@ -19,7 +17,7 @@ Monitor releases and security advisories in the [rqlite GitHub repository](https
 Run rqlite as a dedicated, non-root user. Limit its filesystem access according to what your configuration requires:
 
 - **Write access:** the data directory passed at startup, private temporary storage, and explicitly configured output locations, such as [local backups](/docs/guides/backup/#file-system), query logs, or profiling files.
-- **Read access:** required runtime files, configuration, authentication files, TLS certificates and keys, CA certificates, and any approved SQLite extensions or restore inputs.
+- **Read access:** required runtime files, configuration, authentication files, TLS certificates and keys, CA certificates, and any approved SQLite extensions or restore-from-backup files.
 - **No access:** unrelated application data, other users' private files, and secrets that rqlite does not need.
 
 A dedicated account alone does not prevent access to world-readable files. Enforce these restrictions with filesystem permissions and, where appropriate, a service sandbox or container mounts. Prefer read-only access to configuration, credentials, and extension libraries. Use private temporary storage, such as a service's private `/tmp`, instead of sharing temporary files with unrelated processes.
@@ -27,11 +25,11 @@ A dedicated account alone does not prevent access to world-readable files. Enfor
 Load only trusted [SQLite extensions](/docs/guides/extensions/). Extensions execute code within the rqlite process and may add functions with filesystem access or other side effects. Database read-only connections are not a sandbox for extension code.
 
 ## Restrict access to the data directory
-Make the service account the only unprivileged user with access to the data directory -- for example, set the directory's permissions to `0700`. Protect the entire directory, including SQLite files, Raft logs, and snapshots, since these can contain database contents.
+Make the rqlite service account the only unprivileged user with access to the data directory -- for example, set the directory's permissions to `0700`. Protect the entire directory, including SQLite files, Raft logs, and snapshots, since these can contain database contents.
 
 Restrict access to authentication files and TLS private keys -- for example, use `0600` for files owned by the service account. Protect certificates and CA bundles against unauthorized changes, even though they are not secrets. Consider an encrypted filesystem for data at rest.
 
-Apply equivalent access controls and encryption to backups, restore inputs, temporary files, and [CDC outputs](/docs/guides/cdc/). Query logs and diagnostic files may also contain sensitive information. Limit their collection, access, and retention, and test recovery from protected backups.
+Apply equivalent access controls and encryption to backups, backup data used for restore, temporary files, and [CDC outputs](/docs/guides/cdc/). Logs may also contain sensitive information. Limit their collection, access, and retention.
 
 {{% warning %}}
 If you plan to have systems other than rqlite access the SQLite database file, carefully review the [_Direct Access_ guide](/docs/guides/direct-access/) first.
@@ -49,7 +47,7 @@ AWS EC2 [Security Groups](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/us
 ## Enable HTTPS
 Enable HTTPS on every node, so that all communication between clients and the cluster is encrypted. Without HTTPS, credentials, SQL statements, and query results all cross the network in plaintext. rqlite secures the HTTP API using [_Transport Layer Security (TLS)_](https://www.cloudflare.com/learning/ssl/what-is-an-ssl-certificate/).
 
-To enable HTTPS, set `-http-cert` and `-http-key` on every node. Clients must verify the server certificate and hostname against a trusted CA. For a private CA, configure the client with its CA certificate, such as `curl --cacert http-ca.crt`. Do not disable certificate verification with options such as `curl --insecure`.
+To enable HTTPS, set `-http-cert` and `-http-key` on every node. Clients must verify the server certificate and hostname against a trusted CA.
 
 The relevant command-line options are:
 ```text
@@ -105,7 +103,7 @@ Each user can be granted one or more of the following permissions:
 - _ui_: user can access the built-in management application at `/console`.
 
 {{% warning %}}
-Grant _join_ and _join-read-only_ only to trusted node operators. A joining node receives a copy of the database, including when it joins as a read replica. Processing a join may also remove a pre-existing member with the same identity or address. Do not grant either permission to a user you would not trust to read the entire database and replace a cluster member.
+Grant _join_ and _join-read-only_ only to trusted node operators. A joining node receives a copy of the database, including when it joins as a read replica. Processing a join may also remove a pre-existing member with the same node ID or address. Do not grant either permission to a user you would not trust to read the entire database and replace a cluster member.
 {{% /warning %}}
 
 Access to the [Unified Endpoint](/docs/api/api/#unified-endpoint) requires **both** _execute_ and _query_ permissions, even for a request containing only reads. Use `/db/query` for users who should have read-only access.
@@ -148,13 +146,7 @@ If you need runtime metrics or profiles, provision a separate monitoring user wi
 ### Protect and rotate credentials
 The authentication file contains plaintext passwords. Store it as a secret, restrict access to it, and do not commit it to source control or include it in diagnostic uploads. Avoid putting passwords in URLs or command-line arguments, where they may appear in shell history, logs, or process listings. The `curl` examples below prompt for a password; unattended clients should obtain credentials from protected secret storage.
 
-rqlite loads the authentication file at startup. Editing the file does **not** update a running node. To rotate credentials while preserving access:
-
-1. Add a new username with a new password and the required permissions alongside the old username on every applicable node. Restart nodes one at a time, preserving a voting quorum and checking readiness after each restart.
-2. Move applications and operational clients to the new credentials. Update `-join-as` and `-cdc-as` where applicable, restarting affected nodes to apply configuration changes.
-3. Remove the old username from every applicable node and restart nodes one at a time again. Verify that new credentials work and old credentials fail against each node, including requests forwarded to the Leader.
-
-If credentials have been compromised, restrict access immediately and prioritize revocation; do not leave the old account enabled for a routine migration window.
+rqlite loads the authentication file at startup. Editing the file does **not** update a running node. If you change the file you must restart the node.
 
 ## Use parameterized statements
 Use [_Parameterized Statements_](/docs/api/api/#parameterized-statements) whenever a SQL statement includes values supplied by users or other untrusted sources. This protects against SQL Injection attacks.
@@ -249,34 +241,6 @@ curl --fail-with-body --cacert http-ca.crt \
   --get 'https://localhost:4001/db/query?pretty&timings' \
   --data-urlencode 'q=SELECT 1'
 ```
-
-## Verify your deployment
-Check **every node**, including Followers and read replicas. Test from both allowed and disallowed source networks. Repeat after upgrades, credential or certificate rotation, and network changes. Use a disposable test database for checks that attempt writes or membership changes.
-
-| Check | Expected result |
-| --- | --- |
-| Connect to the inter-node port from a system outside the cluster's network allowlist. | The network blocks the connection. |
-| From an allowed source, connect to an inter-node listener without a certificate, with an untrusted certificate, or with an API client certificate. | Mutual TLS rejects the connection before any cluster operation can be performed. |
-| With HTTP mutual TLS enabled, request the API without a client certificate or with an untrusted certificate. | The TLS connection fails. |
-| Connect with a client that does not trust the server's CA, or uses a hostname absent from the server's SAN. | The client rejects the server certificate. |
-| With a trusted HTTP client certificate, request `/db/query` without Basic Auth or with an incorrect password. | HTTP `401`; no query results. |
-| Query `/db/query` as _reader_ with valid credentials and a trusted client certificate. | The query succeeds. Repeat through a Follower with `level=strong` to exercise forwarding to the Leader. |
-| Attempt a database write through `/db/query` as _reader_. | A SQL error is returned and the database is unchanged. Check the response body: a SQL error may be returned with HTTP `200`. |
-| Request `/db/execute`, `/db/request`, or `/db/backup` as _reader_. | HTTP `401`; no write or backup occurs. |
-| Attempt to join, remove, or reconfigure a cluster member using ordinary application credentials. | Authorization fails and membership is unchanged. Test joining through the inter-node protocol using a trusted node certificate to reach the authorization check. |
-| Request `/readyz` as _health_, then request `/status`, `/nodes`, `/debug/vars`, and `/debug/pprof/`. | Readiness succeeds; the other requests return HTTP `401`. |
-| After credential rotation, retry protected operations with the removed credentials against each node. | HTTP `401` for direct and forwarded API operations. |
-| After certificate rotation, inspect a new TLS connection and test a certificate signed only by a removed CA. | The replacement certificate is presented; certificates from the removed CA are rejected. |
-
-For example, with the files above, confirm that _reader_ cannot retrieve a backup:
-
-```bash
-curl --cacert http-ca.crt --cert client.crt --key client.key \
-  --user reader --output /dev/null --write-out '%{http_code}\n' \
-  'https://localhost:4001/db/backup'
-```
-
-Expect `401`. Also inspect listener addresses, firewall rules, file permissions, and gateway limits. If a check fails, restrict exposure while investigating. Report unexpected failures of authentication, authorization, or other documented security boundaries using the private reporting process below.
 
 ## Report a suspected vulnerability
 Follow the repository's [security policy](https://github.com/rqlite/rqlite/blob/master/SECURITY.md) and report suspected vulnerabilities through its [GitHub Security page](https://github.com/rqlite/rqlite/security). Use the private reporting channel rather than public issues or Slack for exploit details, credentials, or sensitive data.
