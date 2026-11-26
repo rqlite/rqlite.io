@@ -98,7 +98,7 @@ Each user can be granted one or more of the following permissions:
 - _ready_: user can retrieve node readiness via `/readyz`.
 - _remove_: user can remove a node from a cluster. If a node performs an auto-remove on shutdown, then the `-join-as` user must have this permission.
 - _snapshot_: user may initiate a Raft Snapshot via the endpoint `/snapshot`.
-- _status_: user can retrieve node status, topology, Go runtime information, and debug profiles via `/status`, `/nodes`, `/debug/vars`, and `/debug/pprof`.
+- _status_: user can retrieve node status, topology, Go runtime information, and debug profiles via `/status`, `/nodes`, and `/debug/vars`. If `-http-pprof` is passed at the rqlite command line `/debug/pprof` is also accessible.
 - _cdc-hwm-update_: user can broadcast CDC high watermark updates. In practice only a node broadcasts such information, so it's the node that must supply the credentials via the `-cdc-as` command-line flag.
 - _ui_: user can access the built-in management application at `/console`.
 
