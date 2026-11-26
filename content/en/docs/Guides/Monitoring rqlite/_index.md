@@ -161,7 +161,7 @@ memstats:
 Similar to the `status` output, the output of this endpoint could be periodically written to a monitoring system, allowing the performance of rqlite to be tracked over time.
 
 ## pprof support
-[pprof](https://golang.org/pkg/net/http/pprof/) information is available by default and can be accessed as follows:
+[pprof](https://golang.org/pkg/net/http/pprof/) information is available if `-http-pprof` is passed to rqlite at launch time. If passed, it can be accessed as follows:
 
 ```bash
 curl localhost:4001/debug/pprof/cmdline
