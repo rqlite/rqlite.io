@@ -56,7 +56,7 @@ Flags are grouped by topic below. Pass `-h` to `rqlited` to print the same infor
 	<tr>
 		<td><code>-http-pprof</code></td>
 		<td>Enable serving of pprof profiling information over HTTP.
-		    <br><br>When set, Go profiling information is available under &lt;code&gt;/debug/pprof&lt;/code&gt; on the HTTP API. It is disabled by default because profiling data can reveal details of the running process, and capturing a profile consumes resources on the node. Only enable it when you need to profile a node.
+		    <br><br>When set, Go profiling information is available at `/debug/pprof` on the HTTP API. It is disabled by default because profiling data can reveal details of the running process, and capturing a profile consumes resources on the node. Only enable it when you need to profile a node.
 </td>
 	</tr>
 </table>
