@@ -53,7 +53,7 @@ The behavior of the queue rqlite uses to batch the requests is configurable at r
 ## Trade-offs
 As with most databases, there is a trade-off to be made between write performance and durability, but for some applications these trade-offs are worth it.
 
-Because the API returns immediately after queuing the requests **but before the data is committed to Raft log** (and therefore written to SQLite database) there is a small risk of data loss in the event that the node crashes before queued data is persisted. You can make this window arbitrarily small by adjusting the queuing parameters, at the cost of write performance.
+Because the API returns immediately after queuing the requests **but before the data is committed to Raft log** (and therefore written to SQLite database) there is a small risk of data loss in the event that the node crashes, or is stopped, before queued data is persisted. You can make this window arbitrarily small by adjusting the queuing parameters, at the cost of write performance.
 
 By default, **a node will retry a Queued Write once if the Leader is not reachable**. This does mean that if a Queued Write appeared to fail, but was actually successful (this could happen, for example, if the response from the Leader was dropped by the network), data may be duplicated. You can eliminate any risk of duplication by setting `-write-queue-retry` to zero.
 
